@@ -4,9 +4,11 @@
 
 	<groupId>com.github.developframework</groupId>
 	<artifactId>develop-toolkit</artifactId>
-	<version>0.2-SNAPSHOT</version>
+	<version>0.1-SNAPSHOT</version>
 	<description>开发工具箱</description>
 	<inceptionYear>2018</inceptionYear>
+	<name>Develop Toolkit</name>
+	<url>https://github.com/developframework/develop-toolkit</url>
 
 	<properties>
 		<version.lombok>1.18.2</version.lombok>
