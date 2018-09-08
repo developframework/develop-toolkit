@@ -8,6 +8,7 @@
 	<artifactId>develop-toolkit</artifactId>
 	<version>0.1-SNAPSHOT</version>
 	<description>开发工具箱</description>
+	<inceptionYear>2018</inceptionYear>
 
 	<properties>
 		<version.lombok>1.18.2</version.lombok>
@@ -85,8 +86,6 @@
 					<configuration>
 						<!-- 设置git 打tag的名称 -->
 						<tagNameFormat>v@{project.version}</tagNameFormat>
-						<!-- 子模块版本号自动 -->
-						<autoVersionSubmodules>true</autoVersionSubmodules>
 					</configuration>
 				</plugin>
 				<!-- GPG Plugin -->
