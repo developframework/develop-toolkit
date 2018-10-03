@@ -2,16 +2,13 @@ package develop.toolkit.struct;
 
 import lombok.NonNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 分拣器
  *
  * @author qiushui on 2018-07-09.
- * @since 0.4
+ * @since 0.1
  */
 public class Sorter<K, V> {
 
@@ -50,8 +47,17 @@ public class Sorter<K, V> {
 		if (map.containsKey(key)) {
 			return new ArrayList<>(map.get(key));
 		} else {
-			throw new IllegalStateException("key \"" + key + "\" is not exist.");
+			return Collections.EMPTY_LIST;
 		}
+	}
+
+	/**
+	 * 返回所有键
+	 *
+	 * @return
+	 */
+	public Set<K> allKey() {
+		return map.keySet();
 	}
 
 	@FunctionalInterface
