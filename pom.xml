@@ -4,7 +4,7 @@
 
 	<groupId>com.github.developframework</groupId>
 	<artifactId>develop-toolkit</artifactId>
-	<version>0.2</version>
+	<version>0.3-SNAPSHOT</version>
 	<description>开发工具箱</description>
 	<inceptionYear>2018</inceptionYear>
 	<name>Develop Toolkit</name>
@@ -49,7 +49,7 @@
 		<connection>scm:git:git@github.com:developframework/develop-toolkit.git</connection>
 		<developerConnection>scm:git:git@github.com:developframework/develop-toolkit.git</developerConnection>
 		<url>https://github.com/developframework/develop-toolkit</url>
-		<tag>v0.2</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<distributionManagement>
