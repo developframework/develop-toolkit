@@ -13,8 +13,12 @@ public abstract class Password {
     @Getter
     protected String encryptPassword;
 
-    public Password(String originalPassword) {
-        this.encryptPassword = encrypt(originalPassword);
+    public Password(String password, boolean isEncrypt) {
+        if (isEncrypt) {
+            this.encryptPassword = password;
+        } else {
+            this.encryptPassword = encrypt(password);
+        }
     }
 
     @Override
@@ -22,7 +26,7 @@ public abstract class Password {
         if(this == obj) {
             return true;
         }
-        if(obj != null && obj instanceof Password) {
+        if (obj instanceof Password) {
             return encryptPassword.equals(((Password) obj).getEncryptPassword());
         }
         return false;
