@@ -31,7 +31,7 @@ public class CollectionInMap<K, V> extends ConcurrentHashMap<K, Collection<V>> {
 	 * @param item 新元素
 	 */
 	public void addItem(K key, V item) {
-		if (contains(key)) {
+        if (containsKey(key)) {
 			Collection<V> collection = get(key);
 			collection.add(item);
 		} else {
@@ -45,7 +45,7 @@ public class CollectionInMap<K, V> extends ConcurrentHashMap<K, Collection<V>> {
 	 * @param items 新元素
 	 */
 	public void addAllItem(K key, @NonNull Collection<V> items) {
-		if (contains(key)) {
+        if (containsKey(key)) {
 			Collection<V> collection = get(key);
 			collection.addAll(items);
 		} else {
@@ -59,7 +59,7 @@ public class CollectionInMap<K, V> extends ConcurrentHashMap<K, Collection<V>> {
 	 * @param item 新元素
 	 */
 	public void addItemSoft(K key, V item) {
-		if (contains(key)) {
+        if (containsKey(key)) {
 			Collection<V> collection = get(key);
 			collection.add(item);
 		} else {
@@ -75,7 +75,7 @@ public class CollectionInMap<K, V> extends ConcurrentHashMap<K, Collection<V>> {
 	 * @param items 新元素
 	 */
 	public void addAllItemSoft(K key, @NonNull Collection<V> items) {
-		if (contains(key)) {
+        if (containsKey(key)) {
 			Collection<V> collection = get(key);
 			collection.addAll(items);
 		} else {
@@ -91,7 +91,7 @@ public class CollectionInMap<K, V> extends ConcurrentHashMap<K, Collection<V>> {
 	 * @param item 元素
 	 */
 	public void removeItem(K key, V item) {
-		if (contains(key)) {
+        if (containsKey(key)) {
 			Collection<V> collection = get(key);
 			collection.remove(item);
 		} else {
@@ -105,7 +105,7 @@ public class CollectionInMap<K, V> extends ConcurrentHashMap<K, Collection<V>> {
 	 * @param filter 条件
 	 */
 	public void removeIfItem(K key, @NonNull Predicate<? super V> filter) {
-		if (contains(key)) {
+        if (containsKey(key)) {
 			Collection<V> collection = get(key);
 			collection.removeIf(filter);
 		} else {

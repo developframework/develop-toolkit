@@ -47,4 +47,91 @@ public class JavaBeanUtils {
         return sb.toString();
     }
 
+    /**
+     * 驼峰转下划线
+     *
+     * @param camelcaseString
+     * @return
+     */
+    public static String camelcaseToUnderline(String camelcaseString) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < camelcaseString.length(); i++) {
+            char c = camelcaseString.charAt(i);
+            if (i != 0 && c >= 'A' && c <= 'Z') {
+                sb.append('_').append((char) (c + 32));
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 驼峰转中划线
+     *
+     * @param camelcaseString
+     * @return
+     */
+    public static String camelcaseToMiddleLine(String camelcaseString) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < camelcaseString.length(); i++) {
+            char c = camelcaseString.charAt(i);
+            if (i != 0 && c >= 'A' && c <= 'Z') {
+                sb.append('-').append((char) (c + 32));
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 下划线转驼峰
+     *
+     * @param underlineString
+     * @return
+     */
+    public static String underlineToCamelcase(String underlineString) {
+        StringBuilder sb = new StringBuilder();
+        boolean nextUpperCase = false;
+        for (int i = 0; i < underlineString.length(); i++) {
+            char c = underlineString.charAt(i);
+            if (c == '_') {
+                nextUpperCase = i != 0;
+                continue;
+            }
+            if (nextUpperCase) {
+                sb.append((char) (c - 32));
+                nextUpperCase = false;
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 中划线转驼峰
+     *
+     * @param middleLineString
+     * @return
+     */
+    public static String middleLineToCamelcase(String middleLineString) {
+        StringBuilder sb = new StringBuilder();
+        boolean nextUpperCase = false;
+        for (int i = 0; i < middleLineString.length(); i++) {
+            char c = middleLineString.charAt(i);
+            if (c == '-') {
+                nextUpperCase = i != 0;
+                continue;
+            }
+            if (nextUpperCase) {
+                sb.append((char) (c - 32));
+                nextUpperCase = false;
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
 }
