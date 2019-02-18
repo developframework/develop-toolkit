@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.function.Function;
 
 /**
+ * 集合增强工具
+ *
  * @author qiushui on 2018-12-20.
  */
 public final class CollectionAdvice {
@@ -30,7 +32,7 @@ public final class CollectionAdvice {
     }
 
     /**
-     * 获得元素
+     * 获得第一个匹配的元素
      *
      * @param collection
      * @param target
@@ -39,7 +41,7 @@ public final class CollectionAdvice {
      * @param <R>
      * @return
      */
-    public static <E, R> Optional<E> getFirstInCollection(Collection<E> collection, R target, Function<E, R> function) {
+    public static <E, R> Optional<E> getFirstMatchInCollection(Collection<E> collection, R target, Function<E, R> function) {
         for (E item : collection) {
             R value = function.apply(item);
             if (target.equals(value)) {

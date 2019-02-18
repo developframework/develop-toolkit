@@ -43,7 +43,8 @@ public class Sorter<K, V> {
 	 * @param key
 	 * @return
 	 */
-	public List<V> getSingleList(K key) {
+    @SuppressWarnings("unchecked")
+    public List<V> getSingleList(K key) {
 		if (map.containsKey(key)) {
 			return new ArrayList<>(map.get(key));
 		} else {

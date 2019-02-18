@@ -1,148 +1,147 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.github.developframework</groupId>
-	<artifactId>develop-toolkit</artifactId>
-	<version>0.4-SNAPSHOT</version>
-	<description>开发工具箱</description>
-	<inceptionYear>2018</inceptionYear>
-	<name>Develop Toolkit</name>
-	<url>https://github.com/developframework/develop-toolkit</url>
+    <groupId>com.github.developframework</groupId>
+    <artifactId>develop-toolkit</artifactId>
+    <version>0.4-SNAPSHOT</version>
+    <description>开发工具箱</description>
+    <inceptionYear>2018</inceptionYear>
+    <name>Develop Toolkit</name>
+    <url>https://github.com/developframework/develop-toolkit</url>
 
-	<properties>
-		<version.lombok>1.18.2</version.lombok>
-	</properties>
+    <properties>
+        <java.version>8</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
+        <version.lombok>1.18.6</version.lombok>
+    </properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>${version.lombok}</version>
-			<scope>provided</scope>
-			<optional>true</optional>
-		</dependency>
-	</dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${version.lombok}</version>
+        </dependency>
+    </dependencies>
 
-	<developers>
-		<developer>
-			<name>qiuzhenhao</name>
-			<email>408000511@qq.com</email>
-			<organization>developframework</organization>
-			<organizationUrl>http://blog.qiushuicloud.xyz</organizationUrl>
-		</developer>
-	</developers>
+    <developers>
+        <developer>
+            <name>qiuzhenhao</name>
+            <email>408000511@qq.com</email>
+            <organization>developframework</organization>
+            <organizationUrl>http://blog.qiushuicloud.xyz</organizationUrl>
+        </developer>
+    </developers>
 
-	<issueManagement>
-		<system>GitHub Issues</system>
-		<url>https://github.com/developframework/develop-framework</url>
-	</issueManagement>
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/developframework/develop-toolkit</url>
+    </issueManagement>
 
-	<licenses>
-		<license>
-			<name>The Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-		</license>
-	</licenses>
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
 
-	<scm>
-		<connection>scm:git:git@github.com:developframework/develop-toolkit.git</connection>
-		<developerConnection>scm:git:git@github.com:developframework/develop-toolkit.git</developerConnection>
-		<url>https://github.com/developframework/develop-toolkit</url>
-		<tag>HEAD</tag>
-	</scm>
+    <scm>
+        <connection>scm:git:git@github.com:developframework/develop-toolkit.git</connection>
+        <developerConnection>scm:git:git@github.com:developframework/develop-toolkit.git</developerConnection>
+        <url>https://github.com/developframework/develop-toolkit</url>
+        <tag>HEAD</tag>
+    </scm>
 
-    <!-- 配置私库地址 -->
-	<distributionManagement>
-		<snapshotRepository>
-            <id>hclc nexus</id>
-            <url>http://nexus.hclc-tech.com:8081/repository/maven-snapshots/</url>
-		</snapshotRepository>
-		<repository>
-            <id>hclc nexus</id>
-            <url>http://nexus.hclc-tech.com:8081/repository/maven-releases/</url>
-		</repository>
-	</distributionManagement>
-
-    <!--<distributionManagement>-->
-    <!--<snapshotRepository>-->
-    <!--<id>ossrh</id>-->
-    <!--<url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
-    <!--</snapshotRepository>-->
-    <!--<repository>-->
-    <!--<id>ossrh</id>-->
-    <!--<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
-    <!--</repository>-->
-    <!--</distributionManagement>-->
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <build>
-		<pluginManagement>
-			<plugins>
-				<!-- Source Plugin -->
-				<plugin>
-					<artifactId>maven-source-plugin</artifactId>
-					<version>3.0.1</version>
-					<executions>
-						<execution>
-							<id>attach-sources</id>
-							<phase>verify</phase>
-							<goals>
-								<goal>jar-no-fork</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-				<!-- Release Plugin -->
-				<plugin>
-					<artifactId>maven-release-plugin</artifactId>
-					<configuration>
-						<!-- 设置git 打tag的名称 -->
-						<tagNameFormat>v@{project.version}</tagNameFormat>
-					</configuration>
-				</plugin>
-				<!-- GPG Plugin -->
-				<plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-gpg-plugin</artifactId>
-					<version>1.5</version>
-					<executions>
-						<execution>
-							<id>sign-artifacts</id>
-							<phase>verify</phase>
-							<goals>
-								<goal>sign</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-		<plugins>
-			<plugin>
-				<artifactId>maven-source-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.0.1</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>jar-no-fork</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <configuration>
+                        <tagNameFormat>v@{project.version}</tagNameFormat>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>1.5</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.6</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
-	<profiles>
-		<profile>
-			<id>release</id>
+    <profiles>
+        <profile>
+            <id>release</id>
 
-			<activation>
-				<property>
-					<name>performRelease</name>
-					<value>true</value>
-				</property>
-			</activation>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
 
-			<build>
-				<plugins>
-					<plugin>
-						<inherited>false</inherited>
-						<artifactId>maven-gpg-plugin</artifactId>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+            <build>
+                <plugins>
+                    <plugin>
+                        <inherited>false</inherited>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

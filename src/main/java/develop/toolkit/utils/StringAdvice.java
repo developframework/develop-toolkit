@@ -15,7 +15,7 @@ public final class StringAdvice {
 	 * @return
 	 */
 	public static String[] cutOff(String string, int index) {
-		if(index > string.length() && index < 0) {
+        if (index > string.length() || index < 0) {
 			throw new IllegalArgumentException();
 		}
 		String[] array = new String[2];

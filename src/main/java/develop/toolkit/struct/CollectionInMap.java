@@ -10,7 +10,6 @@ import java.util.function.Predicate;
  * Map里有集合结构
  *
  * @author qiushui on 2018-07-09.
- * @since 0.1
  */
 public class CollectionInMap<K, V> extends ConcurrentHashMap<K, Collection<V>> {
 
@@ -58,7 +57,8 @@ public class CollectionInMap<K, V> extends ConcurrentHashMap<K, Collection<V>> {
 	 * @param key map key
 	 * @param item 新元素
 	 */
-	public void addItemSoft(K key, V item) {
+    @SuppressWarnings("unchecked")
+    public void addItemSoft(K key, V item) {
         if (containsKey(key)) {
 			Collection<V> collection = get(key);
 			collection.add(item);
@@ -74,7 +74,8 @@ public class CollectionInMap<K, V> extends ConcurrentHashMap<K, Collection<V>> {
 	 * @param key map key
 	 * @param items 新元素
 	 */
-	public void addAllItemSoft(K key, @NonNull Collection<V> items) {
+    @SuppressWarnings("unchecked")
+    public void addAllItemSoft(K key, @NonNull Collection<V> items) {
         if (containsKey(key)) {
 			Collection<V> collection = get(key);
 			collection.addAll(items);
