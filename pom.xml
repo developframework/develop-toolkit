@@ -5,14 +5,14 @@
 
     <groupId>com.github.developframework</groupId>
     <artifactId>develop-toolkit</artifactId>
-    <version>0.4-SNAPSHOT</version>
+    <version>0.5-SNAPSHOT</version>
     <description>开发工具箱</description>
     <inceptionYear>2018</inceptionYear>
     <name>Develop Toolkit</name>
     <url>https://github.com/developframework/develop-toolkit</url>
 
     <properties>
-        <java.version>8</java.version>
+        <java.version>11</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
@@ -115,7 +115,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.6</version>
+                            <version>${version.lombok}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
