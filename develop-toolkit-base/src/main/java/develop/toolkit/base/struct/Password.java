@@ -1,4 +1,4 @@
-package develop.toolkit.struct;
+package develop.toolkit.base.struct;
 
 import lombok.Getter;
 

@@ -5,11 +5,16 @@
 
     <groupId>com.github.developframework</groupId>
     <artifactId>develop-toolkit</artifactId>
-    <version>0.5-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <version>1.0.0-SNAPSHOT</version>
     <description>开发工具箱</description>
     <inceptionYear>2018</inceptionYear>
     <name>Develop Toolkit</name>
     <url>https://github.com/developframework/develop-toolkit</url>
+
+    <modules>
+        <module>develop-toolkit-base</module>
+    </modules>
 
     <properties>
         <java.version>11</java.version>

@@ -1,4 +1,4 @@
-package develop.toolkit.utils;
+package develop.toolkit.base.utils;
 
 /**
  * 字符串增强工具

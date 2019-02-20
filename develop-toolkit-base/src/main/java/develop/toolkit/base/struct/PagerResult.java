@@ -1,18 +1,19 @@
-package develop.toolkit.struct;
+package develop.toolkit.base.struct;
 
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * 分页列表结果
  *
  * @author qiushui on 2018-06-07.
- * @since 0.1
  */
 @Getter
-public class PagerResult<T> {
+public class PagerResult<T> implements Serializable {
 
+    private static final long serialVersionUID = -3028130281925624773L;
 	/* 数据列表 */
 	private List<T> list;
 
@@ -33,6 +34,6 @@ public class PagerResult<T> {
 	}
 
 	public PagerResult(int page, int size, List<T> list, long total) {
-		this(new SimplePager(page, size), list, total);
+        this(new Pager(page, size), list, total);
 	}
 }

@@ -1,5 +1,6 @@
-package develop.toolkit.struct;
+package develop.toolkit.base.components;
 
+import develop.toolkit.base.struct.CollectionInMap;
 import lombok.NonNull;
 
 import java.util.*;
@@ -8,7 +9,6 @@ import java.util.*;
  * 分拣器
  *
  * @author qiushui on 2018-07-09.
- * @since 0.1
  */
 public class Sorter<K, V> {
 

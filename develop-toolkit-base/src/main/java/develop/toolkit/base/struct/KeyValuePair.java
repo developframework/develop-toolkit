@@ -1,6 +1,8 @@
-package develop.toolkit.struct;
+package develop.toolkit.base.struct;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -9,10 +11,11 @@ import java.io.Serializable;
  * 键值对结构体
  *
  * @author qiushui on 2018-05-24.
- * @version 0.1
  */
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class KeyValuePair<K, V> implements Serializable {
 
     private static final long serialVersionUID = -6101907039622686690L;
@@ -20,14 +23,6 @@ public class KeyValuePair<K, V> implements Serializable {
     protected K key;
 
     protected V value;
-
-    public KeyValuePair() {
-    }
-
-    public KeyValuePair(K key, V value) {
-        this.key = key;
-        this.value = value;
-    }
 
     @Override
     public String toString() {

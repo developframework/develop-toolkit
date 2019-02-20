@@ -1,6 +1,9 @@
-package develop.toolkit.struct;
+package develop.toolkit.base.struct;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.io.Serializable;
 
 /**
  * 分页请求参数信息
@@ -8,7 +11,10 @@ import lombok.Getter;
  * @author qiushui on 2018-06-07.
  * @since 0.1
  */
-public abstract class Pager {
+@AllArgsConstructor
+public class Pager implements Serializable {
+
+    private static final long serialVersionUID = -4527797845938921337L;
 
 	public static final int DEFAULT_PAGE = 1;
 	public static final int DEFAULT_SIZE = 10;
@@ -24,8 +30,4 @@ public abstract class Pager {
 		this(DEFAULT_PAGE, DEFAULT_SIZE);
 	}
 
-	public Pager(int page, int size) {
-		this.page = page;
-		this.size = size;
-	}
 }

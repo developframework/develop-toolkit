@@ -1,4 +1,4 @@
-package develop.toolkit.utils;
+package develop.toolkit.base.utils;
 
 /**
  * @author qiushui on 2018-10-03.

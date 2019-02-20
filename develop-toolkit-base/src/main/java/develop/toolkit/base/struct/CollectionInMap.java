@@ -1,7 +1,8 @@
-package develop.toolkit.struct;
+package develop.toolkit.base.struct;
 
 import lombok.NonNull;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
@@ -11,8 +12,9 @@ import java.util.function.Predicate;
  *
  * @author qiushui on 2018-07-09.
  */
-public class CollectionInMap<K, V> extends ConcurrentHashMap<K, Collection<V>> {
+public class CollectionInMap<K, V> extends ConcurrentHashMap<K, Collection<V>> implements Serializable {
 
+    private static final long serialVersionUID = 3068493190714636107L;
 	private CollectionProvider collectionProvider;
 
 	public CollectionInMap(@NonNull CollectionProvider collectionProvider) {

@@ -1,4 +1,4 @@
-package develop.toolkit.exception;
+package develop.toolkit.base.exception;
 
 /**
  * 带格式化的运行时异常
