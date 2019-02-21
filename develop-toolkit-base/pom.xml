@@ -11,5 +11,6 @@
 
     <artifactId>develop-toolkit-base</artifactId>
 
+    <description>开发工具箱 - 基础</description>
 
 </project>

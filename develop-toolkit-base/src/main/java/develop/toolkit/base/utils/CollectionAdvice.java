@@ -25,10 +25,12 @@ public final class CollectionAdvice {
      * @param <R>
      * @return
      */
-    public static <E, R> boolean isInCollection(@NonNull Collection<E> collection, R target, Function<E, R> function) {
+    public static <E, R> boolean contains(@NonNull Collection<E> collection, R target, Function<E, R> function) {
         for (E item : collection) {
             R value = function.apply(item);
-            if (target == value || target.equals(value)) {
+            if (target == null) {
+                return value == null;
+            } else if (target.equals(value)) {
                 return true;
             }
         }
@@ -45,11 +47,13 @@ public final class CollectionAdvice {
      * @param <R>
      * @return
      */
-    public static <E, R> Optional<E> getFirstMatchInCollection(@NonNull Collection<E> collection, R target, Function<E, R> function) {
+    public static <E, R> Optional<E> getFirstMatch(@NonNull Collection<E> collection, R target, Function<E, R> function) {
         for (E item : collection) {
             R value = function.apply(item);
-            if (target == value || target.equals(value)) {
-                return Optional.of(item);
+            if (target == null) {
+                return value == null ? Optional.ofNullable(item) : Optional.empty();
+            } else if (target.equals(value)) {
+                return Optional.ofNullable(item);
             }
         }
         return Optional.empty();
@@ -65,7 +69,14 @@ public final class CollectionAdvice {
      * @param <R>
      * @return
      */
-    public static <E, R> List<E> getAllMatchInCollection(@NonNull Collection<E> collection, R target, Function<E, R> function) {
-        return collection.stream().filter(item -> function.apply(item).equals(target)).collect(Collectors.toList());
+    public static <E, R> List<E> getAllMatch(@NonNull Collection<E> collection, R target, Function<E, R> function) {
+        return collection.stream().filter(item -> {
+            R value = function.apply(item);
+            if (target == null) {
+                return value == null;
+            } else {
+                return target.equals(value);
+            }
+        }).collect(Collectors.toList());
     }
 }

@@ -4,7 +4,7 @@ package develop.toolkit.base.utils;
  * @author qiushui on 2018-10-03.
  * @since 0.1
  */
-public class JavaBeanUtils {
+public final class JavaBeanUtils {
 
     /**
      * 根据属性名称和java类型，获取对应的getter方法名
