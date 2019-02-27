@@ -91,7 +91,7 @@ public class IdentificationCard implements Serializable {
      */
     public void parse(RegionParser regionParser) {
         if (regionParser != null) {
-            region = regionParser.parseRegion(card.substring(0, 6));
+            region = regionParser.parseRegion(Integer.parseInt(card.substring(0, 6)));
         }
         switch (card.length()) {
             case 15: {
@@ -149,6 +149,6 @@ public class IdentificationCard implements Serializable {
      */
     public interface RegionParser {
 
-        Region parseRegion(String location);
+        Region parseRegion(int code);
     }
 }
