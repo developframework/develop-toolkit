@@ -1,4 +1,4 @@
-package develop.toolkit.commons.json;
+package develop.toolkit.support.jackson;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

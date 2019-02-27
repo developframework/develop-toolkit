@@ -9,10 +9,15 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>develop-toolkit-commons</artifactId>
-    <description>开发工具箱 - 通用</description>
+    <artifactId>develop-toolkit-support</artifactId>
+    <description>开发工具箱 - 支持扩展</description>
 
     <dependencies>
+        <dependency>
+            <groupId>com.github.developframework</groupId>
+            <artifactId>develop-toolkit-base</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
