@@ -3,6 +3,7 @@ package develop.toolkit.support.mongo.utils;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.Arrays;
@@ -88,6 +89,17 @@ public class AggregationOperationBuilder {
     }
 
     /**
+     * 过滤
+     *
+     * @param criteria
+     * @return
+     */
+    public AggregationOperationBuilder match(Criteria criteria) {
+        aggregationOperations.add(context -> new Document("$match", new Query().addCriteria(criteria).getQueryObject()));
+        return this;
+    }
+
+    /**
      * 添加字段
      *
      * @param expressions
@@ -117,6 +129,29 @@ public class AggregationOperationBuilder {
      */
     public AggregationOperationBuilder complex(AggregationOperation... aggregationOperations) {
         this.aggregationOperations.addAll(Arrays.asList(aggregationOperations));
+        return this;
+    }
+
+    /**
+     * $unwind
+     *
+     * @param field
+     * @param preserveNullAndEmptyArrays
+     * @return
+     */
+    public AggregationOperationBuilder unwind(String field, boolean preserveNullAndEmptyArrays) {
+        this.aggregationOperations.add(Aggregation.unwind(field, preserveNullAndEmptyArrays));
+        return this;
+    }
+
+    /**
+     * json方式
+     *
+     * @param json
+     * @return
+     */
+    public AggregationOperationBuilder json(String json) {
+        this.aggregationOperations.add(context -> Document.parse(json));
         return this;
     }
 }

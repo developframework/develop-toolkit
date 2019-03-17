@@ -173,4 +173,36 @@ public final class DateTimeAdvice {
         }
         return Date.from(instant);
     }
+
+    /**
+     * 毫秒美化
+     *
+     * @param millisecond
+     * @return
+     */
+    public static String millisecondPretty(long millisecond) {
+        if (millisecond < 1000) {
+            return millisecond + "ms";
+        } else if (millisecond < 60_000) {
+            return (millisecond / 1000) + "s" + (millisecond % 1000) + "ms";
+        } else if (millisecond < 3600_000) {
+            long minute = millisecond / 60_000;
+            long second = (millisecond - minute * 60_000) / 1000;
+            long milli = millisecond % 1000;
+            return minute + "m" + second + "s" + milli + "ms";
+        } else if (millisecond < 86_400_000) {
+            long hour = millisecond / (3600_000);
+            long minute = (millisecond - hour * 3600_000) / 60_000;
+            long second = (millisecond - hour * 3600_000 - minute * 60_000) / 1000;
+            long milli = millisecond % 1000;
+            return hour + "h" + minute + "m" + second + "s" + milli + "ms";
+        } else {
+            long day = millisecond / (86_400_000);
+            long hour = (millisecond - day * 86_400_000) / (3600_000);
+            long minute = (millisecond - day * 86_400_000 - hour * 3600_000) / 60_000;
+            long second = (millisecond - day * 86_400_000 - hour * 3600_000 - minute * 60_000) / 1000;
+            long milli = millisecond % 1000;
+            return day + "d" + hour + "h" + minute + "m" + second + "s" + milli + "ms";
+        }
+    }
 }

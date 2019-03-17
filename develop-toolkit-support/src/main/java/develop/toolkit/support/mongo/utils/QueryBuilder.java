@@ -168,7 +168,7 @@ public final class QueryBuilder {
      * @return
      */
     public <E> QueryBuilder in(String attribute, E... array) {
-        return in(attribute, Arrays.asList(array));
+        return in(attribute, array != null ? Arrays.asList(array) : null);
     }
 
     /**

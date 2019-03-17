@@ -4,6 +4,7 @@
 module develop.toolkit.base {
 
     requires lombok;
+    requires slf4j.api;
 
     exports develop.toolkit.base.components;
     exports develop.toolkit.base.constants;

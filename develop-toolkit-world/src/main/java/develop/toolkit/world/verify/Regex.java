@@ -13,5 +13,5 @@ public interface Regex {
     String MOBILE = "^$";
 
     // 不严格的身份证
-    String IDENTIFICATION_CARD_RELAXED = "^\\d{15}|\\d{18}$";
+    String IDENTIFICATION_CARD_RELAXED = "^\\d{15}|(\\d{17}[\\dXx])$";
 }

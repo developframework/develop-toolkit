@@ -4,6 +4,7 @@ import develop.toolkit.world.normal.Region;
 import develop.toolkit.world.verify.Regex;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -16,6 +17,7 @@ import java.time.format.DateTimeFormatter;
  */
 @Getter
 @EqualsAndHashCode(of = "card")
+@NoArgsConstructor
 public class IdentificationCard implements Serializable {
 
     private static final long serialVersionUID = -3165541953812379182L;

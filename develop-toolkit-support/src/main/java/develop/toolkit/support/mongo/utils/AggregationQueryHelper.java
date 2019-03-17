@@ -12,6 +12,7 @@ import org.springframework.data.repository.support.PageableExecutionUtils;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * aggregate方式查询助手
@@ -19,6 +20,51 @@ import java.util.Map;
  * @author qiushui on 2019-01-15.
  */
 public final class AggregationQueryHelper {
+
+    /**
+     * 按照aggregate方式查询单个
+     *
+     * @param mongoOperations
+     * @param aggregationOperations
+     * @param collectionName
+     * @param outputClass
+     * @param <T>
+     * @return
+     */
+    public static <T> Optional<T> aggregationOne(MongoOperations mongoOperations, List<AggregationOperation> aggregationOperations, String collectionName, Class<T> outputClass) {
+        List<T> list = aggregationList(mongoOperations, null, aggregationOperations, collectionName, outputClass);
+        return Optional.ofNullable(list.isEmpty() ? null : list.get(0));
+    }
+
+    /**
+     * 按照aggregate方式查询单个
+     *
+     * @param mongoOperations
+     * @param aggregationOperations
+     * @param docClass
+     * @param outputClass
+     * @param <T>
+     * @return
+     */
+    public static <T> Optional<T> aggregationOne(MongoOperations mongoOperations, List<AggregationOperation> aggregationOperations, Class<?> docClass, Class<T> outputClass) {
+        List<T> list = aggregationList(mongoOperations, null, aggregationOperations, docClass, outputClass);
+        return Optional.ofNullable(list.isEmpty() ? null : list.get(0));
+    }
+
+    /**
+     * 按照aggregate方式查询单个
+     *
+     * @param mongoOperations
+     * @param aggregationOperations
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public static <T> Optional<T> aggregationOne(MongoOperations mongoOperations, List<AggregationOperation> aggregationOperations, Class<T> clazz) {
+        return aggregationOne(mongoOperations, aggregationOperations, clazz, clazz);
+    }
+
+
 
     /**
      * 按照aggregate方式查询列表
@@ -57,6 +103,19 @@ public final class AggregationQueryHelper {
     public static <T> List<T> aggregationList(MongoOperations mongoOperations, Sort sort, List<AggregationOperation> aggregationOperations, Class<?> docClass, Class<T> outputClass) {
         String collectionName = AggregationOperationUtils.collectionNameFormDocumentAnnotation(docClass);
         return aggregationList(mongoOperations, sort, aggregationOperations, collectionName, outputClass);
+    }
+
+    /**
+     * 按照aggregate方式查询列表
+     *
+     * @param mongoOperations
+     * @param aggregationOperations
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> aggregationList(MongoOperations mongoOperations, List<AggregationOperation> aggregationOperations, Class<T> clazz) {
+        return aggregationList(mongoOperations, null, aggregationOperations, clazz, clazz);
     }
 
     /**
@@ -113,5 +172,20 @@ public final class AggregationQueryHelper {
     public static <T> Page<T> aggregationPager(MongoOperations mongoOperations, Pageable pageable, List<AggregationOperation> aggregationOperations, Class<?> docClass, Class<T> outputClass) {
         String collectionName = AggregationOperationUtils.collectionNameFormDocumentAnnotation(docClass);
         return aggregationPager(mongoOperations, pageable, aggregationOperations, collectionName, outputClass);
+    }
+
+    /**
+     * 按照aggregate方式查询分页
+     *
+     * @param mongoOperations
+     * @param pageable
+     * @param aggregationOperations
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public static <T> Page<T> aggregationPager(MongoOperations mongoOperations, Pageable pageable, List<AggregationOperation> aggregationOperations, Class<T> clazz) {
+        String collectionName = AggregationOperationUtils.collectionNameFormDocumentAnnotation(clazz);
+        return aggregationPager(mongoOperations, pageable, aggregationOperations, collectionName, clazz);
     }
 }
