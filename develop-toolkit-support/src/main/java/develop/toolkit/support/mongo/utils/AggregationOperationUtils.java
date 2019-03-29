@@ -134,6 +134,7 @@ public final class AggregationOperationUtils {
      *
      * @return
      */
+    @Deprecated
     public static AggregationOperation groupCount() {
         return context -> new Document("$group", new Document("_id", null).append("count", new Document("$sum", 1)));
     }

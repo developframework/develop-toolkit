@@ -1,7 +1,6 @@
 package develop.toolkit.base.components;
 
 import develop.toolkit.base.utils.DateTimeAdvice;
-import org.slf4j.Logger;
 
 import java.time.Instant;
 
@@ -20,10 +19,10 @@ public final class StopWatch {
         start = Instant.now();
     }
 
-    public void endAndLog(Logger logger, String format) {
+    public String end() {
         end = Instant.now();
         final long millisecond = end.toEpochMilli() - start.toEpochMilli();
-        logger.info(format, DateTimeAdvice.millisecondPretty(millisecond));
+        return DateTimeAdvice.millisecondPretty(millisecond);
     }
 
     public static StopWatch start() {

@@ -3,6 +3,7 @@ package develop.toolkit.support.mongo.utils;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.aggregation.Fields;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -58,7 +59,21 @@ public class AggregationOperationBuilder {
      * @param joinType
      * @return
      */
-    public AggregationOperationBuilder join(String localField, String lookupAs, Class<?> foreignDocClass, JoinType joinType) {
+    public AggregationOperationBuilder join(String localField, String lookupAs, Class<?> foreignDocClass, JoinType joinType, boolean preserveNullAndEmptyArrays) {
+        final String from = AggregationOperationUtils.collectionNameFormDocumentAnnotation(foreignDocClass);
+        return join(localField, lookupAs, from, joinType, preserveNullAndEmptyArrays);
+    }
+
+    /**
+     * 关联
+     *
+     * @param localField
+     * @param lookupAs
+     * @param from
+     * @param joinType
+     * @return
+     */
+    public AggregationOperationBuilder join(String localField, String lookupAs, String from, JoinType joinType, boolean preserveNullAndEmptyArrays) {
 
         /*
 
@@ -70,10 +85,22 @@ public class AggregationOperationBuilder {
          */
 
         final String localFieldId = localField + REF_SUFFIX;
-        final String from = AggregationOperationUtils.collectionNameFormDocumentAnnotation(foreignDocClass);
         aggregationOperations.add(AggregationOperationUtils.addRefFields(localFieldId, localField, joinType));
-        aggregationOperations.add(Aggregation.lookup(from, localFieldId, "_id", lookupAs));
-        aggregationOperations.add(Aggregation.unwind(lookupAs, true));
+        return lookupAndUnwind(from, localFieldId, lookupAs, preserveNullAndEmptyArrays);
+    }
+
+    /**
+     * lookup unwind
+     *
+     * @param from
+     * @param localField
+     * @param lookupAs
+     * @param preserveNullAndEmptyArrays
+     * @return
+     */
+    public AggregationOperationBuilder lookupAndUnwind(String from, String localField, String lookupAs, boolean preserveNullAndEmptyArrays) {
+        aggregationOperations.add(Aggregation.lookup(from, localField, Fields.UNDERSCORE_ID, lookupAs));
+        aggregationOperations.add(Aggregation.unwind(lookupAs, preserveNullAndEmptyArrays));
         return this;
     }
 
@@ -95,7 +122,7 @@ public class AggregationOperationBuilder {
      * @return
      */
     public AggregationOperationBuilder match(Criteria criteria) {
-        aggregationOperations.add(context -> new Document("$match", new Query().addCriteria(criteria).getQueryObject()));
+        aggregationOperations.add(Aggregation.match(criteria));
         return this;
     }
 
@@ -133,6 +160,17 @@ public class AggregationOperationBuilder {
     }
 
     /**
+     * 原生AggregationOperation
+     *
+     * @param aggregationOperation
+     * @return
+     */
+    public AggregationOperationBuilder aggregation(AggregationOperation aggregationOperation) {
+        this.aggregationOperations.add(aggregationOperation);
+        return this;
+    }
+
+    /**
      * $unwind
      *
      * @param field
@@ -152,6 +190,45 @@ public class AggregationOperationBuilder {
      */
     public AggregationOperationBuilder json(String json) {
         this.aggregationOperations.add(context -> Document.parse(json));
+        return this;
+    }
+
+    /**
+     * 去重
+     *
+     * @return
+     */
+    public AggregationOperationBuilder distinct(String... fields) {
+        /*
+            {
+                $group: {
+                    _id: "$_id",
+                    uniqueValue: {$addToSet: "$$ROOT"}
+                }
+            },
+            {
+                $unwind: "$uniqueValue"
+            },
+            {
+                $replaceRoot: {newRoot: "$uniqueValue"}
+            }
+
+         */
+        final String key = "uniqueValue";
+        this.aggregationOperations.add(Aggregation.group(fields.length == 0 ? new String[]{Fields.UNDERSCORE_ID_REF} : fields).addToSet("$$ROOT").as(key));
+        this.aggregationOperations.add(Aggregation.unwind(key));
+        this.aggregationOperations.add(Aggregation.replaceRoot(key));
+        return this;
+    }
+
+    /**
+     * 数量
+     *
+     * @param field
+     * @return
+     */
+    public AggregationOperationBuilder count(String field) {
+        this.aggregationOperations.add(Aggregation.group().count().as(field));
         return this;
     }
 }
