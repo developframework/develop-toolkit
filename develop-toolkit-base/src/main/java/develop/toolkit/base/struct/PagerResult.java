@@ -36,4 +36,17 @@ public class PagerResult<T> implements Serializable {
 	public PagerResult(int page, int size, List<T> list, long total) {
         this(new Pager(page, size), list, total);
 	}
+
+    /**
+     * 空分页结果
+     *
+     * @return
+     */
+    public static <T> PagerResult<T> empty(Class<T> clazz, int page, int size) {
+        return new PagerResult<>(page, size, List.of(), 0);
+    }
+
+    public static <T> PagerResult<T> empty(Class<T> clazz) {
+        return new PagerResult<>(new Pager(), List.of(), 0);
+    }
 }

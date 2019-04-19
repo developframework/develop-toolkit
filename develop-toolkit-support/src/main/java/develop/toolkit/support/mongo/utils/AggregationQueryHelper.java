@@ -126,7 +126,7 @@ public final class AggregationQueryHelper {
 
         // 查询总条数
         List<AggregationOperation> queryCountAggregationOperation = new LinkedList<>(aggregationOperations);
-        queryCountAggregationOperation.add(Aggregation.group().count().as("count"));
+        queryCountAggregationOperation.add(Aggregation.count().as("count"));
         final AggregationResults<Map> countResults = mongoOperations.aggregate(
                 Aggregation.newAggregation(queryCountAggregationOperation),
                 collectionName,
@@ -135,7 +135,7 @@ public final class AggregationQueryHelper {
 
         // 查询列表
         List<AggregationOperation> queryListAggregationOperation = new LinkedList<>(aggregationOperations);
-        queryListAggregationOperation.add(Aggregation.sort(pageable.getSort()));
+        queryListAggregationOperation.add(context -> Aggregation.sort(pageable.getSort()).toDocument(Aggregation.DEFAULT_CONTEXT));
         queryListAggregationOperation.add(Aggregation.skip(pageable.getOffset()));
         queryListAggregationOperation.add(Aggregation.limit(pageable.getPageSize()));
         AggregationResults<T> results = mongoOperations.aggregate(

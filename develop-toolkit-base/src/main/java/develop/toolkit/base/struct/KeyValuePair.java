@@ -1,9 +1,6 @@
 package develop.toolkit.base.struct;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -14,6 +11,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
+@EqualsAndHashCode(of = "key")
 @NoArgsConstructor
 @AllArgsConstructor
 public class KeyValuePair<K, V> implements Serializable {
@@ -27,35 +25,5 @@ public class KeyValuePair<K, V> implements Serializable {
     @Override
     public String toString() {
         return key + " -> " + value;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        if(key != null) {
-            hash = hash * 31 + key.hashCode();
-        }
-        if(value != null) {
-            hash = hash * 31 + value.hashCode();
-        }
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if(this == obj) {
-            return true;
-        }
-        if(obj instanceof KeyValuePair) {
-            KeyValuePair otherKeyValuePair = (KeyValuePair) obj;
-            if((key == null && otherKeyValuePair.getKey() == null) || key.equals(otherKeyValuePair.getKey())) {
-                Object otherValue = otherKeyValuePair.getValue();
-                if(value == null && otherValue != null) {
-                    return false;
-                }
-                return value == otherValue || value.equals(otherValue);
-            }
-        }
-        return false;
     }
 }

@@ -22,6 +22,10 @@ public final class Querys {
         return new Query().addCriteria(Criteria.where(field).is(value));
     }
 
+    public static Query ne(String field, @Nullable Object value) {
+        return new Query().addCriteria(Criteria.where(field).ne(value));
+    }
+
     public static Query gt(String field, Object value) {
         return new Query().addCriteria(Criteria.where(field).gt(value));
     }
