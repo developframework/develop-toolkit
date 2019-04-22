@@ -175,6 +175,17 @@ public final class DateTimeAdvice {
     }
 
     /**
+     * 判断是否同一个月
+     *
+     * @param day1
+     * @param day2
+     * @return
+     */
+    public static boolean isSameMonth(LocalDate day1, LocalDate day2) {
+        return day1.getYear() == day2.getYear() && day1.getMonth().getValue() == day2.getMonth().getValue();
+    }
+
+    /**
      * 毫秒美化
      *
      * @param millisecond

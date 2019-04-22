@@ -1,6 +1,7 @@
 package develop.toolkit.base.struct;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
  * @author qiushui on 2018-06-07.
  */
 @Getter
+@NoArgsConstructor
 public class PagerResult<T> implements Serializable {
 
     private static final long serialVersionUID = -3028130281925624773L;
@@ -18,7 +20,7 @@ public class PagerResult<T> implements Serializable {
 	private List<T> list;
 
 	/* 记录总条数 */
-	private long total;
+    private long recordTotal;
 
 	/* 分页信息 */
 	private Pager pager;
@@ -26,11 +28,11 @@ public class PagerResult<T> implements Serializable {
 	/* 页总数 */
 	private long pageTotal;
 
-	public PagerResult(Pager pager, List<T> list, long total) {
+    public PagerResult(Pager pager, List<T> list, long recordTotal) {
 		this.list = list;
-		this.total = total;
+        this.recordTotal = recordTotal;
 		this.pager = pager;
-		this.pageTotal = total % pager.getSize() == 0 ? total / pager.getSize() : (total / pager.getSize() + 1L);
+        this.pageTotal = recordTotal % pager.getSize() == 0 ? recordTotal / pager.getSize() : (recordTotal / pager.getSize() + 1L);
 	}
 
 	public PagerResult(int page, int size, List<T> list, long total) {
