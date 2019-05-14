@@ -232,6 +232,18 @@ public final class QueryBuilder {
     }
 
     /**
+     * 是否存在
+     *
+     * @param attribute
+     * @param exists
+     * @return
+     */
+    public QueryBuilder exists(String attribute, boolean exists) {
+        query.addCriteria(Criteria.where(attribute).exists(exists));
+        return this;
+    }
+
+    /**
      * 复杂Query
      *
      * @param complexQuery

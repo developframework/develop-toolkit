@@ -2,10 +2,9 @@ package develop.toolkit.base.utils;
 
 import lombok.NonNull;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -78,5 +77,39 @@ public final class CollectionAdvice {
                 return target.equals(value);
             }
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * 并集
+     *
+     * @param master
+     * @param other
+     * @param <E>
+     * @return
+     */
+    @SafeVarargs
+    public static <E> Set<E> union(Collection<E> master, Collection<E>... other) {
+        Set<E> set = new HashSet<>(master);
+        for (Collection<E> collection : other) {
+            set.addAll(collection);
+        }
+        return set;
+    }
+
+    /**
+     * 交集
+     *
+     * @param master
+     * @param other
+     * @param <E>
+     * @return
+     */
+    @SafeVarargs
+    public static <E> Set<E> intersection(Collection<E> master, Collection<E>... other) {
+        Set<E> set = new HashSet<>(master);
+        for (Collection<E> collection : other) {
+            set.removeIf(Predicate.not(collection::contains));
+        }
+        return set;
     }
 }
