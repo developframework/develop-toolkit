@@ -24,7 +24,7 @@ public final class CollectionAdvice {
      * @param <R>
      * @return
      */
-    public static <E, R> boolean contains(@NonNull Collection<E> collection, R target, Function<E, R> function) {
+    public static <E, R> boolean contains(@NonNull Collection<E> collection, R target, @NonNull Function<E, R> function) {
         for (E item : collection) {
             R value = function.apply(item);
             if (target == null) {
@@ -46,7 +46,7 @@ public final class CollectionAdvice {
      * @param <R>
      * @return
      */
-    public static <E, R> Optional<E> getFirstMatch(@NonNull Collection<E> collection, R target, Function<E, R> function) {
+    public static <E, R> Optional<E> getFirstMatch(@NonNull Collection<E> collection, R target, @NonNull Function<E, R> function) {
         for (E item : collection) {
             R value = function.apply(item);
             if (target == null) {
@@ -68,7 +68,7 @@ public final class CollectionAdvice {
      * @param <R>
      * @return
      */
-    public static <E, R> List<E> getAllMatch(@NonNull Collection<E> collection, R target, Function<E, R> function) {
+    public static <E, R> List<E> getAllMatch(@NonNull Collection<E> collection, R target, @NonNull Function<E, R> function) {
         return collection.stream().filter(item -> {
             R value = function.apply(item);
             if (target == null) {
@@ -77,6 +77,25 @@ public final class CollectionAdvice {
                 return target.equals(value);
             }
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * 转化为Map
+     *
+     * @param collection
+     * @param keySupplier
+     * @param valueSupplier
+     * @param <E>
+     * @param <K>
+     * @param <V>
+     * @return
+     */
+    public static <E, K, V> Map<K, V> toMap(@NonNull Collection<E> collection, @NonNull Function<E, K> keySupplier, @NonNull Function<E, V> valueSupplier) {
+        Map<K, V> map = new HashMap<>();
+        for (E item : collection) {
+            map.put(keySupplier.apply(item), valueSupplier.apply(item));
+        }
+        return map;
     }
 
     /**
