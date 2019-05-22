@@ -1,11 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>develop-toolkit</artifactId>
         <groupId>com.github.developframework</groupId>
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+        <version>1.0.1-SNAPSHOT</version>
+=======
+        <version>1.0.0</version>
+>>>>>>> 0b8b005... [maven-release-plugin] prepare release v1.0.0
+=======
+        <version>1.0.1-SNAPSHOT</version>
+>>>>>>> afb49c5... [maven-release-plugin] prepare for next development iteration
+=======
         <version>1.0.0-SNAPSHOT</version>
+>>>>>>> c312ec1... 开发
+=======
+        <version>1.0.0</version>
+>>>>>>> 1b015fe... [maven-release-plugin] prepare release v1.0.0
+=======
+        <version>1.0.0-SNAPSHOT</version>
+>>>>>>> be15cad... [maven-release-plugin] rollback the release of v1.0.0
+=======
+        <version>1.0.0</version>
+>>>>>>> f915eb5... [maven-release-plugin] prepare release v1.0.0
+=======
+        <version>1.0.1-SNAPSHOT</version>
+>>>>>>> e21cdbb... [maven-release-plugin] prepare for next development iteration
+=======
+        <version>1.0.0-SNAPSHOT</version>
+>>>>>>> a10d20d... 开发
+=======
+        <version>1.0.0</version>
+>>>>>>> da67080... [maven-release-plugin] prepare release v1.0.0
+=======
+        <version>1.0.1-SNAPSHOT</version>
+>>>>>>> 7ff5c64... [maven-release-plugin] prepare for next development iteration
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

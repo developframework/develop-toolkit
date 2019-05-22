@@ -10,16 +10,6 @@ import develop.toolkit.world.person.IdentificationCard;
 public final class WorldVerify {
 
     /**
-     * 严格验证手机号
-     *
-     * @param mobile
-     * @return
-     */
-    public static boolean isMobile(String mobile) {
-        return mobile != null && mobile.matches(Regex.MOBILE);
-    }
-
-    /**
      * 不严格验证手机号
      *
      * @param mobile
