@@ -5,7 +5,7 @@
     <groupId>com.github.developframework</groupId>
     <artifactId>develop-toolkit</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <description>开发工具箱</description>
     <inceptionYear>2018</inceptionYear>
     <name>Develop Toolkit</name>
@@ -32,17 +32,17 @@
             <dependency>
                 <groupId>com.github.developframework</groupId>
                 <artifactId>develop-toolkit-base</artifactId>
-                <version>1.0.1-SNAPSHOT</version>
+                <version>1.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.github.developframework</groupId>
                 <artifactId>develop-toolkit-support</artifactId>
-                <version>1.0.1-SNAPSHOT</version>
+                <version>1.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.github.developframework</groupId>
                 <artifactId>develop-toolkit-world</artifactId>
-                <version>1.0.1-SNAPSHOT</version>
+                <version>1.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>
