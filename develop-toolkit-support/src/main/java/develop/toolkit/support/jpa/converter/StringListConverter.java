@@ -26,6 +26,6 @@ public class StringListConverter implements AttributeConverter<List<String>, Str
         if (StringUtils.isBlank(dbData)) {
             return Collections.emptyList();
         }
-        return List.of(dbData.split("\\,"));
+        return List.of(dbData.split(","));
     }
 }

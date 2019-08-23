@@ -5,6 +5,7 @@ import develop.toolkit.world.verify.Regex;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -16,6 +17,7 @@ import java.time.format.DateTimeFormatter;
  * @author qiushui on 2019-02-27.
  */
 @Getter
+@Setter
 @EqualsAndHashCode(of = "card")
 @NoArgsConstructor
 public class IdentificationCard implements Serializable {
@@ -56,7 +58,7 @@ public class IdentificationCard implements Serializable {
      *
      * @return
      */
-    public boolean isLength15() {
+    public boolean length15() {
         return card.length() == 15;
     }
 
@@ -65,7 +67,7 @@ public class IdentificationCard implements Serializable {
      *
      * @return
      */
-    public boolean isLength18() {
+    public boolean length18() {
         return card.length() == 18;
     }
 

@@ -22,8 +22,31 @@ public class KeyValuePair<K, V> implements Serializable {
 
     protected V value;
 
+    /**
+     * 美化成字符串
+     *
+     * @param separator
+     * @return
+     */
+    public String formatString(String separator) {
+        return key + separator + value;
+    }
+
     @Override
     public String toString() {
-        return key + " -> " + value;
+        return formatString(":");
+    }
+
+    /**
+     * 带值初始化
+     *
+     * @param key
+     * @param value
+     * @param <K>
+     * @param <V>
+     * @return
+     */
+    public static <K, V> KeyValuePair<K, V> of(K key, V value) {
+        return new KeyValuePair<>(key, value);
     }
 }

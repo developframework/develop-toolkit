@@ -3,6 +3,8 @@ package develop.toolkit.base.components;
 import develop.toolkit.base.utils.DateTimeAdvice;
 
 import java.time.Instant;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 秒表
@@ -11,18 +13,33 @@ import java.time.Instant;
  */
 public final class StopWatch {
 
-    private Instant start;
+    public static final String DEFAULT_NAME = "default";
 
-    private Instant end;
+    private Map<String, Instant> startInstantMap = new ConcurrentHashMap<>();
 
     private StopWatch() {
-        start = Instant.now();
+        start(DEFAULT_NAME);
     }
 
-    public String end() {
-        end = Instant.now();
-        final long millisecond = end.toEpochMilli() - start.toEpochMilli();
-        return DateTimeAdvice.millisecondPretty(millisecond);
+    public void start(String name) {
+        startInstantMap.put(name, Instant.now());
+    }
+
+    public long end() {
+        return end(DEFAULT_NAME);
+    }
+
+    public long end(String name) {
+        final Instant end = Instant.now();
+        return end.toEpochMilli() - startInstantMap.get(name).toEpochMilli();
+    }
+
+    public String formatEnd(String label) {
+        return label + ": " + DateTimeAdvice.millisecondPretty(end());
+    }
+
+    public String formatEnd(String label, String name) {
+        return label + ": " + DateTimeAdvice.millisecondPretty(end(name));
     }
 
     public static StopWatch start() {

@@ -4,6 +4,7 @@ import lombok.NonNull;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
@@ -16,6 +17,10 @@ public class CollectionInMap<K, V> extends ConcurrentHashMap<K, Collection<V>> i
 
     private static final long serialVersionUID = 3068493190714636107L;
 	private CollectionProvider collectionProvider;
+
+    public CollectionInMap() {
+        this.collectionProvider = k -> new LinkedList();
+    }
 
 	public CollectionInMap(@NonNull CollectionProvider collectionProvider) {
 		this.collectionProvider = collectionProvider;

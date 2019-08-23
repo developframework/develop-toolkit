@@ -1,5 +1,7 @@
 package develop.toolkit.base.utils;
 
+import develop.toolkit.base.struct.TwoValues;
+
 /**
  * 字符串增强工具
  *
@@ -14,13 +16,13 @@ public final class StringAdvice {
 	 * @param index
 	 * @return
 	 */
-	public static String[] cutOff(String string, int index) {
+    public static TwoValues<String, String> cutOff(String string, int index) {
         if (index > string.length() || index < 0) {
 			throw new IllegalArgumentException();
 		}
-		String[] array = new String[2];
-		array[0] = string.substring(0, index);
-		array[1] = string.substring(index);
-		return array;
+        return new TwoValues<>(
+                string.substring(0, index),
+                string.substring(index)
+        );
 	}
 }

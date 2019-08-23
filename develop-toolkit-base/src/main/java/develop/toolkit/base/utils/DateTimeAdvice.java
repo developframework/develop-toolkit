@@ -29,6 +29,16 @@ public final class DateTimeAdvice {
     }
 
     /**
+     * 解析标准日期时间字符串
+     *
+     * @param dateStr
+     * @return
+     */
+    public static LocalDateTime parseStandard(CharSequence dateStr) {
+        return LocalDateTime.parse(dateStr, DateFormatConstants.STANDARD_FORMATTER);
+    }
+
+    /**
      * 格式化Date
      *
      * @param date

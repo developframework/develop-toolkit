@@ -22,4 +22,19 @@ public class ThreeValues<T, S, U> implements Serializable {
     private S secondValue;
 
     private U thirdValue;
+
+    /**
+     * 带值初始化
+     *
+     * @param firstValue
+     * @param secondValue
+     * @param thirdValue
+     * @param <T>
+     * @param <S>
+     * @param <U>
+     * @return
+     */
+    public static <T, S, U> ThreeValues<T, S, U> of(T firstValue, S secondValue, U thirdValue) {
+        return new ThreeValues<>(firstValue, secondValue, thirdValue);
+    }
 }

@@ -1,5 +1,7 @@
 package develop.toolkit.base.constants;
 
+import java.time.format.DateTimeFormatter;
+
 /**
  * 日期时间格式化常量
  *
@@ -14,4 +16,6 @@ public interface DateFormatConstants {
     String MYSQL_FORMAT_DATETIME = "%Y-%m-%d %H:%i:%s";
     String MYSQL_FORMAT_DATE = "%Y-%m-%d";
     String MYSQL_FORMAT_TIME = "%H:%i:%s";
+
+    DateTimeFormatter STANDARD_FORMATTER = DateTimeFormatter.ofPattern(STANDARD);
 }

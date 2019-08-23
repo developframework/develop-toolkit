@@ -98,14 +98,26 @@
         <tag>v1.0.0</tag>
     </scm>
 
+    <!--<distributionManagement>-->
+    <!--<snapshotRepository>-->
+    <!--<id>ossrh</id>-->
+    <!--<url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
+    <!--</snapshotRepository>-->
+    <!--<repository>-->
+    <!--<id>ossrh</id>-->
+    <!--<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
+    <!--</repository>-->
+    <!--</distributionManagement>-->
+
+    <!-- 配置私库地址 -->
     <distributionManagement>
         <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <id>hclc nexus</id>
+            <url>http://nexus.hclc-tech.com:8081/repository/maven-snapshots/</url>
         </snapshotRepository>
         <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>hclc nexus</id>
+            <url>http://nexus.hclc-tech.com:8081/repository/maven-releases/</url>
         </repository>
     </distributionManagement>
 

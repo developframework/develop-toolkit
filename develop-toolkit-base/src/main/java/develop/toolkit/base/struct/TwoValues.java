@@ -20,4 +20,17 @@ public class TwoValues<T, S> implements Serializable {
     private T firstValue;
 
     private S secondValue;
+
+    /**
+     * 带值初始化
+     *
+     * @param firstValue
+     * @param secondValue
+     * @param <T>
+     * @param <S>
+     * @return
+     */
+    public static <T, S> TwoValues<T, S> of(T firstValue, S secondValue) {
+        return new TwoValues<>(firstValue, secondValue);
+    }
 }

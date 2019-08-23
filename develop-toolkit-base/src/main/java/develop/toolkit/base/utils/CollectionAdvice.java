@@ -59,6 +59,42 @@ public final class CollectionAdvice {
     }
 
     /**
+     * 获得第一个判断是true的元素
+     *
+     * @param collection
+     * @param function
+     * @param <E>
+     * @return
+     */
+    public static <E> Optional<E> getFirstTrue(@NonNull Collection<E> collection, @NonNull Function<E, Boolean> function) {
+        for (E item : collection) {
+            Boolean value = function.apply(item);
+            if (value != null && value) {
+                return Optional.ofNullable(item);
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * 获得第一个判断是false的元素
+     *
+     * @param collection
+     * @param function
+     * @param <E>
+     * @return
+     */
+    public static <E> Optional<E> getFirstFalse(@NonNull Collection<E> collection, @NonNull Function<E, Boolean> function) {
+        for (E item : collection) {
+            Boolean value = function.apply(item);
+            if (value != null && !value) {
+                return Optional.ofNullable(item);
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
      * 获得全部匹配的元素
      *
      * @param collection
