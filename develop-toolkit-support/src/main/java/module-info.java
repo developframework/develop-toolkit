@@ -13,6 +13,4 @@ module develop.toolkit.support {
     requires spring.data.mongodb;
 
     exports develop.toolkit.support.jpa.converter;
-    exports develop.toolkit.support.mongo.converter;
-    exports develop.toolkit.support.mongo.utils;
 }

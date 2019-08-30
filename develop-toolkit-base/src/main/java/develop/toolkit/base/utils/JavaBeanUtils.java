@@ -76,8 +76,11 @@ public final class JavaBeanUtils {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < camelcaseString.length(); i++) {
             char c = camelcaseString.charAt(i);
-            if (i != 0 && c >= 'A' && c <= 'Z') {
-                sb.append('-').append((char) (c + 32));
+            if (c >= 'A' && c <= 'Z') {
+                if (i > 0) {
+                    sb.append('-');
+                }
+                sb.append((char) (c + 32));
             } else {
                 sb.append(c);
             }
@@ -128,6 +131,44 @@ public final class JavaBeanUtils {
             if (nextUpperCase) {
                 sb.append((char) (c - 32));
                 nextUpperCase = false;
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 开头字母转大写
+     *
+     * @param text
+     * @return
+     */
+    public static String startUpperCaseText(String text) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (i == 0 && c >= 'a' && c <= 'z') {
+                sb.append((char) (c - 32));
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 开头字母转小写
+     *
+     * @param text
+     * @return
+     */
+    public static String startLowerCaseText(String text) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (i == 0 && c >= 'A' && c <= 'Z') {
+                sb.append((char) (c + 32));
             } else {
                 sb.append(c);
             }
