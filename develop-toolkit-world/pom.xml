@@ -13,13 +13,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.github.developframework</groupId>
             <artifactId>develop-toolkit-base</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

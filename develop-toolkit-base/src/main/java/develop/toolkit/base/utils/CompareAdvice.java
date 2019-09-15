@@ -71,7 +71,7 @@ public final class CompareAdvice {
      * @param b
      * @return
      */
-    public <T extends Comparable<T>> T max(@NonNull T a, @NonNull T b) {
+    public static <T extends Comparable<T>> T max(@NonNull T a, @NonNull T b) {
         return gt(a, b) ? a : b;
     }
 
@@ -82,7 +82,7 @@ public final class CompareAdvice {
      * @param b
      * @return
      */
-    public <T extends Comparable<T>> T min(@NonNull T a, @NonNull T b) {
+    public static <T extends Comparable<T>> T min(@NonNull T a, @NonNull T b) {
         return lt(a, b) ? a : b;
     }
 }

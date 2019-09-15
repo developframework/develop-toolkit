@@ -8,13 +8,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>develop-toolkit-support</artifactId>
-    <description>开发工具箱 - 支持扩展</description>
+    <description>开发工具箱 - 扩展支持</description>
 
     <properties>
-        <version.jackson>2.9.8</version.jackson>
-        <version.jpa>2.2</version.jpa>
-        <version.spring-data>2.1.5.RELEASE</version.spring-data>
         <version.mongo-java-driver>3.10.1</version.mongo-java-driver>
+        <version.mysql-connector-java>8.0.15</version.mysql-connector-java>
     </properties>
 
     <dependencies>
@@ -23,36 +21,15 @@
             <artifactId>develop-toolkit-base</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>javax.persistence-api</artifactId>
-            <version>${version.jpa}</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-mongodb</artifactId>
-            <version>${version.spring-data}</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
             <version>${version.mongo-java-driver}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${version.jackson}</version>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${version.mysql-connector-java}</version>
             <optional>true</optional>
         </dependency>
     </dependencies>

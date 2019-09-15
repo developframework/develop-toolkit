@@ -94,6 +94,56 @@ public final class IOAdvice {
     }
 
     /**
+     * 读取文本
+     *
+     * @param inputStream
+     * @param charset
+     * @return
+     */
+    public static String readText(InputStream inputStream, Charset charset) {
+        StringBuilder sb = new StringBuilder();
+        readLines(inputStream, charset).forEach(line -> sb.append(line.trim()));
+        return sb.toString();
+    }
+
+    /**
+     * 读取文本
+     *
+     * @param inputStream
+     * @return
+     */
+    public static String readText(InputStream inputStream) {
+        StringBuilder sb = new StringBuilder();
+        readLines(inputStream).forEach(line -> sb.append(line.trim()));
+        return sb.toString();
+    }
+
+    /**
+     * 从classpath读取文本
+     *
+     * @param filename
+     * @param charset
+     * @return
+     */
+    public static String readTextFromClasspath(String filename, Charset charset) {
+        StringBuilder sb = new StringBuilder();
+        forEachFromClasspath(filename, charset, line -> sb.append(line.trim()));
+        return sb.toString();
+    }
+
+    /**
+     * 从classpath读取文本
+     *
+     * @param filename
+     * @return
+     */
+    public static String readTextFromClasspath(String filename) {
+        StringBuilder sb = new StringBuilder();
+        forEachFromClasspath(filename, line -> sb.append(line.trim()));
+        return sb.toString();
+    }
+
+    /**
      * 文本流按行循环处理
      *
      * @param inputStream
@@ -212,5 +262,14 @@ public final class IOAdvice {
      */
     public static void printInputStream(InputStream inputStream, Charset charset) {
         readLines(inputStream, charset).forEach(System.out::println);
+    }
+
+    /**
+     * 打印流文件
+     *
+     * @param inputStream
+     */
+    public static void printInputStream(InputStream inputStream) {
+        readLines(inputStream, StandardCharsets.UTF_8).forEach(System.out::println);
     }
 }
