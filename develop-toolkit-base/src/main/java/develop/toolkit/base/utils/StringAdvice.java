@@ -20,7 +20,7 @@ public final class StringAdvice {
         if (index > string.length() || index < 0) {
 			throw new IllegalArgumentException();
 		}
-        return new TwoValues<>(
+        return TwoValues.of(
                 string.substring(0, index),
                 string.substring(index)
         );

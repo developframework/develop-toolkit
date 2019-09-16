@@ -230,7 +230,7 @@ public final class IOAdvice {
      * @param function
      * @throws IOException
      */
-    public static void transfer(InputStream inputStream, OutputStream outputStream, Charset charset, Function<String, String> function) throws IOException {
+    public static void transferText(InputStream inputStream, OutputStream outputStream, Charset charset, Function<String, String> function) throws IOException {
         Scanner scanner = new Scanner(inputStream, charset);
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, charset))) {
             while (scanner.hasNext()) {

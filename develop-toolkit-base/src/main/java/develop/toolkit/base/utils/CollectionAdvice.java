@@ -1,6 +1,7 @@
 package develop.toolkit.base.utils;
 
 import develop.toolkit.base.struct.CollectionInMap;
+import develop.toolkit.base.struct.TwoValues;
 import lombok.NonNull;
 
 import java.util.*;
@@ -169,6 +170,7 @@ public final class CollectionAdvice {
 
     /**
      * 关联
+     * 将集合target按条件与集合master配对
      *
      * @param master
      * @param target
@@ -187,6 +189,48 @@ public final class CollectionAdvice {
             }
         }
         return map;
+    }
+
+    /**
+     * 划分
+     * 按条件把集合拆分成满足条件和不满足条件的两个集合
+     *
+     * @param collection
+     * @param predicate
+     * @param <E>
+     * @return
+     */
+    public static <E> TwoValues<List<E>, List<E>> partition(Collection<E> collection, Predicate<E> predicate) {
+        List<E> match = new LinkedList<>();
+        List<E> notMatch = new LinkedList<>();
+        for (E e : collection) {
+            if (predicate.test(e)) {
+                match.add(e);
+            } else {
+                notMatch.add(e);
+            }
+        }
+        return TwoValues.of(match, notMatch);
+    }
+
+    /**
+     * 压缩
+     * 将两个集合的元素按索引捆绑到一起
+     *
+     * @param master
+     * @param other
+     * @param <E>
+     * @return
+     */
+    public static <E> List<TwoValues<E, E>> zip(List<E> master, List<E> other) {
+        if (master.size() != other.size()) {
+            throw new IllegalArgumentException("list size must be some");
+        }
+        List<TwoValues<E, E>> list = new LinkedList<>();
+        for (int i = 0; i < master.size(); i++) {
+            list.add(TwoValues.of(master.get(i), other.get(i)));
+        }
+        return list;
     }
 
     public interface AssociatePredicate<E, T> {
