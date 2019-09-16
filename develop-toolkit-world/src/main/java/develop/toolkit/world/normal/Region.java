@@ -1,6 +1,8 @@
 package develop.toolkit.world.normal;
 
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -9,8 +11,12 @@ import java.io.Serializable;
  *
  * @author qiushui on 2019-02-26.
  */
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"provinceCode", "cityCode", "countyCode"})
 public class Region implements Serializable {
+
+    private static final long serialVersionUID = 1431053980547777108L;
 
     /* 省级 */
     private String province;
@@ -29,4 +35,9 @@ public class Region implements Serializable {
 
     /* 县级编码 */
     private Integer countyCode;
+
+    @Override
+    public String toString() {
+        return province + city + county;
+    }
 }

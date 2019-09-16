@@ -1,6 +1,6 @@
 package develop.toolkit.world.person;
 
-import develop.toolkit.base.struct.Password;
+import develop.toolkit.world.normal.Password;
 
 import java.io.Serializable;
 

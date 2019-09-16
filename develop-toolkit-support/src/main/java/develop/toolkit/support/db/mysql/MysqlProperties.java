@@ -18,7 +18,9 @@ public class MysqlProperties {
 
     private String password;
 
+    private String database;
+
     public String getUrl() {
-        return String.format("jdbc:mysql://%s:%d/hclc_informationize?useSSL=false", domain, port);
+        return String.format("jdbc:mysql://%s:%d/%s?useSSL=false", domain, port, database);
     }
 }

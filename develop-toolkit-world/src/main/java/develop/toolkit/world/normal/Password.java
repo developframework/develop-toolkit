@@ -1,6 +1,8 @@
-package develop.toolkit.base.struct;
+package develop.toolkit.world.normal;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * 不可逆密码基类
@@ -8,9 +10,11 @@ import lombok.Getter;
  * @author qiushui on 2018-05-26.
  * @version 0.1
  */
+@Getter
+@EqualsAndHashCode
+@ToString(of = "encryptPassword")
 public abstract class Password {
 
-    @Getter
     protected String encryptPassword;
 
     public Password(String password, boolean isEncrypt) {
@@ -21,24 +25,6 @@ public abstract class Password {
         }
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if(this == obj) {
-            return true;
-        }
-        if (obj instanceof Password) {
-            return encryptPassword.equals(((Password) obj).getEncryptPassword());
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash += encryptPassword.hashCode() * 31;
-        return hash;
-    }
-
     /**
      * 比较加密密码字符串
      * @param encryptPassword 加密密码字符串
@@ -46,11 +32,6 @@ public abstract class Password {
      */
     public boolean equalsEncryptPassword(String encryptPassword) {
         return this.encryptPassword.equals(encryptPassword);
-    }
-
-    @Override
-    public String toString() {
-        return encryptPassword;
     }
 
     /**

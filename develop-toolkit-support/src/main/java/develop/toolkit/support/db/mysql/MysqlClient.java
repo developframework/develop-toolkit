@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 /**
  * @author qiushui on 2019-09-03.
  */
-public class MysqlClient {
+public class MysqlClient implements AutoCloseable {
 
     private Connection connection;
 
@@ -114,7 +114,7 @@ public class MysqlClient {
         );
     }
 
-    public <T> int insert(String table, List<T> list, String... fields) throws SQLException {
+    public <T> int insertAll(String table, List<T> list, String... fields) throws SQLException {
         String sql = new StringBuilder()
                 .append("INSERT INTO ").append(table).append("(")
                 .append(StringUtils.join(fields, ",")).append(") VALUES")
@@ -150,6 +150,25 @@ public class MysqlClient {
      * @throws SQLException
      */
     public <T> int insert(String table, T data, String... fields) throws SQLException {
-        return insert(table, List.of(data), fields);
+        return insertAll(table, List.of(data), fields);
+    }
+
+    /**
+     * 执行修改语句
+     *
+     * @param sql
+     * @param setter
+     * @return
+     * @throws SQLException
+     */
+    public int executeUpdate(String sql, PreparedStatementSetter setter) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        setter.set(preparedStatement);
+        return preparedStatement.executeUpdate();
+    }
+
+    @Override
+    public void close() throws SQLException {
+        connection.close();
     }
 }

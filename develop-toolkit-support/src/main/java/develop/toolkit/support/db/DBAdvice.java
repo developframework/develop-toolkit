@@ -10,13 +10,13 @@ import java.sql.SQLException;
  */
 public final class DBAdvice {
 
-    public static MysqlClient mysql(String domain, String username, String password) throws SQLException {
-        return mysql(domain, 3306, username, password);
+    public static MysqlClient mysql(String domain, String username, String password, String database) throws SQLException {
+        return mysql(domain, 3306, username, password, database);
     }
 
-    public static MysqlClient mysql(String domain, int port, String username, String password) throws SQLException {
+    public static MysqlClient mysql(String domain, int port, String username, String password, String database) throws SQLException {
         return new MysqlClient(
-                new MysqlProperties(domain, port, username, password)
+                new MysqlProperties(domain, port, username, password, database)
         );
     }
 }

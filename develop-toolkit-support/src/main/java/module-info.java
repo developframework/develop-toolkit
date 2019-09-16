@@ -10,4 +10,5 @@ module develop.toolkit.support {
     requires expression;
 
     exports develop.toolkit.support.db;
+    exports develop.toolkit.support.db.mysql;
 }

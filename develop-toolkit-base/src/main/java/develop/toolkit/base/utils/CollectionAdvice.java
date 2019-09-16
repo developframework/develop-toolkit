@@ -1,5 +1,6 @@
 package develop.toolkit.base.utils;
 
+import develop.toolkit.base.struct.CollectionInMap;
 import lombok.NonNull;
 
 import java.util.*;
@@ -62,14 +63,13 @@ public final class CollectionAdvice {
      * 获得第一个判断是true的元素
      *
      * @param collection
-     * @param function
+     * @param predicate
      * @param <E>
      * @return
      */
-    public static <E> Optional<E> getFirstTrue(@NonNull Collection<E> collection, @NonNull Function<E, Boolean> function) {
+    public static <E> Optional<E> getFirstTrue(@NonNull Collection<E> collection, @NonNull Predicate<E> predicate) {
         for (E item : collection) {
-            Boolean value = function.apply(item);
-            if (value != null && value) {
+            if (predicate.test(item)) {
                 return Optional.ofNullable(item);
             }
         }
@@ -80,14 +80,13 @@ public final class CollectionAdvice {
      * 获得第一个判断是false的元素
      *
      * @param collection
-     * @param function
+     * @param predicate
      * @param <E>
      * @return
      */
-    public static <E> Optional<E> getFirstFalse(@NonNull Collection<E> collection, @NonNull Function<E, Boolean> function) {
+    public static <E> Optional<E> getFirstFalse(@NonNull Collection<E> collection, @NonNull Predicate<E> predicate) {
         for (E item : collection) {
-            Boolean value = function.apply(item);
-            if (value != null && !value) {
+            if (!predicate.test(item)) {
                 return Optional.ofNullable(item);
             }
         }
@@ -166,5 +165,31 @@ public final class CollectionAdvice {
             set.removeIf(Predicate.not(collection::contains));
         }
         return set;
+    }
+
+    /**
+     * 关联
+     *
+     * @param master
+     * @param target
+     * @param predicate
+     * @param <E>
+     * @param <T>
+     * @return
+     */
+    public static <E, T> CollectionInMap<E, T> associate(Collection<E> master, Collection<T> target, AssociatePredicate<E, T> predicate) {
+        CollectionInMap<E, T> map = new CollectionInMap<>();
+        for (E e : master) {
+            for (T t : target) {
+                if (predicate.test(e, t)) {
+                    map.addItemSoft(e, t);
+                }
+            }
+        }
+        return map;
+    }
+
+    public interface AssociatePredicate<E, T> {
+        boolean test(E master, T target);
     }
 }
