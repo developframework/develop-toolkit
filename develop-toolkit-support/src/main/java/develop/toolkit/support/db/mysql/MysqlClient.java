@@ -167,6 +167,18 @@ public class MysqlClient implements AutoCloseable {
         return preparedStatement.executeUpdate();
     }
 
+    /**
+     * 执行修改语句
+     *
+     * @param sql
+     * @return
+     * @throws SQLException
+     */
+    public int executeUpdate(String sql) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        return preparedStatement.executeUpdate();
+    }
+
     @Override
     public void close() throws SQLException {
         connection.close();
