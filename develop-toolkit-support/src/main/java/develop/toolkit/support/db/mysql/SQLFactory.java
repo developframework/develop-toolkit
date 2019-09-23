@@ -29,7 +29,7 @@ public class SQLFactory {
                 continue;
             }
             if (line.startsWith("#")) {
-                putSql(key, sb.toString());
+                putSql(key, sb);
                 key = line.substring(1).trim();
             } else {
                 if (sb.length() > 0) {
@@ -38,15 +38,16 @@ public class SQLFactory {
                 sb.append(line.trim());
             }
         }
-        putSql(key, sb.toString());
+        putSql(key, sb);
     }
 
-    private void putSql(String key, String sql) {
-        if (key != null && sql.length() > 0) {
+    private void putSql(String key, StringBuilder sb) {
+        if (key != null && sb.length() > 0) {
             if (sqlMap.containsKey(key)) {
                 throw new RuntimeException("sql map exists \"" + key + "\"");
             }
-            sqlMap.put(key, sql);
+            sqlMap.put(key, sb.toString());
+            sb.setLength(0);
         }
     }
 

@@ -65,6 +65,19 @@ public final class CompareAdvice {
     }
 
     /**
+     * 在之间（闭区间）
+     *
+     * @param a
+     * @param start
+     * @param end
+     * @param <T>
+     * @return
+     */
+    public static <T extends Comparable<T>> boolean between(@NonNull T a, @NonNull T start, @NonNull T end) {
+        return gte(a, start) && lte(a, end);
+    }
+
+    /**
      * 返回两者中较大值
      *
      * @param a

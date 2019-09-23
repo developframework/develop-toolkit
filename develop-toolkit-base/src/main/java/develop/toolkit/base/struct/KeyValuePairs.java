@@ -74,6 +74,7 @@ public class KeyValuePairs<K, V> extends LinkedList<KeyValuePair<K, V>> {
      * @param <V>
      * @return
      */
+    @SafeVarargs
     public static <K, V> KeyValuePairs<K, V> of(KeyValuePair<K, V>... keyValuePairArray) {
         KeyValuePairs<K, V> keyValuePairs = new KeyValuePairs<>();
         keyValuePairs.addAll(List.of(keyValuePairArray));
