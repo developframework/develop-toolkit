@@ -1,5 +1,7 @@
 package develop.toolkit.support.http;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -12,6 +14,7 @@ import java.util.stream.Collectors;
 /**
  * Http增强工具
  */
+@Slf4j
 public final class HttpAdvice {
 
     /**
@@ -54,7 +57,7 @@ public final class HttpAdvice {
                                 httpMethod.name(),
                                 form == null ? HttpRequest.BodyPublishers.noBody() :
                                         HttpRequest.BodyPublishers.ofString(
-                                                parameters
+                                                form
                                                         .entrySet()
                                                         .stream()
                                                         .map(kv -> String.format("%s=%s", kv.getKey(), kv.getValue()))
@@ -135,11 +138,15 @@ public final class HttpAdvice {
     private static HttpAdviceResponse send(HttpClient httpClient, HttpRequest httpRequest) throws IOException {
         try {
             HttpResponse<byte[]> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofByteArray());
-            return new HttpAdviceResponse(
+            HttpAdviceResponse response = new HttpAdviceResponse(
                     httpResponse.statusCode(),
                     httpResponse.headers().map(),
                     httpResponse.body()
             );
+            if (log.isDebugEnabled()) {
+                log.debug(response.toString());
+            }
+            return response;
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

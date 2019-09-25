@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -36,4 +37,21 @@ public class HttpAdviceResponse {
         return xmlMapper.readValue(body, clazz);
     }
 
+    public String getHeader(String header) {
+        return StringUtils.join(headers.getOrDefault(header, List.of()), ";");
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb
+                .append("\nhttp response:\n")
+                .append("\tstatus: ").append(httpStatus).append("\n")
+                .append("\theaders:\n");
+        for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+            sb.append("\t\t").append(entry.getKey()).append(": ").append(StringUtils.join(entry.getValue(), ";")).append("\n");
+        }
+        sb.append("\tbody:\n").append(ofString());
+        return sb.toString();
+    }
 }
