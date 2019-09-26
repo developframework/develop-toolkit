@@ -51,7 +51,7 @@ public class HttpAdviceResponse {
         for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
             sb.append("\t\t").append(entry.getKey()).append(": ").append(StringUtils.join(entry.getValue(), ";")).append("\n");
         }
-        sb.append("\tbody:\n").append(ofString());
+        sb.append("\tbody: ").append(ofString());
         return sb.toString();
     }
 }

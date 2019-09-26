@@ -1,6 +1,7 @@
 package develop.toolkit.support.http;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.net.URI;
@@ -27,12 +28,13 @@ public final class HttpAdvice {
      * @return
      * @throws IOException
      */
-    public static HttpAdviceResponse get(HttpClient httpClient, String url, Map<String, String> headers, Map<String, Object> parameters) throws IOException {
+    public static HttpAdviceResponse get(String label, HttpClient httpClient, String url, Map<String, String> headers, Map<String, Object> parameters) throws IOException {
         return send(
+                label,
                 httpClient,
-                builder(url, headers, parameters)
-                        .GET()
-                        .build()
+                HttpMethod.GET,
+                builder(url, headers, parameters),
+                null
         );
     }
 
@@ -48,22 +50,17 @@ public final class HttpAdvice {
      * @return
      * @throws IOException
      */
-    public static HttpAdviceResponse sendFormUrlencoded(HttpClient httpClient, HttpMethod httpMethod, String url, Map<String, String> headers, Map<String, Object> parameters, Map<String, String> form) throws IOException {
+    public static HttpAdviceResponse sendFormUrlencoded(String label, HttpClient httpClient, HttpMethod httpMethod, String url, Map<String, String> headers, Map<String, Object> parameters, Map<String, String> form) throws IOException {
         return send(
+                label,
                 httpClient,
-                builder(url, headers, parameters)
-                        .header("Content-Type", "application/x-www-form-urlencoded")
-                        .method(
-                                httpMethod.name(),
-                                form == null ? HttpRequest.BodyPublishers.noBody() :
-                                        HttpRequest.BodyPublishers.ofString(
-                                                form
-                                                        .entrySet()
-                                                        .stream()
-                                                        .map(kv -> String.format("%s=%s", kv.getKey(), kv.getValue()))
-                                                        .collect(Collectors.joining("&")),
-                                                StandardCharsets.UTF_8))
-                        .build()
+                httpMethod,
+                builder(url, headers, parameters).header("Content-Type", "application/x-www-form-urlencoded"),
+                form
+                        .entrySet()
+                        .stream()
+                        .map(kv -> String.format("%s=%s", kv.getKey(), kv.getValue()))
+                        .collect(Collectors.joining("&"))
         );
     }
 
@@ -79,16 +76,13 @@ public final class HttpAdvice {
      * @return
      * @throws IOException
      */
-    public static HttpAdviceResponse sendJson(HttpClient httpClient, HttpMethod httpMethod, String url, Map<String, String> headers, Map<String, Object> parameters, String json) throws IOException {
+    public static HttpAdviceResponse sendJson(String label, HttpClient httpClient, HttpMethod httpMethod, String url, Map<String, String> headers, Map<String, Object> parameters, String json) throws IOException {
         return send(
+                label,
                 httpClient,
-                builder(url, headers, parameters)
-                        .header("Content-Type", "application/json;charset=UTF-8")
-                        .method(
-                                httpMethod.name(),
-                                json == null ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(json, StandardCharsets.UTF_8)
-                        )
-                        .build()
+                httpMethod,
+                builder(url, headers, parameters).header("Content-Type", "application/json;charset=UTF-8"),
+                json
         );
     }
 
@@ -104,16 +98,13 @@ public final class HttpAdvice {
      * @return
      * @throws IOException
      */
-    public static HttpAdviceResponse sendXml(HttpClient httpClient, HttpMethod httpMethod, String url, Map<String, String> headers, Map<String, Object> parameters, String xml) throws IOException {
+    public static HttpAdviceResponse sendXml(String label, HttpClient httpClient, HttpMethod httpMethod, String url, Map<String, String> headers, Map<String, Object> parameters, String xml) throws IOException {
         return send(
+                label,
                 httpClient,
-                builder(url, headers, parameters)
-                        .header("Content-Type", "application/xml;charset=UTF-8")
-                        .method(
-                                httpMethod.name(),
-                                xml == null ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(xml, StandardCharsets.UTF_8)
-                        )
-                        .build()
+                httpMethod,
+                builder(url, headers, parameters).header("Content-Type", "application/xml;charset=UTF-8"),
+                xml
         );
     }
 
@@ -135,20 +126,41 @@ public final class HttpAdvice {
         return builder;
     }
 
-    private static HttpAdviceResponse send(HttpClient httpClient, HttpRequest httpRequest) throws IOException {
+    private static HttpAdviceResponse send(String label, HttpClient httpClient, HttpMethod httpMethod, HttpRequest.Builder builder, String content) throws IOException {
+        HttpAdviceResponse response = null;
+        HttpRequest httpRequest = null;
         try {
+            httpRequest = builder.method(
+                    httpMethod.name(),
+                    content == null ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(content, StandardCharsets.UTF_8)
+            ).build();
             HttpResponse<byte[]> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofByteArray());
-            HttpAdviceResponse response = new HttpAdviceResponse(
+            response = new HttpAdviceResponse(
                     httpResponse.statusCode(),
                     httpResponse.headers().map(),
                     httpResponse.body()
             );
-            if (log.isDebugEnabled()) {
-                log.debug(response.toString());
-            }
             return response;
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
+        } finally {
+            if (log.isDebugEnabled() && httpRequest != null) {
+                StringBuilder sb = new StringBuilder();
+                sb
+                        .append("\nlabel: ").append(label)
+                        .append("\nhttp request:\n")
+                        .append("\turl: ").append(httpRequest.uri().toString()).append("\n")
+                        .append("\theaders:\n");
+                httpRequest
+                        .headers()
+                        .map()
+                        .forEach((k, v) -> sb.append("\t\t").append(k).append(": ").append(StringUtils.join(v, ";")).append("\n"));
+                sb.append("\tbody: ").append(content != null ? content : "(no content)").append("\n");
+                if (response != null) {
+                    sb.append(response.toString());
+                }
+                log.debug(sb.toString());
+            }
         }
     }
 }
