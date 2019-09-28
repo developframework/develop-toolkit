@@ -10,6 +10,26 @@ import develop.toolkit.base.struct.TwoValues;
  */
 public final class StringAdvice {
 
+    /**
+     * 判断是null和空
+     *
+     * @param content
+     * @return
+     */
+    public static boolean isEmpty(String content) {
+        return content == null || content.isEmpty();
+    }
+
+    /**
+     * 判断不是null和空
+     *
+     * @param content
+     * @return
+     */
+    public static boolean isNotEmpty(String content) {
+        return content != null && content.isEmpty();
+    }
+
 	/**
 	 * 从index位置切断字符串
 	 * @param string
