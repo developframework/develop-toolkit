@@ -8,6 +8,9 @@ module develop.toolkit.support {
     requires java.sql;
     requires mysql.connector.java;
     requires expression;
+    requires java.net.http;
+    requires com.fasterxml.jackson.databind;
+    requires com.fasterxml.jackson.dataformat.xml;
 
     exports develop.toolkit.support.db;
     exports develop.toolkit.support.db.mysql;
