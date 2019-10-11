@@ -222,6 +222,42 @@ public final class IOAdvice {
     }
 
     /**
+     * 追加文本行
+     *
+     * @param lines
+     * @param filename
+     * @param charset
+     * @throws IOException
+     */
+    public static void appendLines(List<String> lines, String filename, Charset charset) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), charset))) {
+            for (String line : lines) {
+                writer.append(line);
+                writer.newLine();
+            }
+            writer.flush();
+        }
+    }
+
+    /**
+     * 追加文本行
+     *
+     * @param lines
+     * @param outputStream
+     * @param charset
+     * @throws IOException
+     */
+    public static void appendLines(List<String> lines, OutputStream outputStream, Charset charset) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, charset))) {
+            for (String line : lines) {
+                writer.append(line);
+                writer.newLine();
+            }
+            writer.flush();
+        }
+    }
+
+    /**
      * 转移
      *
      * @param inputStream

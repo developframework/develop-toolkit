@@ -27,7 +27,7 @@ public final class StringAdvice {
      * @return
      */
     public static boolean isNotEmpty(String content) {
-        return content != null && content.isEmpty();
+        return content != null && !content.isEmpty();
     }
 
 	/**
@@ -38,7 +38,7 @@ public final class StringAdvice {
 	 */
     public static TwoValues<String, String> cutOff(String string, int index) {
         if (index > string.length() || index < 0) {
-			throw new IllegalArgumentException();
+            return null;
 		}
         return TwoValues.of(
                 string.substring(0, index),
