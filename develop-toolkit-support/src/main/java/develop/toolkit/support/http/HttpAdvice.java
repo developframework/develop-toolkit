@@ -149,13 +149,13 @@ public final class HttpAdvice {
                 sb
                         .append("\nlabel: ").append(label)
                         .append("\nhttp request:\n")
-                        .append("\turl: ").append(httpRequest.uri().toString()).append("\n")
-                        .append("\theaders:\n");
+                        .append("    url: ").append(httpRequest.uri().toString()).append("\n")
+                        .append("    headers:\n");
                 httpRequest
                         .headers()
                         .map()
-                        .forEach((k, v) -> sb.append("\t\t").append(k).append(": ").append(StringUtils.join(v, ";")).append("\n"));
-                sb.append("\tbody: ").append(content != null ? content : "(no content)").append("\n");
+                        .forEach((k, v) -> sb.append("        ").append(k).append(": ").append(StringUtils.join(v, ";")).append("\n"));
+                sb.append("    body: ").append(content != null ? content : "(no content)").append("\n");
                 if (response != null) {
                     sb.append(response.toString());
                 }

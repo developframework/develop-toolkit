@@ -46,12 +46,12 @@ public class HttpAdviceResponse {
         StringBuilder sb = new StringBuilder();
         sb
                 .append("\nhttp response:\n")
-                .append("\tstatus: ").append(httpStatus).append("\n")
-                .append("\theaders:\n");
+                .append("    status: ").append(httpStatus).append("\n")
+                .append("    headers:\n");
         for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
-            sb.append("\t\t").append(entry.getKey()).append(": ").append(StringUtils.join(entry.getValue(), ";")).append("\n");
+            sb.append("        ").append(entry.getKey()).append(": ").append(StringUtils.join(entry.getValue(), ";")).append("\n");
         }
-        sb.append("\tbody: ").append(ofString());
+        sb.append("    body: ").append(ofString());
         return sb.toString();
     }
 }
