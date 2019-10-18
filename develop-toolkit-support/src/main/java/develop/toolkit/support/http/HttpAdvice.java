@@ -148,9 +148,8 @@ public final class HttpAdvice {
                 StringBuilder sb = new StringBuilder();
                 sb
                         .append("\nlabel: ").append(label)
-                        .append("\nhttp request:\n")
-                        .append("    url: ").append(httpRequest.uri().toString()).append("\n")
-                        .append("    headers:\n");
+                        .append("\nhttp request:\n    url: ")
+                        .append(httpRequest.uri().toString()).append("\n    headers:\n");
                 httpRequest
                         .headers()
                         .map()

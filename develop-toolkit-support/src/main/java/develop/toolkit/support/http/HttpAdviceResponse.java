@@ -45,9 +45,7 @@ public class HttpAdviceResponse {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb
-                .append("\nhttp response:\n")
-                .append("    status: ").append(httpStatus).append("\n")
-                .append("    headers:\n");
+                .append("\nhttp response:\n    status: ").append(httpStatus).append("\n    headers:\n");
         for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
             sb.append("        ").append(entry.getKey()).append(": ").append(StringUtils.join(entry.getValue(), ";")).append("\n");
         }
