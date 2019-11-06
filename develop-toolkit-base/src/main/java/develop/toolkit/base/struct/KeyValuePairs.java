@@ -1,9 +1,6 @@
 package develop.toolkit.base.struct;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -76,8 +73,20 @@ public class KeyValuePairs<K, V> extends LinkedList<KeyValuePair<K, V>> {
      */
     @SafeVarargs
     public static <K, V> KeyValuePairs<K, V> of(KeyValuePair<K, V>... keyValuePairArray) {
+        return of(List.of(keyValuePairArray));
+    }
+
+    /**
+     * 带值初始化
+     *
+     * @param keyValuePairCollection
+     * @param <K>
+     * @param <V>
+     * @return
+     */
+    public static <K, V> KeyValuePairs<K, V> of(Collection<KeyValuePair<K, V>> keyValuePairCollection) {
         KeyValuePairs<K, V> keyValuePairs = new KeyValuePairs<>();
-        keyValuePairs.addAll(List.of(keyValuePairArray));
+        keyValuePairs.addAll(keyValuePairCollection);
         return keyValuePairs;
     }
 }

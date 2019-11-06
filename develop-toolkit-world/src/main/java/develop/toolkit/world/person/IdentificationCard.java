@@ -82,7 +82,7 @@ public class IdentificationCard implements Serializable {
             if (card.length() == 15) {
                 return true;
             } else {
-                return card.charAt(17) == computeLastCode(card.substring(0, card.length() - 1));
+                return card.toUpperCase().charAt(17) == computeLastCode(card.substring(0, card.length() - 1));
             }
         }
         return false;
