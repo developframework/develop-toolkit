@@ -2,7 +2,6 @@ package develop.toolkit.base.utils;
 
 import develop.toolkit.base.struct.CollectionInMap;
 import develop.toolkit.base.struct.TwoValues;
-import lombok.NonNull;
 
 import java.util.*;
 import java.util.function.Function;
@@ -23,16 +22,17 @@ public final class CollectionAdvice {
      * @param target
      * @param function
      * @param <E>
-     * @param <R>
      * @return
      */
-    public static <E, R> boolean contains(@NonNull Collection<E> collection, R target, @NonNull Function<E, R> function) {
-        for (E item : collection) {
-            R value = function.apply(item);
-            if (target == null) {
-                return value == null;
-            } else if (target.equals(value)) {
-                return true;
+    public static <E> boolean contains(Collection<E> collection, Object target, Function<E, ?> function) {
+        if (collection != null) {
+            for (E item : collection) {
+                Object value = function == null ? item : function.apply(item);
+                if (target == null) {
+                    return value == null;
+                } else if (target.equals(value)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -45,16 +45,17 @@ public final class CollectionAdvice {
      * @param target
      * @param function
      * @param <E>
-     * @param <R>
      * @return
      */
-    public static <E, R> Optional<E> getFirstMatch(@NonNull Collection<E> collection, R target, @NonNull Function<E, R> function) {
-        for (E item : collection) {
-            R value = function.apply(item);
-            if (target == null) {
-                return value == null ? Optional.ofNullable(item) : Optional.empty();
-            } else if (target.equals(value)) {
-                return Optional.ofNullable(item);
+    public static <E> Optional<E> getFirstMatch(Collection<E> collection, Object target, Function<E, ?> function) {
+        if (collection != null) {
+            for (E item : collection) {
+                Object value = function == null ? item : function.apply(item);
+                if (target == null) {
+                    return value == null ? Optional.ofNullable(item) : Optional.empty();
+                } else if (target.equals(value)) {
+                    return Optional.ofNullable(item);
+                }
             }
         }
         return Optional.empty();
@@ -68,10 +69,12 @@ public final class CollectionAdvice {
      * @param <E>
      * @return
      */
-    public static <E> Optional<E> getFirstTrue(@NonNull Collection<E> collection, @NonNull Predicate<E> predicate) {
-        for (E item : collection) {
-            if (predicate.test(item)) {
-                return Optional.ofNullable(item);
+    public static <E> Optional<E> getFirstTrue(Collection<E> collection, Predicate<E> predicate) {
+        if (collection != null) {
+            for (E item : collection) {
+                if (predicate.test(item)) {
+                    return Optional.ofNullable(item);
+                }
             }
         }
         return Optional.empty();
@@ -85,10 +88,12 @@ public final class CollectionAdvice {
      * @param <E>
      * @return
      */
-    public static <E> Optional<E> getFirstFalse(@NonNull Collection<E> collection, @NonNull Predicate<E> predicate) {
-        for (E item : collection) {
-            if (!predicate.test(item)) {
-                return Optional.ofNullable(item);
+    public static <E> Optional<E> getFirstFalse(Collection<E> collection, Predicate<E> predicate) {
+        if (collection != null) {
+            for (E item : collection) {
+                if (!predicate.test(item)) {
+                    return Optional.ofNullable(item);
+                }
             }
         }
         return Optional.empty();
@@ -101,18 +106,82 @@ public final class CollectionAdvice {
      * @param target
      * @param function
      * @param <E>
-     * @param <R>
      * @return
      */
-    public static <E, R> List<E> getAllMatch(@NonNull Collection<E> collection, R target, @NonNull Function<E, R> function) {
+    public static <E> List<E> getAllMatch(Collection<E> collection, Object target, Function<E, ?> function) {
+        if (collection == null) {
+            return null;
+        }
         return collection.stream().filter(item -> {
-            R value = function.apply(item);
+            Object value = function == null ? item : function.apply(item);
             if (target == null) {
                 return value == null;
             } else {
                 return target.equals(value);
             }
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * 全部匹配
+     *
+     * @param collection
+     * @param predicate
+     * @param <E>
+     * @return
+     */
+    public static <E> boolean allMatch(Collection<E> collection, Predicate<E> predicate) {
+        if (predicate == null || collection == null) {
+            return false;
+        }
+        for (E e : collection) {
+            if (!predicate.test(e)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 任意一个匹配
+     *
+     * @param collection
+     * @param predicate
+     * @param <E>
+     * @return
+     */
+    public static <E> boolean anyMatch(Collection<E> collection, Predicate<E> predicate) {
+        if (collection != null && predicate != null) {
+            for (E e : collection) {
+                if (predicate.test(e)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 判断所有元素的处理值相等
+     *
+     * @param collection
+     * @param function
+     * @param <E>
+     * @return
+     */
+    public static <E> boolean allAccept(Collection<E> collection, Function<E, ?> function) {
+        if (collection == null || collection.isEmpty()) {
+            return false;
+        }
+        List<E> list = new ArrayList<>(collection);
+        Object targetValue = function == null ? list.get(0) : function.apply(list.get(0));
+        for (int i = 1, size = list.size(); i < size; i++) {
+            Object itemValue = function == null ? list.get(i) : function.apply(list.get(i));
+            if ((targetValue != null && !targetValue.equals(itemValue)) || (targetValue == null && itemValue != null)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -126,7 +195,7 @@ public final class CollectionAdvice {
      * @param <V>
      * @return
      */
-    public static <E, K, V> Map<K, V> toMap(@NonNull Collection<E> collection, @NonNull Function<E, K> keySupplier, @NonNull Function<E, V> valueSupplier) {
+    public static <E, K, V> Map<K, V> toMap(Collection<E> collection, Function<E, K> keySupplier, Function<E, V> valueSupplier) {
         Map<K, V> map = new HashMap<>();
         for (E item : collection) {
             map.put(keySupplier.apply(item), valueSupplier.apply(item));

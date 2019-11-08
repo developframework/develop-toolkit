@@ -258,7 +258,7 @@ public final class IOAdvice {
     }
 
     /**
-     * 转移
+     * 复制文本
      *
      * @param inputStream
      * @param outputStream
@@ -266,7 +266,7 @@ public final class IOAdvice {
      * @param function
      * @throws IOException
      */
-    public static void transferText(InputStream inputStream, OutputStream outputStream, Charset charset, Function<String, String> function) throws IOException {
+    public static void copyText(InputStream inputStream, OutputStream outputStream, Charset charset, Function<String, String> function) throws IOException {
         Scanner scanner = new Scanner(inputStream, charset);
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, charset))) {
             while (scanner.hasNext()) {
@@ -276,6 +276,44 @@ public final class IOAdvice {
             }
         }
         scanner.close();
+    }
+
+    /**
+     * 复制文件
+     *
+     * @param inputStream
+     * @param outputStream
+     * @return
+     * @throws IOException
+     */
+    public static long copy(InputStream inputStream, OutputStream outputStream) throws IOException {
+        final byte[] buffer = new byte[4096];
+        long count = 0;
+        int n;
+        while (-1 != (n = inputStream.read(buffer))) {
+            outputStream.write(buffer, 0, n);
+            count += n;
+        }
+        return count;
+    }
+
+    /**
+     * 安静地复制文件
+     *
+     * @param source
+     * @param target
+     * @return
+     */
+    public static long copyQuietly(File source, File target) {
+        target.getParentFile().mkdirs();
+        try (
+                InputStream inputStream = new FileInputStream(source);
+                OutputStream outputStream = new FileOutputStream(target)
+        ) {
+            return copy(inputStream, outputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
