@@ -36,7 +36,7 @@ public class CollectionInMap<K, V> extends ConcurrentHashMap<K, Collection<V>> i
 	 * @param key map key
 	 * @param item 新元素
 	 */
-	public void addItem(K key, V item) {
+    public void putItem(K key, V item) {
         if (containsKey(key)) {
 			Collection<V> collection = get(key);
 			collection.add(item);
@@ -50,7 +50,7 @@ public class CollectionInMap<K, V> extends ConcurrentHashMap<K, Collection<V>> i
 	 * @param key map key
 	 * @param items 新元素
 	 */
-	public void addAllItem(K key, @NonNull Collection<V> items) {
+    public void putAllItem(K key, @NonNull Collection<V> items) {
         if (containsKey(key)) {
 			Collection<V> collection = get(key);
 			collection.addAll(items);
@@ -65,7 +65,7 @@ public class CollectionInMap<K, V> extends ConcurrentHashMap<K, Collection<V>> i
 	 * @param item 新元素
 	 */
     @SuppressWarnings("unchecked")
-    public void addItemSoft(K key, V item) {
+    public void putItemSoft(K key, V item) {
         if (containsKey(key)) {
 			Collection<V> collection = get(key);
 			collection.add(item);
@@ -82,7 +82,7 @@ public class CollectionInMap<K, V> extends ConcurrentHashMap<K, Collection<V>> i
 	 * @param items 新元素
 	 */
     @SuppressWarnings("unchecked")
-    public void addAllItemSoft(K key, @NonNull Collection<V> items) {
+    public void putAllItemSoft(K key, @NonNull Collection<V> items) {
         if (containsKey(key)) {
 			Collection<V> collection = get(key);
 			collection.addAll(items);

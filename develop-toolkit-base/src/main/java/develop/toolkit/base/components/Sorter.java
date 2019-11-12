@@ -10,6 +10,7 @@ import java.util.*;
  *
  * @author qiushui on 2018-07-09.
  */
+@Deprecated
 public class Sorter<K, V> {
 
 	private CollectionInMap<K, V> map = new CollectionInMap<>(key -> new LinkedList());
@@ -27,7 +28,7 @@ public class Sorter<K, V> {
 	public void sort(Collection<V> collection) {
 		for (V item : collection) {
 			K key = sortFunction.sort(item);
-			map.addItemSoft(key, item);
+            map.putItemSoft(key, item);
 		}
 	}
 

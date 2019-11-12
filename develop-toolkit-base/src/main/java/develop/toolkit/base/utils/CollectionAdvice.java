@@ -195,10 +195,10 @@ public final class CollectionAdvice {
      * @param <V>
      * @return
      */
-    public static <E, K, V> Map<K, V> grouping(Collection<E> collection, Function<E, K> keySupplier, Function<E, V> valueSupplier) {
-        Map<K, V> map = new HashMap<>();
+    public static <E, K, V> CollectionInMap<K, V> grouping(Collection<E> collection, Function<E, K> keySupplier, Function<E, V> valueSupplier) {
+        CollectionInMap<K, V> map = new CollectionInMap<>(k -> new LinkedList());
         for (E item : collection) {
-            map.put(keySupplier.apply(item), valueSupplier.apply(item));
+            map.putItemSoft(keySupplier.apply(item), valueSupplier.apply(item));
         }
         return map;
     }
@@ -215,7 +215,13 @@ public final class CollectionAdvice {
     public static <E, K> Map<K, Integer> groupingCount(Collection<E> collection, Function<E, K> keySupplier) {
         Map<K, Integer> map = new HashMap<>();
         for (E item : collection) {
-            map.computeIfPresent(keySupplier.apply(item), (k, v) -> v + 1);
+            K key = keySupplier.apply(item);
+            Integer v;
+            if ((v = map.get(key)) != null) {
+                map.put(key, ++v);
+            } else {
+                map.put(key, 1);
+            }
         }
         return map;
     }
@@ -270,7 +276,7 @@ public final class CollectionAdvice {
         for (E e : master) {
             for (T t : target) {
                 if (predicate.test(e, t)) {
-                    map.addItemSoft(e, t);
+                    map.putItemSoft(e, t);
                 }
             }
         }
