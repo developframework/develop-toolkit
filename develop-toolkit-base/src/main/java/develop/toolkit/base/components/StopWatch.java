@@ -34,6 +34,10 @@ public final class StopWatch {
         return end.toEpochMilli() - startInstantMap.get(name).toEpochMilli();
     }
 
+    public String formatEnd() {
+        return DateTimeAdvice.millisecondPretty(end());
+    }
+
     public String formatEnd(String label) {
         return label + ": " + DateTimeAdvice.millisecondPretty(end());
     }

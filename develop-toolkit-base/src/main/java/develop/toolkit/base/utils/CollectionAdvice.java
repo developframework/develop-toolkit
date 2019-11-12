@@ -185,7 +185,7 @@ public final class CollectionAdvice {
     }
 
     /**
-     * 转化为Map
+     * 分组
      *
      * @param collection
      * @param keySupplier
@@ -195,10 +195,27 @@ public final class CollectionAdvice {
      * @param <V>
      * @return
      */
-    public static <E, K, V> Map<K, V> toMap(Collection<E> collection, Function<E, K> keySupplier, Function<E, V> valueSupplier) {
+    public static <E, K, V> Map<K, V> grouping(Collection<E> collection, Function<E, K> keySupplier, Function<E, V> valueSupplier) {
         Map<K, V> map = new HashMap<>();
         for (E item : collection) {
             map.put(keySupplier.apply(item), valueSupplier.apply(item));
+        }
+        return map;
+    }
+
+    /**
+     * 分组求数量
+     *
+     * @param collection
+     * @param keySupplier
+     * @param <E>
+     * @param <K>
+     * @return
+     */
+    public static <E, K> Map<K, Integer> groupingCount(Collection<E> collection, Function<E, K> keySupplier) {
+        Map<K, Integer> map = new HashMap<>();
+        for (E item : collection) {
+            map.computeIfPresent(keySupplier.apply(item), (k, v) -> v + 1);
         }
         return map;
     }
@@ -293,7 +310,7 @@ public final class CollectionAdvice {
      */
     public static <E> List<TwoValues<E, E>> zip(List<E> master, List<E> other) {
         if (master.size() != other.size()) {
-            throw new IllegalArgumentException("list size must be some");
+            throw new IllegalArgumentException("list size must be same");
         }
         List<TwoValues<E, E>> list = new LinkedList<>();
         for (int i = 0; i < master.size(); i++) {
