@@ -20,7 +20,7 @@
     <properties>
         <version.lombok>1.18.10</version.lombok>
         <version.slf4j-api>1.7.28</version.slf4j-api>
-        <version.expression>1.3.2</version.expression>
+        <version.expression>1.4.0</version.expression>
     </properties>
 
     <dependencyManagement>
