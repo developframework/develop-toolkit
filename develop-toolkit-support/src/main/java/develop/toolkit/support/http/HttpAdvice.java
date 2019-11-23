@@ -38,6 +38,36 @@ public final class HttpAdvice {
         );
     }
 
+    public static HttpAdviceResponse post(String label, HttpClient httpClient, String url, Map<String, String> headers, Map<String, Object> parameters) throws IOException {
+        return send(
+                label,
+                httpClient,
+                HttpMethod.POST,
+                builder(url, headers, parameters),
+                null
+        );
+    }
+
+    public static HttpAdviceResponse put(String label, HttpClient httpClient, String url, Map<String, String> headers, Map<String, Object> parameters) throws IOException {
+        return send(
+                label,
+                httpClient,
+                HttpMethod.PUT,
+                builder(url, headers, parameters),
+                null
+        );
+    }
+
+    public static HttpAdviceResponse delete(String label, HttpClient httpClient, String url, Map<String, String> headers, Map<String, Object> parameters) throws IOException {
+        return send(
+                label,
+                httpClient,
+                HttpMethod.DELETE,
+                builder(url, headers, parameters),
+                null
+        );
+    }
+
     /**
      * 发送x-www-form-urlencoded格式请求
      *
