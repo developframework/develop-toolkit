@@ -110,4 +110,38 @@ public final class ObjectAdvice {
         var clazz = obj.getClass();
         return clazz == boolean.class || clazz == Boolean.class;
     }
+
+    /**
+     * 值是否在数组里
+     *
+     * @param obj
+     * @param targets
+     * @param <T>
+     * @return
+     */
+    public static <T> boolean valueIn(@NonNull T obj, T... targets) {
+        for (T target : targets) {
+            if (obj.equals(target)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 值是否不在数组里
+     *
+     * @param obj
+     * @param targets
+     * @param <T>
+     * @return
+     */
+    public static <T> boolean valueNotIn(@NonNull T obj, T... targets) {
+        for (T target : targets) {
+            if (obj.equals(target)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
