@@ -47,12 +47,12 @@ public class JDKToolkitHttpClient implements ToolkitHttpClient {
         try {
             final HttpResponse<byte[]> httpResponse = httpClient.send(httpRequestBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
             final HttpResponseData<T, Y> responseData = new HttpResponseData<>(httpResponse.statusCode(), httpResponse.body());
-            responseData.parseHeaders(httpResponse.headers().map());
+            responseData.setHeaders(httpResponse.headers().map());
             responseData.setSuccess(httpResponseDataBodyProcessor.checkSuccess(responseData));
             if (responseData.isSuccess()) {
-                responseData.setSuccessBody(httpResponseDataBodyProcessor.parseBodyContent(responseData));
+                responseData.setSuccessBody(httpResponseDataBodyProcessor.parseBodyContent(responseData.getData()));
             } else {
-                responseData.setErrorBody(httpResponseDataBodyProcessor.error(responseData));
+                responseData.setErrorBody(httpResponseDataBodyProcessor.error(responseData.getData()));
             }
             return responseData;
         } catch (Exception e) {

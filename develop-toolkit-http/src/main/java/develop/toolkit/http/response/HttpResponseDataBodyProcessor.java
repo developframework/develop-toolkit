@@ -22,11 +22,10 @@ public interface HttpResponseDataBodyProcessor<T, Y> {
     /**
      * 实现如何解析请求成功时的Body
      */
-    T parseBodyContent(HttpResponseData httpResponseData) throws IOException;
+    T parseBodyContent(byte[] data) throws IOException;
 
     /**
      * 实现请求失败时的处理
      */
-    Y error(HttpResponseData httpResponseData) throws IOException;
-
+    Y error(byte[] data) throws IOException;
 }

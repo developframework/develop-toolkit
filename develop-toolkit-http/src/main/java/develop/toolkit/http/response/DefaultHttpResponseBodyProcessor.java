@@ -12,12 +12,12 @@ import java.nio.charset.StandardCharsets;
 public class DefaultHttpResponseBodyProcessor implements HttpResponseDataBodyProcessor<String, String> {
 
     @Override
-    public String parseBodyContent(HttpResponseData httpResponseData) throws IOException {
-        return new String(httpResponseData.getData(), StandardCharsets.UTF_8);
+    public String parseBodyContent(byte[] data) throws IOException {
+        return new String(data, StandardCharsets.UTF_8);
     }
 
     @Override
-    public String error(HttpResponseData httpResponseData) throws IOException {
-        return new String(httpResponseData.getData(), StandardCharsets.UTF_8);
+    public String error(byte[] data) throws IOException {
+        return new String(data, StandardCharsets.UTF_8);
     }
 }

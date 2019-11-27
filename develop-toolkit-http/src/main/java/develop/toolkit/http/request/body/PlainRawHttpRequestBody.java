@@ -3,15 +3,15 @@ package develop.toolkit.http.request.body;
 import java.nio.charset.Charset;
 
 /**
- * Text富文本Body
+ * Plain富文本Body
  *
  * @author qiuzhenhao
  */
-public class TextRawHttpRequestBody extends RawHttpRequestDataBody {
+public class PlainRawHttpRequestBody extends RawHttpRequestDataBody {
 
     private String text;
 
-    public TextRawHttpRequestBody(String text) {
+    public PlainRawHttpRequestBody(String text) {
         this.text = text;
     }
 
