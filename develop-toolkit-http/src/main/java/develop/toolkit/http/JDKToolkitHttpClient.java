@@ -2,7 +2,6 @@ package develop.toolkit.http;
 
 import develop.toolkit.http.request.HttpRequestData;
 import develop.toolkit.http.response.HttpResponseData;
-import develop.toolkit.http.response.HttpResponseDataBodyProcessor;
 import lombok.Getter;
 
 import java.net.URI;
@@ -10,6 +9,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.time.Instant;
 
 /**
  * 基于JDK 11 HttpClient实现
@@ -31,7 +31,7 @@ public class JDKToolkitHttpClient implements ToolkitHttpClient {
     }
 
     @Override
-    public <T, Y, P extends HttpResponseDataBodyProcessor<T, Y>> HttpResponseData<T, Y> request(HttpRequestData requestData, P httpResponseDataBodyProcessor) throws HttpFailedException {
+    public HttpResponseData request(HttpRequestData requestData) throws HttpFailedException {
         if (requestData.getBody() != null) {
             requestData.getBody().prepare(requestData);
         }
@@ -45,15 +45,12 @@ public class JDKToolkitHttpClient implements ToolkitHttpClient {
         requestData.getHeaders().forEach(httpRequestBuilder::header);
 
         try {
+            Instant start = Instant.now();
             final HttpResponse<byte[]> httpResponse = httpClient.send(httpRequestBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
-            final HttpResponseData<T, Y> responseData = new HttpResponseData<>(httpResponse.statusCode(), httpResponse.body());
+            final long costTime = Instant.now().toEpochMilli() - start.toEpochMilli();
+            final HttpResponseData responseData = new HttpResponseData(httpResponse.statusCode(), httpResponse.body());
+            responseData.setCostTime(costTime);
             responseData.setHeaders(httpResponse.headers().map());
-            responseData.setSuccess(httpResponseDataBodyProcessor.checkSuccess(responseData));
-            if (responseData.isSuccess()) {
-                responseData.setSuccessBody(httpResponseDataBodyProcessor.parseBodyContent(responseData.getData()));
-            } else {
-                responseData.setErrorBody(httpResponseDataBodyProcessor.error(responseData.getData()));
-            }
             return responseData;
         } catch (Exception e) {
             throw new HttpFailedException("http failed: %s", e, e.getMessage());

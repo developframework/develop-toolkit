@@ -45,4 +45,26 @@ public final class StringAdvice {
                 string.substring(index)
         );
 	}
+
+    /**
+     * 切掉尾部字符串
+     *
+     * @param string
+     * @param tail
+     * @return
+     */
+    public static String cutTail(String string, String tail) {
+        return string.endsWith(tail) ? string.substring(0, string.length() - tail.length()) : string;
+    }
+
+    /**
+     * 切掉头部字符串
+     *
+     * @param string
+     * @param head
+     * @return
+     */
+    public static String cutHead(String string, String head) {
+        return string.startsWith(head) ? string.substring(head.length() + 1) : string;
+    }
 }
