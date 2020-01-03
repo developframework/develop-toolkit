@@ -2,11 +2,15 @@ package develop.toolkit.base.utils;
 
 import develop.toolkit.base.struct.TwoValues;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * 字符串增强工具
  *
  * @author qiushui on 2018-09-06.
- * @since 0.1
  */
 public final class StringAdvice {
 
@@ -66,5 +70,34 @@ public final class StringAdvice {
      */
     public static String cutHead(String string, String head) {
         return string.startsWith(head) ? string.substring(head.length() + 1) : string;
+    }
+
+    /**
+     * 正则取值
+     *
+     * @param string
+     * @param regex
+     * @return
+     */
+    public static List<String> regexMatch(String string, String regex) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(string);
+        List<String> list = new ArrayList<>(matcher.groupCount());
+        while (matcher.find()) {
+            list.add(matcher.group());
+        }
+        return list;
+    }
+
+    /**
+     * 正则开头结尾匹配抓取中间字符串值
+     *
+     * @param string
+     * @param start
+     * @param end
+     * @return
+     */
+    public static List<String> regexMatchStartEnd(String string, String start, String end) {
+        return regexMatch(string, String.format("(?<=%s)(.+?)(?=%s)", start, end));
     }
 }

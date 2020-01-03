@@ -1,9 +1,11 @@
 package develop.toolkit.base.utils;
 
 import develop.toolkit.base.struct.CollectionInMap;
+import develop.toolkit.base.struct.KeyValuePairs;
 import develop.toolkit.base.struct.TwoValues;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -284,6 +286,26 @@ public final class CollectionAdvice {
     }
 
     /**
+     * 关联 （明确是单个的）
+     * 将集合target按条件与集合master配对
+     *
+     * @param master
+     * @param target
+     * @param predicate
+     * @param <E>
+     * @param <T>
+     * @return
+     */
+    public static <E, T> KeyValuePairs<E, T> associateOne(Collection<E> master, Collection<T> target, AssociatePredicate<E, T> predicate) {
+        final KeyValuePairs<E, T> keyValuePairs = new KeyValuePairs<>();
+        for (E e : master) {
+            final T matchT = getFirstTrue(target, t -> predicate.test(e, t)).orElse(null);
+            keyValuePairs.addKeyValue(e, matchT);
+        }
+        return keyValuePairs;
+    }
+
+    /**
      * 划分
      * 按条件把集合拆分成满足条件和不满足条件的两个集合
      *
@@ -323,6 +345,25 @@ public final class CollectionAdvice {
             list.add(TwoValues.of(master.get(i), other.get(i)));
         }
         return list;
+    }
+
+    /**
+     * 分页处理
+     *
+     * @param list
+     * @param size
+     * @param consumer
+     * @param <T>
+     */
+    public static <T> void pagerProcess(List<T> list, int size, Consumer<List<T>> consumer) {
+        final int total = list.size();
+        final int page = total % size == 0 ? (total / size) : (total / size + 1);
+        for (int i = 0; i < page; i++) {
+            int fromIndex = i * size;
+            int toIndex = fromIndex + Math.min(total - fromIndex, size);
+            List<T> subList = list.subList(fromIndex, toIndex);
+            consumer.accept(subList);
+        }
     }
 
     public interface AssociatePredicate<E, T> {
