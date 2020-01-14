@@ -2,7 +2,6 @@
  * @author qiushui on 2019-02-26.
  */
 module develop.toolkit.base {
-
     requires lombok;
     requires org.slf4j;
     requires org.apache.commons.lang3;
