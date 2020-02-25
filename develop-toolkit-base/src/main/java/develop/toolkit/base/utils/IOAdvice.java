@@ -1,7 +1,5 @@
 package develop.toolkit.base.utils;
 
-import lombok.NonNull;
-
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -27,7 +25,7 @@ public final class IOAdvice {
      * @throws IOException
      */
     public static Stream<String> readLines(String filename) throws IOException {
-        return readLines(filename, StandardCharsets.UTF_8);
+        return readLines(filename, null);
     }
 
     /**
@@ -47,10 +45,9 @@ public final class IOAdvice {
      *
      * @param inputStream
      * @return
-     * @throws IOException
      */
     public static Stream<String> readLines(InputStream inputStream) {
-        return readLines(inputStream, StandardCharsets.UTF_8);
+        return readLines(inputStream, null);
     }
 
     /**
@@ -60,8 +57,8 @@ public final class IOAdvice {
      * @param charset
      * @return
      */
-    public static Stream<String> readLines(@NonNull InputStream inputStream, Charset charset) {
-        Scanner scanner = new Scanner(inputStream, charset);
+    public static Stream<String> readLines(InputStream inputStream, Charset charset) {
+        Scanner scanner = new Scanner(inputStream, charset == null ? StandardCharsets.UTF_8 : charset);
         List<String> lines = new LinkedList<>();
         while (scanner.hasNext()) {
             lines.add(scanner.nextLine());
@@ -71,15 +68,24 @@ public final class IOAdvice {
     }
 
     /**
+     * 从classpath读流
+     *
+     * @param filename
+     * @return
+     */
+    public static InputStream readInputStreamFromClasspath(String filename) {
+        return IOAdvice.class.getResourceAsStream(filename.startsWith("/") ? filename : ("/" + filename));
+    }
+
+    /**
      * 从classpath读取文件
      *
      * @param filename
      * @param charset
      * @return
-     * @throws IOException
      */
     public static Stream<String> readLinesFromClasspath(String filename, Charset charset) {
-        return readLines(IOAdvice.class.getResourceAsStream(filename), charset);
+        return readLines(readInputStreamFromClasspath(filename), charset);
     }
 
     /**
@@ -87,10 +93,20 @@ public final class IOAdvice {
      *
      * @param filename
      * @return
-     * @throws IOException
      */
     public static Stream<String> readLinesFromClasspath(String filename) {
-        return readLines(IOAdvice.class.getResourceAsStream(filename));
+        return readLines(readInputStreamFromClasspath(filename), null);
+    }
+
+    /**
+     * 从classpath读取文件并每行用regex切分
+     *
+     * @param filename
+     * @param regex
+     * @return
+     */
+    public static Stream<String[]> splitFromClasspath(String filename, String regex) {
+        return readLinesFromClasspath(filename).map(line -> line.split(regex));
     }
 
     /**
