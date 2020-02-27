@@ -18,6 +18,32 @@ import java.util.stream.Stream;
 public final class IOAdvice {
 
     /**
+     * 转换成字节数组
+     *
+     * @param inputStream
+     * @return
+     * @throws IOException
+     */
+    public static byte[] toByteArray(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        inputStream.transferTo(baos);
+        byte[] data = baos.toByteArray();
+        baos.close();
+        return data;
+    }
+
+    /**
+     * 转换成字节数组
+     *
+     * @param filename
+     * @return
+     * @throws IOException
+     */
+    public static byte[] toByteArrayFromClasspath(String filename) throws IOException {
+        return toByteArray(readInputStreamFromClasspath(filename));
+    }
+
+    /**
      * 文件读取行
      *
      * @param filename
@@ -348,7 +374,6 @@ public final class IOAdvice {
      *
      * @param inputStream
      * @param charset
-     * @throws IOException
      */
     public static void printInputStream(InputStream inputStream, Charset charset) {
         readLines(inputStream, charset).forEach(System.out::println);
