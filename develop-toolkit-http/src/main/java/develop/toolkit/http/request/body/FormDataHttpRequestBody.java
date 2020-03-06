@@ -33,7 +33,7 @@ public class FormDataHttpRequestBody implements HttpRequestDataBody {
     }
 
     @Override
-    public byte[] serializeBody(Charset charset) {
+    public String body(Charset charset) {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
             if (entry != null) {
@@ -43,8 +43,7 @@ public class FormDataHttpRequestBody implements HttpRequestDataBody {
                         .append(String.format("Content-Disposition: form-data; name=\"%s\"\r\n\r\n%s\r\n", entry.getKey(), URLEncoder.encode(entry.getValue().toString(), charset)));
             }
         }
-        System.out.println(sb.toString());
-        return sb.toString().getBytes(charset);
+        return sb.toString();
     }
 
     @Override

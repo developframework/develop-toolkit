@@ -23,11 +23,6 @@ public class FormUrlencodedHttpRequestBody implements HttpRequestDataBody {
     }
 
     @Override
-    public byte[] serializeBody(Charset charset) {
-        return serializeParameters(charset).getBytes(charset);
-    }
-
-    @Override
     public void prepare(HttpRequestData httpRequestData) {
         httpRequestData.addHeader("Content-Type", "application/x-www-form-urlencoded;charset=" + httpRequestData.getCharset().displayName());
     }
@@ -37,12 +32,12 @@ public class FormUrlencodedHttpRequestBody implements HttpRequestDataBody {
      *
      * @return
      */
-    protected String serializeParameters(Charset charset) {
-        return parameters.entrySet().stream().map(parameter -> {
+    @Override
+    public String body(Charset charset) {
+        return parameters.entrySet().stream().map(entry -> {
             try {
-                return String.format("%s=%s", parameter.getKey(), URLEncoder.encode(parameter.getValue().toString(), charset.displayName()));
+                return String.format("%s=%s", entry.getKey(), URLEncoder.encode(entry.getValue().toString(), charset.displayName()));
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
                 return "";
             }
         }).collect(Collectors.joining("&"));

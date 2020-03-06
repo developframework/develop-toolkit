@@ -9,19 +9,12 @@ import java.nio.charset.Charset;
  */
 public class XmlRawHttpRequestBody extends RawHttpRequestDataBody {
 
-    private String xml;
-
     public XmlRawHttpRequestBody(String xml) {
-        this.xml = xml;
+        super(xml);
     }
 
     @Override
     protected String getContentType(Charset charset) {
         return "application/xml;charset=" + charset.displayName();
-    }
-
-    @Override
-    public byte[] serializeBody(Charset charset) {
-        return xml.getBytes(charset);
     }
 }

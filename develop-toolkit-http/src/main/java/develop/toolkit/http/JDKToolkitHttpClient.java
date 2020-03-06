@@ -37,16 +37,16 @@ public class JDKToolkitHttpClient implements ToolkitHttpClient {
         }
         final byte[] data = requestData.serializeBody();
         final HttpRequest.BodyPublisher bodyPublisher = data != null ? HttpRequest.BodyPublishers.ofByteArray(data) : HttpRequest.BodyPublishers.noBody();
-        HttpRequest.Builder httpRequestBuilder = HttpRequest.newBuilder()
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)
                 .timeout(Duration.ofSeconds(30L))
                 .uri(URI.create(requestData.getWholeUrl()))
                 .method(requestData.getHttpMethod().name(), bodyPublisher);
-        requestData.getHeaders().forEach(httpRequestBuilder::header);
+        requestData.getHeaders().forEach(builder::header);
 
         try {
             Instant start = Instant.now();
-            final HttpResponse<byte[]> httpResponse = httpClient.send(httpRequestBuilder.build(), HttpResponse.BodyHandlers.ofByteArray());
+            final HttpResponse<byte[]> httpResponse = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofByteArray());
             final long costTime = Instant.now().toEpochMilli() - start.toEpochMilli();
             final HttpResponseData responseData = new HttpResponseData(httpResponse.statusCode(), httpResponse.body());
             responseData.setCostTime(costTime);

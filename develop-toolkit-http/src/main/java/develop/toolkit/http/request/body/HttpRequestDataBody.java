@@ -15,7 +15,16 @@ public interface HttpRequestDataBody {
      * @param charset
      * @return
      */
-    byte[] serializeBody(Charset charset);
+    default byte[] serializeBody(Charset charset) {
+        return body(charset).getBytes();
+    }
+
+    /**
+     * 字符串格式body
+     *
+     * @return
+     */
+    String body(Charset charset);
 
     /**
      * 准备

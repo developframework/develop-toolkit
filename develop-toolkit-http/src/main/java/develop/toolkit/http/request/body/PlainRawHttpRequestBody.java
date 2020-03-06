@@ -9,19 +9,12 @@ import java.nio.charset.Charset;
  */
 public class PlainRawHttpRequestBody extends RawHttpRequestDataBody {
 
-    private String text;
-
     public PlainRawHttpRequestBody(String text) {
-        this.text = text;
+        super(text);
     }
 
     @Override
     protected String getContentType(Charset charset) {
         return "text/plain;charset=" + charset.displayName();
-    }
-
-    @Override
-    public byte[] serializeBody(Charset charset) {
-        return text.getBytes(charset);
     }
 }

@@ -27,7 +27,7 @@ public class HttpResponseData {
         this.data = data;
     }
 
-    public String getStringBody() {
+    public String stringBody() {
         return new String(data, StandardCharsets.UTF_8);
     }
 }

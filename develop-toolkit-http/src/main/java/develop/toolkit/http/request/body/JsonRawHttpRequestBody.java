@@ -7,19 +7,12 @@ import java.nio.charset.Charset;
  */
 public class JsonRawHttpRequestBody extends RawHttpRequestDataBody {
 
-    private String json;
-
     public JsonRawHttpRequestBody(String json) {
-        this.json = json;
+       super(json);
     }
 
     @Override
     protected String getContentType(Charset charset) {
         return "application/json;charset=" + charset.displayName();
-    }
-
-    @Override
-    public byte[] serializeBody(Charset charset) {
-        return json.getBytes(charset);
     }
 }

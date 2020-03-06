@@ -1,5 +1,6 @@
 package develop.toolkit.http.request;
 
+import develop.toolkit.base.utils.K;
 import develop.toolkit.http.request.body.HttpRequestDataBody;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,7 +32,6 @@ public class HttpRequestData {
     @Setter
     private Charset charset = StandardCharsets.UTF_8;
 
-    @Setter
     private HttpRequestDataBody body;
 
     public HttpRequestData(HttpMethod httpMethod, String url) {
@@ -39,12 +39,19 @@ public class HttpRequestData {
         this.url = url;
     }
 
-    public void addHeader(String headerName, String value) {
+    public HttpRequestData addHeader(String headerName, String value) {
         headers.put(headerName, value);
+        return this;
     }
 
-    public void addUrlParameter(String parameterName, Object value) {
+    public HttpRequestData addUrlParameter(String parameterName, Object value) {
         urlParameters.put(parameterName, value);
+        return this;
+    }
+
+    public HttpRequestData addBody(HttpRequestDataBody body) {
+        this.body = body;
+        return this;
     }
 
     public String getWholeUrl() {
@@ -61,7 +68,6 @@ public class HttpRequestData {
             try {
                 return String.format("%s=%s", parameter.getKey(), URLEncoder.encode(parameter.getValue().toString(), charset.displayName()));
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
                 return "";
             }
         }).collect(Collectors.joining("&"));
@@ -73,9 +79,15 @@ public class HttpRequestData {
      * @return
      */
     public byte[] serializeBody() {
-        if (body == null) {
-            return null;
-        }
-        return body.serializeBody(charset);
+        return K.map(body, b -> b.serializeBody(charset));
+    }
+
+    /**
+     * 字符串格式Body
+     *
+     * @return
+     */
+    public String stringBody() {
+        return K.map(body, b -> b.body(charset));
     }
 }

@@ -1,6 +1,7 @@
 package develop.toolkit.http.request.body;
 
 import develop.toolkit.http.request.HttpRequestData;
+import lombok.Getter;
 
 import java.nio.charset.Charset;
 
@@ -9,11 +10,23 @@ import java.nio.charset.Charset;
  */
 public abstract class RawHttpRequestDataBody implements HttpRequestDataBody {
 
+    @Getter
+    private String raw;
+
+    public RawHttpRequestDataBody(String raw) {
+        this.raw = raw;
+    }
+
     @Override
     public void prepare(HttpRequestData httpRequestData) {
         httpRequestData.addHeader("Content-Type", getContentType(httpRequestData.getCharset()));
     }
 
     protected abstract String getContentType(Charset charset);
+
+    @Override
+    public String body(Charset charset) {
+        return raw;
+    }
 
 }
