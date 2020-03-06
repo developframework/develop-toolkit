@@ -22,14 +22,17 @@ public final class IOAdvice {
      *
      * @param inputStream
      * @return
-     * @throws IOException
      */
-    public static byte[] toByteArray(InputStream inputStream) throws IOException {
+    public static byte[] toByteArray(InputStream inputStream) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        inputStream.transferTo(baos);
-        byte[] data = baos.toByteArray();
-        baos.close();
-        return data;
+        try (inputStream) {
+            inputStream.transferTo(baos);
+            byte[] data = baos.toByteArray();
+            baos.close();
+            return data;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -37,9 +40,8 @@ public final class IOAdvice {
      *
      * @param filename
      * @return
-     * @throws IOException
      */
-    public static byte[] toByteArrayFromClasspath(String filename) throws IOException {
+    public static byte[] toByteArrayFromClasspath(String filename) {
         return toByteArray(readInputStreamFromClasspath(filename));
     }
 
@@ -48,9 +50,8 @@ public final class IOAdvice {
      *
      * @param filename
      * @return
-     * @throws IOException
      */
-    public static Stream<String> readLines(String filename) throws IOException {
+    public static Stream<String> readLines(String filename) {
         return readLines(filename, null);
     }
 
@@ -60,10 +61,13 @@ public final class IOAdvice {
      * @param filename
      * @param charset
      * @return
-     * @throws IOException
      */
-    public static Stream<String> readLines(String filename, Charset charset) throws IOException {
-        return readLines(new FileInputStream(filename), charset);
+    public static Stream<String> readLines(String filename, Charset charset) {
+        try {
+            return readLines(new FileInputStream(filename), charset);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -84,13 +88,17 @@ public final class IOAdvice {
      * @return
      */
     public static Stream<String> readLines(InputStream inputStream, Charset charset) {
-        Scanner scanner = new Scanner(inputStream, charset == null ? StandardCharsets.UTF_8 : charset);
-        List<String> lines = new LinkedList<>();
-        while (scanner.hasNext()) {
-            lines.add(scanner.nextLine());
+        try (inputStream) {
+            Scanner scanner = new Scanner(inputStream, charset == null ? StandardCharsets.UTF_8 : charset);
+            List<String> lines = new LinkedList<>();
+            while (scanner.hasNext()) {
+                lines.add(scanner.nextLine());
+            }
+            scanner.close();
+            return lines.stream();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        scanner.close();
-        return lines.stream();
     }
 
     /**
@@ -233,15 +241,16 @@ public final class IOAdvice {
      * @param lines
      * @param filename
      * @param charset
-     * @throws IOException
      */
-    public static void writeLines(List<String> lines, String filename, Charset charset) throws IOException {
+    public static void writeLines(List<String> lines, String filename, Charset charset) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), charset))) {
             for (String line : lines) {
                 writer.write(line);
                 writer.newLine();
             }
             writer.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -251,15 +260,16 @@ public final class IOAdvice {
      * @param lines
      * @param outputStream
      * @param charset
-     * @throws IOException
      */
-    public static void writeLines(List<String> lines, OutputStream outputStream, Charset charset) throws IOException {
+    public static void writeLines(List<String> lines, OutputStream outputStream, Charset charset) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, charset))) {
             for (String line : lines) {
                 writer.write(line);
                 writer.newLine();
             }
             writer.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -269,15 +279,16 @@ public final class IOAdvice {
      * @param lines
      * @param filename
      * @param charset
-     * @throws IOException
      */
-    public static void appendLines(List<String> lines, String filename, Charset charset) throws IOException {
+    public static void appendLines(List<String> lines, String filename, Charset charset) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), charset))) {
             for (String line : lines) {
                 writer.append(line);
                 writer.newLine();
             }
             writer.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -287,15 +298,16 @@ public final class IOAdvice {
      * @param lines
      * @param outputStream
      * @param charset
-     * @throws IOException
      */
-    public static void appendLines(List<String> lines, OutputStream outputStream, Charset charset) throws IOException {
+    public static void appendLines(List<String> lines, OutputStream outputStream, Charset charset) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, charset))) {
             for (String line : lines) {
                 writer.append(line);
                 writer.newLine();
             }
             writer.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -306,9 +318,8 @@ public final class IOAdvice {
      * @param outputStream
      * @param charset
      * @param function
-     * @throws IOException
      */
-    public static void copyText(InputStream inputStream, OutputStream outputStream, Charset charset, Function<String, String> function) throws IOException {
+    public static void copyText(InputStream inputStream, OutputStream outputStream, Charset charset, Function<String, String> function) {
         Scanner scanner = new Scanner(inputStream, charset);
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, charset))) {
             while (scanner.hasNext()) {
@@ -316,6 +327,8 @@ public final class IOAdvice {
                 writer.write(line);
                 writer.newLine();
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         scanner.close();
     }
@@ -326,7 +339,6 @@ public final class IOAdvice {
      * @param inputStream
      * @param outputStream
      * @return
-     * @throws IOException
      */
     public static long copy(InputStream inputStream, OutputStream outputStream) throws IOException {
         final byte[] buffer = new byte[4096];
@@ -363,9 +375,8 @@ public final class IOAdvice {
      *
      * @param filename
      * @param charset
-     * @throws IOException
      */
-    public static void printFile(String filename, Charset charset) throws IOException {
+    public static void printFile(String filename, Charset charset) {
         readLines(filename, charset).forEach(System.out::println);
     }
 
