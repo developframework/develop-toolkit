@@ -32,6 +32,7 @@ public class HttpRequestData {
     @Setter
     private Charset charset = StandardCharsets.UTF_8;
 
+    @Setter
     private HttpRequestDataBody body;
 
     public HttpRequestData(HttpMethod httpMethod, String url) {
