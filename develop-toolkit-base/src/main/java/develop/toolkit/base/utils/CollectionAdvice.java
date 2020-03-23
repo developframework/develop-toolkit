@@ -198,7 +198,7 @@ public final class CollectionAdvice {
      * @return
      */
     public static <E, K, V> CollectionInMap<K, V> grouping(Collection<E> collection, Function<E, K> keySupplier, Function<E, V> valueSupplier) {
-        CollectionInMap<K, V> map = new CollectionInMap<>(k -> new LinkedList());
+        CollectionInMap<K, V> map = new CollectionInMap<>();
         for (E item : collection) {
             map.putItemSoft(keySupplier.apply(item), valueSupplier.apply(item));
         }

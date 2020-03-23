@@ -16,17 +16,17 @@ import java.util.function.Predicate;
 public class CollectionInMap<K, V> extends ConcurrentHashMap<K, Collection<V>> implements Serializable {
 
     private static final long serialVersionUID = 3068493190714636107L;
-	private CollectionProvider collectionProvider;
+	private CollectionProvider<K, V> collectionProvider;
 
     public CollectionInMap() {
-        this.collectionProvider = k -> new LinkedList();
+        this.collectionProvider = k -> new LinkedList<>();
     }
 
-	public CollectionInMap(@NonNull CollectionProvider collectionProvider) {
+	public CollectionInMap(@NonNull CollectionProvider<K, V> collectionProvider) {
 		this.collectionProvider = collectionProvider;
 	}
 
-	public CollectionInMap(int initialCapacity, @NonNull CollectionProvider collectionProvider) {
+	public CollectionInMap(int initialCapacity, @NonNull CollectionProvider<K, V> collectionProvider) {
 		super(initialCapacity);
 		this.collectionProvider = collectionProvider;
 	}
