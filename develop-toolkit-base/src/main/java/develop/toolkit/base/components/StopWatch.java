@@ -17,11 +17,11 @@ public final class StopWatch {
 
     private Map<String, Instant> startInstantMap = new ConcurrentHashMap<>();
 
-    private StopWatch() {
-        start(DEFAULT_NAME);
+    private StopWatch(String name) {
+        pause(name);
     }
 
-    public void start(String name) {
+    public void pause(String name) {
         startInstantMap.put(name, Instant.now());
     }
 
@@ -47,6 +47,10 @@ public final class StopWatch {
     }
 
     public static StopWatch start() {
-        return new StopWatch();
+        return new StopWatch(DEFAULT_NAME);
+    }
+
+    public static StopWatch start(String name) {
+        return new StopWatch(name);
     }
 }

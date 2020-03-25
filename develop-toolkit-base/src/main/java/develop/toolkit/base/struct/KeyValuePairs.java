@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
  */
 public class KeyValuePairs<K, V> extends LinkedList<KeyValuePair<K, V>> {
 
+    private static final long serialVersionUID = -3327179013671312416L;
+
     /**
      * 添加键值对
      *

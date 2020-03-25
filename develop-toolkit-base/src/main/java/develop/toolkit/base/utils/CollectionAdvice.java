@@ -1,5 +1,6 @@
 package develop.toolkit.base.utils;
 
+import develop.toolkit.base.components.Counter;
 import develop.toolkit.base.struct.CollectionInMap;
 import develop.toolkit.base.struct.KeyValuePairs;
 import develop.toolkit.base.struct.TwoValues;
@@ -29,7 +30,7 @@ public final class CollectionAdvice {
     public static <E> boolean contains(Collection<E> collection, Object target, Function<E, ?> function) {
         if (collection != null) {
             for (E item : collection) {
-                Object value = function == null ? item : function.apply(item);
+                Object value = function.apply(item);
                 if (target == null) {
                     return value == null;
                 } else if (target.equals(value)) {
@@ -52,11 +53,32 @@ public final class CollectionAdvice {
     public static <E> Optional<E> getFirstMatch(Collection<E> collection, Object target, Function<E, ?> function) {
         if (collection != null) {
             for (E item : collection) {
-                Object value = function == null ? item : function.apply(item);
-                if (target == null) {
-                    return value == null ? Optional.ofNullable(item) : Optional.empty();
-                } else if (target.equals(value)) {
+                final Object value = function.apply(item);
+                if (target != null) {
+                    if (target.equals(value)) {
+                        return Optional.ofNullable(item);
+                    }
+                } else if (value == null) {
                     return Optional.ofNullable(item);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * 获得第一个匹配的元素
+     *
+     * @param collection
+     * @param target
+     * @param <E>
+     * @return
+     */
+    public static <E> Optional<E> getFirstMatch(Collection<E> collection, Object target) {
+        if (collection != null && target != null) {
+            for (E item : collection) {
+                if (target.equals(item)) {
+                    return Optional.of(item);
                 }
             }
         }
@@ -114,14 +136,17 @@ public final class CollectionAdvice {
         if (collection == null) {
             return null;
         }
-        return collection.stream().filter(item -> {
-            Object value = function == null ? item : function.apply(item);
-            if (target == null) {
-                return value == null;
-            } else {
-                return target.equals(value);
-            }
-        }).collect(Collectors.toList());
+        return collection
+                .stream()
+                .filter(item -> {
+                    Object value = function == null ? item : function.apply(item);
+                    if (target == null) {
+                        return value == null;
+                    } else {
+                        return target.equals(value);
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     /**
@@ -199,9 +224,7 @@ public final class CollectionAdvice {
      */
     public static <E, K, V> CollectionInMap<K, V> grouping(Collection<E> collection, Function<E, K> keySupplier, Function<E, V> valueSupplier) {
         CollectionInMap<K, V> map = new CollectionInMap<>();
-        for (E item : collection) {
-            map.putItemSoft(keySupplier.apply(item), valueSupplier.apply(item));
-        }
+        collection.forEach(item -> map.putItemSoft(keySupplier.apply(item), valueSupplier.apply(item)));
         return map;
     }
 
@@ -214,18 +237,10 @@ public final class CollectionAdvice {
      * @param <K>
      * @return
      */
-    public static <E, K> Map<K, Integer> groupingCount(Collection<E> collection, Function<E, K> keySupplier) {
-        Map<K, Integer> map = new HashMap<>();
-        for (E item : collection) {
-            K key = keySupplier.apply(item);
-            Integer v;
-            if ((v = map.get(key)) != null) {
-                map.put(key, ++v);
-            } else {
-                map.put(key, 1);
-            }
-        }
-        return map;
+    public static <E, K> Counter<K> groupingCount(Collection<E> collection, Function<E, K> keySupplier) {
+        Counter<K> counter = new Counter<>();
+        collection.forEach(item -> counter.add(keySupplier.apply(item)));
+        return counter;
     }
 
     /**
