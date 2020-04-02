@@ -73,7 +73,7 @@ public enum Season {
      */
     public int getDayOfSeason(LocalDate day) {
         if (isDayAt(MonthDay.from(day), this)) {
-            return (int) range().getFirstValue().atYear(day.getYear()).until(day, ChronoUnit.DAYS);
+            return (int) range().getFirstValue().atYear(day.getYear()).until(day, ChronoUnit.DAYS) + 1;
         }
         return -1;
     }

@@ -370,7 +370,7 @@ public final class CollectionAdvice {
      * @param consumer
      * @param <T>
      */
-    public static <T> void pagerProcess(List<T> list, int size, Consumer<List<T>> consumer) {
+    public static <T> void pagingProcess(List<T> list, int size, Consumer<List<T>> consumer) {
         final int total = list.size();
         final int page = total % size == 0 ? (total / size) : (total / size + 1);
         for (int i = 0; i < page; i++) {
