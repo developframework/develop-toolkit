@@ -9,6 +9,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -163,7 +164,9 @@ public final class HttpAdvice {
             httpRequest = builder.method(
                     httpMethod.name(),
                     content == null ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(content, StandardCharsets.UTF_8)
-            ).build();
+            )
+                    .timeout(Duration.ofSeconds(10L))
+                    .build();
             HttpResponse<byte[]> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofByteArray());
             response = new HttpAdviceResponse(
                     httpResponse.statusCode(),

@@ -152,9 +152,7 @@ public final class DateTimeAdvice {
         if (localDate == null) {
             return null;
         }
-        LocalTime localTime = LocalTime.of(0, 0, 0, 0);
-        LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
-        return fromLocalDateTime(localDateTime);
+        return fromLocalDateTime(localDate.atTime(LocalTime.MIN));
     }
 
     /**
