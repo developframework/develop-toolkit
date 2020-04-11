@@ -5,6 +5,7 @@ import develop.toolkit.base.utils.JavaBeanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.sql.*;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -114,12 +115,12 @@ public class MysqlClient implements AutoCloseable {
         );
     }
 
-    public <T> int insertAll(String table, List<T> list, String... fields) throws SQLException {
+    public <T> int insertAll(String table, Collection<T> collection, String... fields) throws SQLException {
         String sql = new StringBuilder()
                 .append("INSERT INTO ").append(table).append("(")
-                .append(StringUtils.join(fields, ",")).append(") VALUES")
+                .append(Stream.of(fields).map(f -> "`" + f + "`").collect(Collectors.joining(","))).append(") VALUES")
                 .append(
-                        list
+                        collection
                                 .stream()
                                 .map(data ->
                                         "(" + Stream.of(fields)
