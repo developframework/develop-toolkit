@@ -228,6 +228,12 @@ public final class CollectionAdvice {
         return map;
     }
 
+    public static <K, V> CollectionInMap<K, V> grouping(Collection<V> collection, Function<V, K> keySupplier) {
+        CollectionInMap<K, V> map = new CollectionInMap<>();
+        collection.forEach(item -> map.putItemSoft(keySupplier.apply(item), item));
+        return map;
+    }
+
     /**
      * 分组求数量
      *

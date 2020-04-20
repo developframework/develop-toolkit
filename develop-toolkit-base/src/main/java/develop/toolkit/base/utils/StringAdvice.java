@@ -69,7 +69,7 @@ public final class StringAdvice {
      * @return
      */
     public static String cutHead(String string, String head) {
-        return string.startsWith(head) ? string.substring(head.length() + 1) : string;
+        return string.startsWith(head) ? string.substring(head.length()) : string;
     }
 
     /**
