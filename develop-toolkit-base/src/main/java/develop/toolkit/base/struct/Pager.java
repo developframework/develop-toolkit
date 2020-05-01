@@ -1,7 +1,7 @@
 package develop.toolkit.base.struct;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -11,7 +11,6 @@ import java.io.Serializable;
  * @author qiushui on 2018-06-07.
  * @since 0.1
  */
-@AllArgsConstructor
 public class Pager implements Serializable {
 
     private static final long serialVersionUID = -4527797845938921337L;
@@ -26,8 +25,20 @@ public class Pager implements Serializable {
 	@Getter
 	protected int size;
 
+	/* 记录总条数 */
+	@Setter
+	private long recordTotal;
+
+	/* 页总数 */
+	@Setter
+	private long pageTotal;
+
 	public Pager() {
 		this(DEFAULT_PAGE, DEFAULT_SIZE);
 	}
 
+	public Pager(int page, int size) {
+		this.page = page;
+		this.size = size;
+	}
 }

@@ -34,12 +34,23 @@ public final class StringAdvice {
         return content != null && !content.isEmpty();
     }
 
-	/**
-	 * 从index位置切断字符串
-	 * @param string
-	 * @param index
-	 * @return
-	 */
+    /**
+     * null话默认为空字符串
+     *
+     * @param content
+     * @return
+     */
+    public static String defaultEmpty(String content) {
+        return content != null ? content : "";
+    }
+
+    /**
+     * 从index位置切断字符串
+     *
+     * @param string
+     * @param index
+     * @return
+     */
     public static TwoValues<String, String> cutOff(String string, int index) {
         if (index > string.length() || index < 0) {
             return null;

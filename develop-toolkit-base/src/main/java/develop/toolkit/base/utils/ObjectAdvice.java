@@ -1,9 +1,11 @@
 package develop.toolkit.base.utils;
 
+import develop.toolkit.base.struct.KeyValuePairs;
 import lombok.NonNull;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -206,6 +208,23 @@ public final class ObjectAdvice {
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * 读取全部字段值
+     *
+     * @param instance
+     * @return
+     */
+    public static KeyValuePairs<String, Object> readAllFieldValue(Object instance) {
+        Class<?> instanceClass = instance.getClass();
+        KeyValuePairs<String, Object> keyValuePairs = new KeyValuePairs<>();
+
+        Field[] fields = instanceClass.getDeclaredFields();
+        for (Field field : fields) {
+            keyValuePairs.addKeyValue(field.getName(), get(instance, field.getName(), field.getType(), true));
+        }
+        return keyValuePairs;
     }
 
     /**

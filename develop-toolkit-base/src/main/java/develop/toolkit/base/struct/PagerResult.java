@@ -19,21 +19,15 @@ public class PagerResult<T> implements Serializable {
 	/* 数据列表 */
 	private List<T> list;
 
-	/* 记录总条数 */
-    private long recordTotal;
-
 	/* 分页信息 */
 	private Pager pager;
 
-	/* 页总数 */
-	private long pageTotal;
-
     public PagerResult(Pager pager, List<T> list, long recordTotal) {
-		this.list = list;
-        this.recordTotal = recordTotal;
-		this.pager = pager;
-        this.pageTotal = recordTotal % pager.getSize() == 0 ? recordTotal / pager.getSize() : (recordTotal / pager.getSize() + 1L);
-	}
+        this.list = list;
+        this.pager = pager;
+        this.pager.setRecordTotal(recordTotal);
+        this.pager.setPageTotal(recordTotal % pager.getSize() == 0 ? recordTotal / pager.getSize() : (recordTotal / pager.getSize() + 1L));
+    }
 
 	public PagerResult(int page, int size, List<T> list, long total) {
         this(new Pager(page, size), list, total);
