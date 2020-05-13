@@ -1,14 +1,11 @@
-package develop.toolkit.support.http;
+package develop.toolkit.base.struct;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -25,16 +22,8 @@ public class HttpAdviceResponse {
 
     private byte[] body;
 
-    public String ofString() {
+    public String bodyOfString() {
         return new String(body, StandardCharsets.UTF_8);
-    }
-
-    public <T> T parseJson(Class<T> clazz, ObjectMapper objectMapper) throws IOException {
-        return objectMapper.readValue(body, clazz);
-    }
-
-    public <T> T parseXml(Class<T> clazz, XmlMapper xmlMapper) throws IOException {
-        return xmlMapper.readValue(body, clazz);
     }
 
     public String getHeader(String header) {
@@ -49,7 +38,7 @@ public class HttpAdviceResponse {
         for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
             sb.append("        ").append(entry.getKey()).append(": ").append(StringUtils.join(entry.getValue(), ";")).append("\n");
         }
-        sb.append("    body: ").append(ofString());
+        sb.append("    body: ").append(bodyOfString());
         return sb.toString();
     }
 }

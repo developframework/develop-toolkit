@@ -5,6 +5,7 @@ module develop.toolkit.base {
     requires lombok;
     requires org.slf4j;
     requires org.apache.commons.lang3;
+    requires java.net.http;
 
     exports develop.toolkit.base.components;
     exports develop.toolkit.base.constants;

@@ -1,5 +1,6 @@
-package develop.toolkit.support.http;
+package develop.toolkit.base.utils;
 
+import develop.toolkit.base.struct.HttpAdviceResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -20,6 +21,37 @@ import java.util.stream.Collectors;
 public final class HttpAdvice {
 
     /**
+     * 通用请求
+     *
+     * @param label
+     * @param httpClient
+     * @param httpMethod
+     * @param url
+     * @param headers
+     * @param parameters
+     * @param content
+     * @return
+     * @throws IOException
+     */
+    public static HttpAdviceResponse request(
+            String label,
+            HttpClient httpClient,
+            String httpMethod,
+            String url,
+            Map<String, String> headers,
+            Map<String, Object> parameters,
+            String content
+    ) throws IOException {
+        return send(
+                label,
+                httpClient,
+                httpMethod,
+                builder(url, headers, parameters),
+                content
+        );
+    }
+
+    /**
      * GET请求
      *
      * @param httpClient
@@ -33,39 +65,39 @@ public final class HttpAdvice {
         return send(
                 label,
                 httpClient,
-                HttpMethod.GET,
+                "GET",
                 builder(url, headers, parameters),
                 null
         );
     }
 
-    public static HttpAdviceResponse post(String label, HttpClient httpClient, String url, Map<String, String> headers, Map<String, Object> parameters) throws IOException {
+    public static HttpAdviceResponse post(String label, HttpClient httpClient, String url, Map<String, String> headers, String content) throws IOException {
         return send(
                 label,
                 httpClient,
-                HttpMethod.POST,
-                builder(url, headers, parameters),
-                null
+                "POST",
+                builder(url, headers, null),
+                content
         );
     }
 
-    public static HttpAdviceResponse put(String label, HttpClient httpClient, String url, Map<String, String> headers, Map<String, Object> parameters) throws IOException {
+    public static HttpAdviceResponse put(String label, HttpClient httpClient, String url, Map<String, String> headers, String content) throws IOException {
         return send(
                 label,
                 httpClient,
-                HttpMethod.PUT,
-                builder(url, headers, parameters),
-                null
+                "PUT",
+                builder(url, headers, null),
+                content
         );
     }
 
-    public static HttpAdviceResponse delete(String label, HttpClient httpClient, String url, Map<String, String> headers, Map<String, Object> parameters) throws IOException {
+    public static HttpAdviceResponse delete(String label, HttpClient httpClient, String url, Map<String, String> headers, String content) throws IOException {
         return send(
                 label,
                 httpClient,
-                HttpMethod.DELETE,
-                builder(url, headers, parameters),
-                null
+                "DELETE",
+                builder(url, headers, null),
+                content
         );
     }
 
@@ -81,7 +113,7 @@ public final class HttpAdvice {
      * @return
      * @throws IOException
      */
-    public static HttpAdviceResponse sendFormUrlencoded(String label, HttpClient httpClient, HttpMethod httpMethod, String url, Map<String, String> headers, Map<String, Object> parameters, Map<String, String> form) throws IOException {
+    public static HttpAdviceResponse sendFormUrlencoded(String label, HttpClient httpClient, String httpMethod, String url, Map<String, String> headers, Map<String, Object> parameters, Map<String, String> form) throws IOException {
         return send(
                 label,
                 httpClient,
@@ -107,7 +139,7 @@ public final class HttpAdvice {
      * @return
      * @throws IOException
      */
-    public static HttpAdviceResponse sendJson(String label, HttpClient httpClient, HttpMethod httpMethod, String url, Map<String, String> headers, Map<String, Object> parameters, String json) throws IOException {
+    public static HttpAdviceResponse sendJson(String label, HttpClient httpClient, String httpMethod, String url, Map<String, String> headers, Map<String, Object> parameters, String json) throws IOException {
         return send(
                 label,
                 httpClient,
@@ -129,7 +161,7 @@ public final class HttpAdvice {
      * @return
      * @throws IOException
      */
-    public static HttpAdviceResponse sendXml(String label, HttpClient httpClient, HttpMethod httpMethod, String url, Map<String, String> headers, Map<String, Object> parameters, String xml) throws IOException {
+    public static HttpAdviceResponse sendXml(String label, HttpClient httpClient, String httpMethod, String url, Map<String, String> headers, Map<String, Object> parameters, String xml) throws IOException {
         return send(
                 label,
                 httpClient,
@@ -157,12 +189,12 @@ public final class HttpAdvice {
         return builder;
     }
 
-    private static HttpAdviceResponse send(String label, HttpClient httpClient, HttpMethod httpMethod, HttpRequest.Builder builder, String content) throws IOException {
+    private static HttpAdviceResponse send(String label, HttpClient httpClient, String httpMethod, HttpRequest.Builder builder, String content) throws IOException {
         HttpAdviceResponse response = null;
         HttpRequest httpRequest = null;
         try {
             httpRequest = builder.method(
-                    httpMethod.name(),
+                    httpMethod,
                     content == null ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(content, StandardCharsets.UTF_8)
             )
                     .timeout(Duration.ofSeconds(10L))
