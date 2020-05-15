@@ -2,10 +2,9 @@ package develop.toolkit.base.struct;
 
 import lombok.NonNull;
 
-import java.io.Serializable;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
 /**
@@ -13,14 +12,14 @@ import java.util.function.Predicate;
  *
  * @author qiushui on 2018-07-09.
  */
-public class CollectionInMap<K, V> extends ConcurrentHashMap<K, Collection<V>> implements Serializable {
+public class CollectionInMap<K, V> extends LinkedHashMap<K, Collection<V>> {
 
-    private static final long serialVersionUID = 3068493190714636107L;
+	private static final long serialVersionUID = 3068493190714636107L;
 	private CollectionProvider<K, V> collectionProvider;
 
-    public CollectionInMap() {
-        this.collectionProvider = k -> new LinkedList<>();
-    }
+	public CollectionInMap() {
+		this.collectionProvider = k -> new LinkedList<>();
+	}
 
 	public CollectionInMap(@NonNull CollectionProvider<K, V> collectionProvider) {
 		this.collectionProvider = collectionProvider;

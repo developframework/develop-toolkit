@@ -284,6 +284,20 @@ public final class CollectionAdvice {
     }
 
     /**
+     * 补集
+     *
+     * @param master
+     * @param other
+     * @param <E>
+     * @return
+     */
+    public static <E> Set<E> complementary(Collection<E> master, Collection<E> other) {
+        Set<E> set = new HashSet<>(master);
+        set.removeIf(other::contains);
+        return set;
+    }
+
+    /**
      * 关联
      * 将集合target按条件与集合master配对
      *
