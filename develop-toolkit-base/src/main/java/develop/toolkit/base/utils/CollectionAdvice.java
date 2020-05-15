@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -295,6 +296,23 @@ public final class CollectionAdvice {
         Set<E> set = new HashSet<>(master);
         set.removeIf(other::contains);
         return set;
+    }
+
+    /**
+     * 合并多集合
+     *
+     * @param supplier
+     * @param collections
+     * @param <E>
+     * @return
+     */
+    @SafeVarargs
+    public static <E> Collection<E> merge(Supplier<Collection<E>> supplier, Collection<E>... collections) {
+        Collection<E> collection = supplier.get();
+        for (Collection<E> coll : collections) {
+            collection.addAll(coll);
+        }
+        return collection;
     }
 
     /**
