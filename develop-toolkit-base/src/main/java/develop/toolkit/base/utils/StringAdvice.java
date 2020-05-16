@@ -35,13 +35,24 @@ public final class StringAdvice {
     }
 
     /**
-     * null话默认为空字符串
+     * null的话默认为空字符串
      *
      * @param content
      * @return
      */
     public static String defaultEmpty(String content) {
         return content != null ? content : "";
+    }
+
+    /**
+     * 空字符串的话默认为默认值
+     *
+     * @param content
+     * @param defaultValue
+     * @return
+     */
+    public static String emptyOr(String content, String defaultValue) {
+        return isEmpty(content) ? defaultValue : content;
     }
 
     /**

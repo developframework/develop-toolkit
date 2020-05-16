@@ -6,10 +6,7 @@ import develop.toolkit.base.struct.KeyValuePairs;
 import develop.toolkit.base.struct.TwoValues;
 
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Collectors;
 
 /**
@@ -21,12 +18,6 @@ public final class CollectionAdvice {
 
     /**
      * 检查元素
-     *
-     * @param collection
-     * @param target
-     * @param function
-     * @param <E>
-     * @return
      */
     public static <E> boolean contains(Collection<E> collection, Object target, Function<E, ?> function) {
         if (collection != null) {
@@ -44,12 +35,6 @@ public final class CollectionAdvice {
 
     /**
      * 获得第一个匹配的元素
-     *
-     * @param collection
-     * @param target
-     * @param function
-     * @param <E>
-     * @return
      */
     public static <E> Optional<E> getFirstMatch(Collection<E> collection, Object target, Function<E, ?> function) {
         if (collection != null) {
@@ -69,11 +54,6 @@ public final class CollectionAdvice {
 
     /**
      * 获得第一个匹配的元素
-     *
-     * @param collection
-     * @param target
-     * @param <E>
-     * @return
      */
     public static <E> Optional<E> getFirstMatch(Collection<E> collection, Object target) {
         if (collection != null && target != null) {
@@ -88,11 +68,6 @@ public final class CollectionAdvice {
 
     /**
      * 获得第一个判断是true的元素
-     *
-     * @param collection
-     * @param predicate
-     * @param <E>
-     * @return
      */
     public static <E> Optional<E> getFirstTrue(Collection<E> collection, Predicate<E> predicate) {
         if (collection != null) {
@@ -107,11 +82,6 @@ public final class CollectionAdvice {
 
     /**
      * 获得第一个判断是false的元素
-     *
-     * @param collection
-     * @param predicate
-     * @param <E>
-     * @return
      */
     public static <E> Optional<E> getFirstFalse(Collection<E> collection, Predicate<E> predicate) {
         if (collection != null) {
@@ -126,12 +96,6 @@ public final class CollectionAdvice {
 
     /**
      * 获得全部匹配的元素
-     *
-     * @param collection
-     * @param target
-     * @param function
-     * @param <E>
-     * @return
      */
     public static <E> List<E> getAllMatch(Collection<E> collection, Object target, Function<E, ?> function) {
         if (collection == null) {
@@ -152,11 +116,6 @@ public final class CollectionAdvice {
 
     /**
      * 全部匹配
-     *
-     * @param collection
-     * @param predicate
-     * @param <E>
-     * @return
      */
     public static <E> boolean allMatch(Collection<E> collection, Predicate<E> predicate) {
         if (predicate == null || collection == null) {
@@ -172,11 +131,6 @@ public final class CollectionAdvice {
 
     /**
      * 任意一个匹配
-     *
-     * @param collection
-     * @param predicate
-     * @param <E>
-     * @return
      */
     public static <E> boolean anyMatch(Collection<E> collection, Predicate<E> predicate) {
         if (collection != null && predicate != null) {
@@ -191,11 +145,6 @@ public final class CollectionAdvice {
 
     /**
      * 判断所有元素的处理值相等
-     *
-     * @param collection
-     * @param function
-     * @param <E>
-     * @return
      */
     public static <E> boolean allAccept(Collection<E> collection, Function<E, ?> function) {
         if (collection == null || collection.isEmpty()) {
@@ -214,14 +163,6 @@ public final class CollectionAdvice {
 
     /**
      * 分组
-     *
-     * @param collection
-     * @param keySupplier
-     * @param valueSupplier
-     * @param <E>
-     * @param <K>
-     * @param <V>
-     * @return
      */
     public static <E, K, V> CollectionInMap<K, V> grouping(Collection<E> collection, Function<E, K> keySupplier, Function<E, V> valueSupplier) {
         CollectionInMap<K, V> map = new CollectionInMap<>();
@@ -235,14 +176,14 @@ public final class CollectionAdvice {
         return map;
     }
 
+    public static <K, V> Map<K, V> groupingUniqueKey(Collection<V> collection, Function<V, K> keySupplier) {
+        Map<K, V> map = new HashMap<>();
+        collection.forEach(item -> map.put(keySupplier.apply(item), item));
+        return map;
+    }
+
     /**
      * 分组求数量
-     *
-     * @param collection
-     * @param keySupplier
-     * @param <E>
-     * @param <K>
-     * @return
      */
     public static <E, K> Counter<K> groupingCount(Collection<E> collection, Function<E, K> keySupplier) {
         Counter<K> counter = new Counter<>();
@@ -252,11 +193,6 @@ public final class CollectionAdvice {
 
     /**
      * 并集
-     *
-     * @param master
-     * @param other
-     * @param <E>
-     * @return
      */
     @SafeVarargs
     public static <E> Set<E> union(Collection<E> master, Collection<E>... other) {
@@ -269,11 +205,6 @@ public final class CollectionAdvice {
 
     /**
      * 交集
-     *
-     * @param master
-     * @param other
-     * @param <E>
-     * @return
      */
     @SafeVarargs
     public static <E> Set<E> intersection(Collection<E> master, Collection<E>... other) {
@@ -286,11 +217,6 @@ public final class CollectionAdvice {
 
     /**
      * 补集
-     *
-     * @param master
-     * @param other
-     * @param <E>
-     * @return
      */
     public static <E> Set<E> complementary(Collection<E> master, Collection<E> other) {
         Set<E> set = new HashSet<>(master);
@@ -300,11 +226,6 @@ public final class CollectionAdvice {
 
     /**
      * 合并多集合
-     *
-     * @param supplier
-     * @param collections
-     * @param <E>
-     * @return
      */
     @SafeVarargs
     public static <E> Collection<E> merge(Supplier<Collection<E>> supplier, Collection<E>... collections) {
@@ -318,15 +239,8 @@ public final class CollectionAdvice {
     /**
      * 关联
      * 将集合target按条件与集合master配对
-     *
-     * @param master
-     * @param target
-     * @param predicate
-     * @param <E>
-     * @param <T>
-     * @return
      */
-    public static <E, T> CollectionInMap<E, T> associate(Collection<E> master, Collection<T> target, AssociatePredicate<E, T> predicate) {
+    public static <E, T> CollectionInMap<E, T> associate(Collection<E> master, Collection<T> target, BiPredicate<E, T> predicate) {
         CollectionInMap<E, T> map = new CollectionInMap<>();
         for (E e : master) {
             for (T t : target) {
@@ -341,15 +255,8 @@ public final class CollectionAdvice {
     /**
      * 关联 （明确是单个的）
      * 将集合target按条件与集合master配对
-     *
-     * @param master
-     * @param target
-     * @param predicate
-     * @param <E>
-     * @param <T>
-     * @return
      */
-    public static <E, T> KeyValuePairs<E, T> associateOne(Collection<E> master, Collection<T> target, AssociatePredicate<E, T> predicate) {
+    public static <E, T> KeyValuePairs<E, T> associateOne(Collection<E> master, Collection<T> target, BiPredicate<E, T> predicate) {
         final KeyValuePairs<E, T> keyValuePairs = new KeyValuePairs<>();
         for (E e : master) {
             final T matchT = getFirstTrue(target, t -> predicate.test(e, t)).orElse(null);
@@ -361,11 +268,6 @@ public final class CollectionAdvice {
     /**
      * 划分
      * 按条件把集合拆分成满足条件和不满足条件的两个集合
-     *
-     * @param collection
-     * @param predicate
-     * @param <E>
-     * @return
      */
     public static <E> TwoValues<List<E>, List<E>> partition(Collection<E> collection, Predicate<E> predicate) {
         List<E> match = new LinkedList<>();
@@ -383,11 +285,6 @@ public final class CollectionAdvice {
     /**
      * 压缩
      * 将两个集合的元素按索引捆绑到一起
-     *
-     * @param master
-     * @param other
-     * @param <E>
-     * @return
      */
     public static <E> List<TwoValues<E, E>> zip(List<E> master, List<E> other) {
         if (master.size() != other.size()) {
@@ -402,11 +299,6 @@ public final class CollectionAdvice {
 
     /**
      * 分页处理
-     *
-     * @param list
-     * @param size
-     * @param consumer
-     * @param <T>
      */
     public static <T> void pagingProcess(List<T> list, int size, Consumer<List<T>> consumer) {
         final int total = list.size();
@@ -417,9 +309,5 @@ public final class CollectionAdvice {
             List<T> subList = list.subList(fromIndex, toIndex);
             consumer.accept(subList);
         }
-    }
-
-    public interface AssociatePredicate<E, T> {
-        boolean test(E master, T target);
     }
 }

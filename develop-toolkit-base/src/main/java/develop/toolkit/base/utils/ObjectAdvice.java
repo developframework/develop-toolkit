@@ -2,11 +2,11 @@ package develop.toolkit.base.utils;
 
 import develop.toolkit.base.struct.KeyValuePairs;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * 实例对象处理增强工具
@@ -21,7 +21,6 @@ public final class ObjectAdvice {
      * @param clazz
      * @return
      */
-    @SuppressWarnings("unchecked")
     public static boolean isPrimitiveType(Class<?> clazz) {
         return valueIn(clazz,
                 int.class, Integer.class,
@@ -167,20 +166,17 @@ public final class ObjectAdvice {
      * @param value
      * @param firstUseSetterMethod 优先使用setter方法
      */
+    @SneakyThrows
     public static void set(Object instance, String field, Object value, boolean firstUseSetterMethod) {
-        try {
-            if (firstUseSetterMethod) {
-                try {
-                    final String setterMethodName = JavaBeanUtils.getSetterMethodName(field);
-                    MethodUtils.invokeMethod(instance, true, setterMethodName);
-                } catch (NoSuchMethodException e) {
-                    FieldUtils.writeDeclaredField(instance, field, value, true);
-                }
-            } else {
+        if (firstUseSetterMethod) {
+            try {
+                final String setterMethodName = JavaBeanUtils.getSetterMethodName(field);
+                MethodUtils.invokeMethod(instance, true, setterMethodName);
+            } catch (NoSuchMethodException e) {
                 FieldUtils.writeDeclaredField(instance, field, value, true);
             }
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
+        } else {
+            FieldUtils.writeDeclaredField(instance, field, value, true);
         }
     }
 
@@ -193,20 +189,17 @@ public final class ObjectAdvice {
      * @param firstUseGetterMethod 优先使用getter方法
      * @return
      */
+    @SneakyThrows
     public static Object get(Object instance, String field, Class<?> fieldType, boolean firstUseGetterMethod) {
-        try {
-            if (firstUseGetterMethod) {
-                try {
-                    final String getterMethodName = JavaBeanUtils.getGetterMethodName(field, fieldType);
-                    return MethodUtils.invokeMethod(instance, true, getterMethodName);
-                } catch (NoSuchMethodException e) {
-                    return FieldUtils.readDeclaredField(instance, field, true);
-                }
-            } else {
+        if (firstUseGetterMethod) {
+            try {
+                final String getterMethodName = JavaBeanUtils.getGetterMethodName(field, fieldType);
+                return MethodUtils.invokeMethod(instance, true, getterMethodName);
+            } catch (NoSuchMethodException e) {
                 return FieldUtils.readDeclaredField(instance, field, true);
             }
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
+        } else {
+            return FieldUtils.readDeclaredField(instance, field, true);
         }
     }
 
@@ -234,12 +227,9 @@ public final class ObjectAdvice {
      * @param <T>
      * @return
      */
+    @SneakyThrows
     public static <T> T newInstanceQuietly(Class<T> clazz) {
-        try {
-            return clazz.getConstructor().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return clazz.getConstructor().newInstance();
     }
 
     /**

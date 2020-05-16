@@ -24,12 +24,9 @@ public final class IOAdvice {
      * @return
      */
     public static byte[] toByteArray(InputStream inputStream) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (inputStream) {
+        try (inputStream; ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             inputStream.transferTo(baos);
-            byte[] data = baos.toByteArray();
-            baos.close();
-            return data;
+            return baos.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -359,15 +356,17 @@ public final class IOAdvice {
      * @return
      */
     public static long copyQuietly(File source, File target) {
-        target.getParentFile().mkdirs();
-        try (
-                InputStream inputStream = new FileInputStream(source);
-                OutputStream outputStream = new FileOutputStream(target)
-        ) {
-            return copy(inputStream, outputStream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (target.getParentFile().mkdirs()) {
+            try (
+                    InputStream inputStream = new FileInputStream(source);
+                    OutputStream outputStream = new FileOutputStream(target)
+            ) {
+                return copy(inputStream, outputStream);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
+        return -1;
     }
 
     /**

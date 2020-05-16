@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * Map里有集合结构
@@ -15,32 +16,33 @@ import java.util.function.Predicate;
 public class CollectionInMap<K, V> extends LinkedHashMap<K, Collection<V>> {
 
 	private static final long serialVersionUID = 3068493190714636107L;
-	private CollectionProvider<K, V> collectionProvider;
+	private final Supplier<Collection<V>> supplier;
 
 	public CollectionInMap() {
-		this.collectionProvider = k -> new LinkedList<>();
+		this.supplier = LinkedList::new;
 	}
 
-	public CollectionInMap(@NonNull CollectionProvider<K, V> collectionProvider) {
-		this.collectionProvider = collectionProvider;
+	public CollectionInMap(Supplier<Collection<V>> supplier) {
+		this.supplier = supplier;
 	}
 
-	public CollectionInMap(int initialCapacity, @NonNull CollectionProvider<K, V> collectionProvider) {
+	public CollectionInMap(int initialCapacity, Supplier<Collection<V>> supplier) {
 		super(initialCapacity);
-		this.collectionProvider = collectionProvider;
+		this.supplier = supplier;
 	}
 
 	/**
 	 * 追加元素
-	 * @param key map key
+	 *
+	 * @param key  map key
 	 * @param item 新元素
 	 */
-    public void putItem(K key, V item) {
+	public void putItem(K key, V item) {
         if (containsKey(key)) {
 			Collection<V> collection = get(key);
 			collection.add(item);
 		} else {
-			throw new IllegalStateException("key \"" + "\" is not exist.");
+			throw new IllegalStateException("key \"" + key + "\" is not exist.");
 		}
 	}
 
@@ -54,7 +56,7 @@ public class CollectionInMap<K, V> extends LinkedHashMap<K, Collection<V>> {
 			Collection<V> collection = get(key);
 			collection.addAll(items);
 		} else {
-			throw new IllegalStateException("key \"" + "\" is not exist.");
+			throw new IllegalStateException("key \"" + key + "\" is not exist.");
 		}
 	}
 
@@ -63,13 +65,12 @@ public class CollectionInMap<K, V> extends LinkedHashMap<K, Collection<V>> {
 	 * @param key map key
 	 * @param item 新元素
 	 */
-    @SuppressWarnings("unchecked")
     public void putItemSoft(K key, V item) {
         if (containsKey(key)) {
 			Collection<V> collection = get(key);
 			collection.add(item);
 		} else {
-			Collection<V> collection = collectionProvider.provide(key);
+			Collection<V> collection = supplier.get();
 			collection.add(item);
 			put(key, collection);
 		}
@@ -80,13 +81,12 @@ public class CollectionInMap<K, V> extends LinkedHashMap<K, Collection<V>> {
 	 * @param key map key
 	 * @param items 新元素
 	 */
-    @SuppressWarnings("unchecked")
     public void putAllItemSoft(K key, @NonNull Collection<V> items) {
         if (containsKey(key)) {
 			Collection<V> collection = get(key);
 			collection.addAll(items);
 		} else {
-			Collection<V> collection = collectionProvider.provide(key);
+			Collection<V> collection = supplier.get();
 			collection.addAll(items);
 			put(key, collection);
 		}
@@ -118,15 +118,5 @@ public class CollectionInMap<K, V> extends LinkedHashMap<K, Collection<V>> {
 		} else {
 			throw new IllegalStateException("key \"" + key + "\" is not exist.");
 		}
-	}
-
-	/**
-	 * 集合提供器
-	 * @param <V>
-	 */
-	@FunctionalInterface
-	public interface CollectionProvider<K, V> {
-
-		Collection<V> provide(K key);
 	}
 }
