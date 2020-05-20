@@ -31,6 +31,7 @@ public class MysqlProperties {
         this.password = password;
         this.database = database;
         parameters.put("useSSL", "false");
+        parameters.put("serverTimezone", "Asia/Shanghai");
     }
 
     public String getUrl() {
