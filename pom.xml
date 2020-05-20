@@ -13,9 +13,8 @@
 
     <modules>
         <module>develop-toolkit-base</module>
-        <module>develop-toolkit-support</module>
+        <module>develop-toolkit-db</module>
         <module>develop-toolkit-world</module>
-        <module>develop-toolkit-http</module>
     </modules>
 
     <properties>
@@ -33,12 +32,7 @@
             </dependency>
             <dependency>
                 <groupId>com.github.developframework</groupId>
-                <artifactId>develop-toolkit-support</artifactId>
-                <version>1.0.2-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.developframework</groupId>
-                <artifactId>develop-toolkit-http</artifactId>
+                <artifactId>develop-toolkit-db</artifactId>
                 <version>1.0.2-SNAPSHOT</version>
             </dependency>
             <dependency>

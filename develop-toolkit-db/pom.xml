@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.github.developframework</groupId>
+        <artifactId>develop-toolkit</artifactId>
+        <version>1.0.2-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>develop-toolkit-db</artifactId>
+    <description>开发工具箱 - 数据库服务</description>
+
+    <properties>
+        <version.mongo-java-driver>3.10.1</version.mongo-java-driver>
+        <version.mysql-connector-java>8.0.15</version.mysql-connector-java>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.developframework</groupId>
+            <artifactId>develop-toolkit-base</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>${version.mongo-java-driver}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${version.mysql-connector-java}</version>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+</project>
