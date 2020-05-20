@@ -22,6 +22,8 @@ public class HttpAdviceResponse {
 
     private byte[] body;
 
+    private long costTime;
+
     public String bodyOfString() {
         return new String(body, StandardCharsets.UTF_8);
     }

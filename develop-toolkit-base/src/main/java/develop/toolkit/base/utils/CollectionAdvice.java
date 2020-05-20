@@ -8,6 +8,7 @@ import develop.toolkit.base.struct.TwoValues;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 集合增强工具
@@ -309,5 +310,23 @@ public final class CollectionAdvice {
             List<T> subList = list.subList(fromIndex, toIndex);
             consumer.accept(subList);
         }
+    }
+
+    /**
+     * 指定排序
+     * 把master的元素值按sortTarget的元素值排序，条件按predicate
+     */
+    public static <T, S> List<T> sort(Collection<T> master, Collection<S> sortTarget, BiPredicate<T, S> predicate) {
+        return sortTarget
+                .stream()
+                .map(s -> CollectionAdvice.getFirstTrue(master, c -> predicate.test(c, s)).orElse(null))
+                .collect(Collectors.toList());
+    }
+
+    public static <T, S> List<T> sort(Collection<T> master, S[] sortTarget, BiPredicate<T, S> predicate) {
+        return Stream
+                .of(sortTarget)
+                .map(s -> CollectionAdvice.getFirstTrue(master, c -> predicate.test(c, s)).orElse(null))
+                .collect(Collectors.toList());
     }
 }
