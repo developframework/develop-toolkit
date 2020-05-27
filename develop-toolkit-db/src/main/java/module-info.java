@@ -9,6 +9,7 @@ module develop.toolkit.db {
     requires lombok;
     requires mysql.connector.java;
     requires org.apache.commons.lang3;
+    requires mongo.java.driver;
 
     exports develop.toolkit.db;
     exports develop.toolkit.db.mysql;

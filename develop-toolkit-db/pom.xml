@@ -11,8 +11,8 @@
     <description>开发工具箱 - 数据库服务</description>
 
     <properties>
-        <version.mongo-java-driver>3.10.1</version.mongo-java-driver>
-        <version.mysql-connector-java>8.0.15</version.mysql-connector-java>
+        <version.mongo-java-driver>3.12.4</version.mongo-java-driver>
+        <version.mysql-connector-java>8.0.20</version.mysql-connector-java>
     </properties>
 
     <dependencies>

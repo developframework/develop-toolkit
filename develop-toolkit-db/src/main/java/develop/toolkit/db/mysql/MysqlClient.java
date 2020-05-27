@@ -2,6 +2,7 @@ package develop.toolkit.db.mysql;
 
 import com.github.developframework.expression.ExpressionUtils;
 import develop.toolkit.base.utils.JavaBeanUtils;
+import develop.toolkit.base.utils.K;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -11,6 +12,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * Mysql客户端
+ *
  * @author qiushui on 2019-09-03.
  */
 public class MysqlClient implements AutoCloseable {
@@ -41,15 +44,7 @@ public class MysqlClient implements AutoCloseable {
      * @throws SQLException
      */
     public <T> List<T> query(String sql, RowMapper<T> rowMapper) throws SQLException {
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(sql);
-        List<T> list = new LinkedList<>();
-        while (resultSet.next()) {
-            list.add(rowMapper.mapping(resultSet));
-        }
-        resultSet.close();
-        statement.close();
-        return Collections.unmodifiableList(list);
+        return query(sql, null, rowMapper);
     }
 
     /**
@@ -63,16 +58,18 @@ public class MysqlClient implements AutoCloseable {
      * @throws SQLException
      */
     public <T> List<T> query(String sql, PreparedStatementSetter setter, RowMapper<T> rowMapper) throws SQLException {
-        PreparedStatement statement = connection.prepareStatement(sql);
-        setter.set(statement);
-        ResultSet resultSet = statement.executeQuery();
-        List<T> list = new LinkedList<>();
-        while (resultSet.next()) {
-            list.add(rowMapper.mapping(resultSet));
+        final PreparedStatement statement = connection.prepareStatement(sql);
+        if (setter != null) {
+            setter.set(statement);
         }
-        resultSet.close();
-        statement.close();
-        return Collections.unmodifiableList(list);
+        final ResultSet resultSet = statement.executeQuery();
+        try (statement; resultSet) {
+            List<T> list = new LinkedList<>();
+            while (resultSet.next()) {
+                list.add(rowMapper.mapping(resultSet));
+            }
+            return Collections.unmodifiableList(list);
+        }
     }
 
     /**
@@ -117,26 +114,28 @@ public class MysqlClient implements AutoCloseable {
     public <T> int insertAll(String table, Collection<T> collection, String... fields) throws SQLException {
         String sql = new StringBuilder()
                 .append("INSERT INTO ").append(table).append("(")
-                .append(Stream.of(fields).map(f -> "`" + f + "`").collect(Collectors.joining(","))).append(") VALUES")
+                .append(Stream.of(fields).map(f -> String.format("`%s`", f)).collect(Collectors.joining(",")))
+                .append(") VALUES")
                 .append(
                         collection
                                 .stream()
                                 .map(data ->
-                                        "(" + Stream.of(fields)
+                                        Stream.of(fields)
                                                 .map(field -> {
-                                                    Object object = ExpressionUtils.getValue(data, JavaBeanUtils.underlineToCamelcase(field));
-                                                    String value = object != null ? object.toString() : null;
+                                                    String value = K.map(
+                                                            ExpressionUtils.getValue(data, JavaBeanUtils.underlineToCamelcase(field)),
+                                                            Object::toString
+                                                    );
                                                     return StringUtils.isNumeric(value) ? value : ("'" + value + "'");
                                                 })
-                                                .collect(Collectors.joining(",")) + ")"
+                                                .collect(Collectors.joining(",", "(", ")"))
                                 )
                                 .collect(Collectors.joining(","))
                 )
                 .toString();
-        Statement statement = connection.createStatement();
-        int count = statement.executeUpdate(sql);
-        statement.close();
-        return count;
+        try (Statement statement = connection.createStatement()) {
+            return statement.executeUpdate(sql);
+        }
     }
 
     /**
@@ -162,9 +161,12 @@ public class MysqlClient implements AutoCloseable {
      * @throws SQLException
      */
     public int executeUpdate(String sql, PreparedStatementSetter setter) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(sql);
-        setter.set(preparedStatement);
-        return preparedStatement.executeUpdate();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            if (setter != null) {
+                setter.set(preparedStatement);
+            }
+            return preparedStatement.executeUpdate();
+        }
     }
 
     /**
@@ -175,8 +177,7 @@ public class MysqlClient implements AutoCloseable {
      * @throws SQLException
      */
     public int executeUpdate(String sql) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(sql);
-        return preparedStatement.executeUpdate();
+        return executeUpdate(sql, null);
     }
 
     @Override
