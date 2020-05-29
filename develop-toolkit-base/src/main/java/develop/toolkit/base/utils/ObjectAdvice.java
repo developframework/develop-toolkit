@@ -1,12 +1,13 @@
 package develop.toolkit.base.utils;
 
-import develop.toolkit.base.struct.KeyValuePairs;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 实例对象处理增强工具
@@ -163,20 +164,40 @@ public final class ObjectAdvice {
      *
      * @param instance
      * @param field
-     * @param value
      * @param firstUseSetterMethod 优先使用setter方法
      */
     @SneakyThrows
-    public static void set(Object instance, String field, Object value, boolean firstUseSetterMethod) {
+    public static void set(Object instance, Field field, boolean firstUseSetterMethod) {
         if (firstUseSetterMethod) {
             try {
-                final String setterMethodName = JavaBeanUtils.getSetterMethodName(field);
+                final String setterMethodName = JavaBeanUtils.getSetterMethodName(field.getName());
                 MethodUtils.invokeMethod(instance, true, setterMethodName);
             } catch (NoSuchMethodException e) {
-                FieldUtils.writeDeclaredField(instance, field, value, true);
+                FieldUtils.writeField(field, instance, true);
             }
         } else {
-            FieldUtils.writeDeclaredField(instance, field, value, true);
+            FieldUtils.writeField(field, instance, true);
+        }
+    }
+
+    /**
+     * 反射设置值
+     *
+     * @param instance
+     * @param fieldName
+     * @param firstUseSetterMethod 优先使用setter方法
+     */
+    @SneakyThrows
+    public static void set(Object instance, String fieldName, boolean firstUseSetterMethod) {
+        if (firstUseSetterMethod) {
+            try {
+                final String setterMethodName = JavaBeanUtils.getSetterMethodName(fieldName);
+                MethodUtils.invokeMethod(instance, true, setterMethodName);
+            } catch (NoSuchMethodException e) {
+                FieldUtils.writeDeclaredField(instance, fieldName, true);
+            }
+        } else {
+            FieldUtils.writeDeclaredField(instance, fieldName, true);
         }
     }
 
@@ -185,21 +206,43 @@ public final class ObjectAdvice {
      *
      * @param instance
      * @param field
-     * @param fieldType
      * @param firstUseGetterMethod 优先使用getter方法
      * @return
      */
     @SneakyThrows
-    public static Object get(Object instance, String field, Class<?> fieldType, boolean firstUseGetterMethod) {
+    public static Object get(Object instance, Field field, boolean firstUseGetterMethod) {
         if (firstUseGetterMethod) {
             try {
-                final String getterMethodName = JavaBeanUtils.getGetterMethodName(field, fieldType);
+                final String getterMethodName = JavaBeanUtils.getGetterMethodName(field.getName(), field.getType());
                 return MethodUtils.invokeMethod(instance, true, getterMethodName);
             } catch (NoSuchMethodException e) {
-                return FieldUtils.readDeclaredField(instance, field, true);
+                return FieldUtils.readDeclaredField(instance, field.getName(), true);
             }
         } else {
-            return FieldUtils.readDeclaredField(instance, field, true);
+            return FieldUtils.readDeclaredField(instance, field.getName(), true);
+        }
+    }
+
+    /**
+     * 反射获取值
+     *
+     * @param instance
+     * @param fieldName
+     * @param firstUseGetterMethod 优先使用getter方法
+     * @return
+     */
+    @SneakyThrows
+    public static Object get(Object instance, String fieldName, boolean firstUseGetterMethod) {
+        if (firstUseGetterMethod) {
+            try {
+                Field field = instance.getClass().getField(fieldName);
+                final String getterMethodName = JavaBeanUtils.getGetterMethodName(fieldName, field.getType());
+                return MethodUtils.invokeMethod(instance, true, getterMethodName);
+            } catch (NoSuchMethodException e) {
+                return FieldUtils.readDeclaredField(instance, fieldName, true);
+            }
+        } else {
+            return FieldUtils.readDeclaredField(instance, fieldName, true);
         }
     }
 
@@ -209,15 +252,14 @@ public final class ObjectAdvice {
      * @param instance
      * @return
      */
-    public static KeyValuePairs<String, Object> readAllFieldValue(Object instance) {
+    public static Map<Field, Object> readAllFieldValue(Object instance) {
         Class<?> instanceClass = instance.getClass();
-        KeyValuePairs<String, Object> keyValuePairs = new KeyValuePairs<>();
-
+        Map<Field, Object> map = new HashMap<>();
         Field[] fields = instanceClass.getDeclaredFields();
         for (Field field : fields) {
-            keyValuePairs.addKeyValue(field.getName(), get(instance, field.getName(), field.getType(), true));
+            map.put(field, get(instance, field, true));
         }
-        return keyValuePairs;
+        return map;
     }
 
     /**
