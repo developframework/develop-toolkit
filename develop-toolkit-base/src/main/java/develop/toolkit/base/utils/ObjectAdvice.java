@@ -17,113 +17,6 @@ import java.util.Map;
 public final class ObjectAdvice {
 
     /**
-     * 是否基本类型
-     *
-     * @param clazz
-     * @return
-     */
-    public static boolean isPrimitiveType(Class<?> clazz) {
-        return valueIn(clazz,
-                int.class, Integer.class,
-                long.class, Long.class,
-                float.class, Float.class,
-                double.class, Double.class,
-                boolean.class, Boolean.class,
-                char.class, Character.class,
-                short.class, Short.class,
-                byte.class, Byte.class
-        );
-    }
-
-    /**
-     * 是否是字节
-     *
-     * @param obj
-     * @return
-     */
-    public static boolean isByte(Object obj) {
-        var clazz = obj.getClass();
-        return clazz == byte.class || clazz == Byte.class;
-    }
-
-    /**
-     * 是否是短整型
-     *
-     * @param obj
-     * @return
-     */
-    public static boolean isShort(Object obj) {
-        var clazz = obj.getClass();
-        return clazz == short.class || clazz == Short.class;
-    }
-
-    /**
-     * 是否是整型
-     *
-     * @param obj
-     * @return
-     */
-    public static boolean isInt(Object obj) {
-        var clazz = obj.getClass();
-        return clazz == int.class || clazz == Integer.class;
-    }
-
-    /**
-     * 是否是长整型
-     *
-     * @param obj
-     * @return
-     */
-    public static boolean isLong(Object obj) {
-        var clazz = obj.getClass();
-        return clazz == long.class || clazz == Long.class;
-    }
-
-    /**
-     * 是否是单精度浮点型
-     *
-     * @param obj
-     * @return
-     */
-    public static boolean isFloat(Object obj) {
-        var clazz = obj.getClass();
-        return clazz == float.class || clazz == Float.class;
-    }
-
-    /**
-     * 是否是双精度浮点型
-     *
-     * @param obj
-     * @return
-     */
-    public static boolean isDouble(Object obj) {
-        var clazz = obj.getClass();
-        return clazz == double.class || clazz == Double.class;
-    }
-
-    /**
-     * 是否是字符型
-     *
-     * @param obj
-     * @return
-     */
-    public static boolean isChar(Object obj) {
-        var clazz = obj.getClass();
-        return clazz == char.class || clazz == Character.class;
-    }
-
-    /**
-     * 是否是布尔型
-     *
-     * @param obj
-     * @return
-     */
-    public static boolean isBoolean(Object obj) {
-        var clazz = obj.getClass();
-        return clazz == boolean.class || clazz == Boolean.class;
-    }
-
-    /**
      * 值是否在数组里
      *
      * @param obj
@@ -194,10 +87,10 @@ public final class ObjectAdvice {
                 final String setterMethodName = JavaBeanUtils.getSetterMethodName(fieldName);
                 MethodUtils.invokeMethod(instance, true, setterMethodName);
             } catch (NoSuchMethodException e) {
-                FieldUtils.writeDeclaredField(instance, fieldName, true);
+                FieldUtils.writeField(instance, fieldName, true);
             }
         } else {
-            FieldUtils.writeDeclaredField(instance, fieldName, true);
+            FieldUtils.writeField(instance, fieldName, true);
         }
     }
 
@@ -216,10 +109,10 @@ public final class ObjectAdvice {
                 final String getterMethodName = JavaBeanUtils.getGetterMethodName(field.getName(), field.getType());
                 return MethodUtils.invokeMethod(instance, true, getterMethodName);
             } catch (NoSuchMethodException e) {
-                return FieldUtils.readDeclaredField(instance, field.getName(), true);
+                return FieldUtils.readField(instance, field.getName(), true);
             }
         } else {
-            return FieldUtils.readDeclaredField(instance, field.getName(), true);
+            return FieldUtils.readField(instance, field.getName(), true);
         }
     }
 
@@ -239,10 +132,10 @@ public final class ObjectAdvice {
                 final String getterMethodName = JavaBeanUtils.getGetterMethodName(fieldName, field.getType());
                 return MethodUtils.invokeMethod(instance, true, getterMethodName);
             } catch (NoSuchMethodException e) {
-                return FieldUtils.readDeclaredField(instance, fieldName, true);
+                return FieldUtils.readField(instance, fieldName, true);
             }
         } else {
-            return FieldUtils.readDeclaredField(instance, fieldName, true);
+            return FieldUtils.readField(instance, fieldName, true);
         }
     }
 
@@ -253,9 +146,8 @@ public final class ObjectAdvice {
      * @return
      */
     public static Map<Field, Object> readAllFieldValue(Object instance) {
-        Class<?> instanceClass = instance.getClass();
         Map<Field, Object> map = new HashMap<>();
-        Field[] fields = instanceClass.getDeclaredFields();
+        Field[] fields = FieldUtils.getAllFields(instance.getClass());
         for (Field field : fields) {
             map.put(field, get(instance, field, true));
         }
