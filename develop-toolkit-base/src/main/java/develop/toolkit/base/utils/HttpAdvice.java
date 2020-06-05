@@ -23,6 +23,20 @@ import java.util.stream.Collectors;
 public final class HttpAdvice {
 
     /**
+     * 默认的httpClient
+     *
+     * @return
+     */
+    public static HttpClient defaultHttpClient() {
+        return HttpClient
+                .newBuilder()
+                .version(HttpClient.Version.HTTP_1_1)
+                .connectTimeout(Duration.ofSeconds(5L))
+                .followRedirects(HttpClient.Redirect.NORMAL)
+                .build();
+    }
+
+    /**
      * 通用请求
      *
      * @param label
@@ -204,7 +218,7 @@ public final class HttpAdvice {
                     .build();
 
             Instant start = Instant.now();
-            HttpResponse<byte[]> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofByteArray());
+            HttpResponse<byte[]> httpResponse = K.def(httpClient, HttpAdvice::defaultHttpClient).send(httpRequest, HttpResponse.BodyHandlers.ofByteArray());
             Instant end = Instant.now();
             response = new HttpAdviceResponse(
                     httpResponse.statusCode(),
