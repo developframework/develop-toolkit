@@ -9,19 +9,16 @@ import java.io.Serializable;
  *
  * @author qiushui on 2019-02-26.
  */
+@SuppressWarnings("unused")
 public interface Account extends Serializable {
 
     /**
      * 获得账号
-     *
-     * @return
      */
     String getAccount();
 
     /**
      * 获得密码
-     *
-     * @return
      */
     Password getPassword();
 }

@@ -4,14 +4,11 @@ package develop.toolkit.base.utils;
  * @author qiushui on 2018-10-03.
  * @since 0.1
  */
+@SuppressWarnings("unused")
 public final class JavaBeanUtils {
 
     /**
      * 根据属性名称和java类型，获取对应的getter方法名
-     *
-     * @param property
-     * @param javaType
-     * @return
      */
     public static String getGetterMethodName(String property, Class<?> javaType) {
         StringBuilder sb = new StringBuilder();
@@ -31,9 +28,6 @@ public final class JavaBeanUtils {
 
     /**
      * 根据属性名称获取对应的setter方法名称
-     *
-     * @param property
-     * @return
      */
     public static String getSetterMethodName(String property) {
         StringBuilder sb = new StringBuilder();
@@ -49,9 +43,6 @@ public final class JavaBeanUtils {
 
     /**
      * 驼峰转下划线
-     *
-     * @param camelcaseString
-     * @return
      */
     public static String camelcaseToUnderline(String camelcaseString) {
         StringBuilder sb = new StringBuilder();
@@ -68,9 +59,6 @@ public final class JavaBeanUtils {
 
     /**
      * 驼峰转中划线
-     *
-     * @param camelcaseString
-     * @return
      */
     public static String camelcaseToMiddleLine(String camelcaseString) {
         StringBuilder sb = new StringBuilder();
@@ -90,9 +78,6 @@ public final class JavaBeanUtils {
 
     /**
      * 下划线转驼峰
-     *
-     * @param underlineString
-     * @return
      */
     public static String underlineToCamelcase(String underlineString) {
         StringBuilder sb = new StringBuilder();
@@ -115,9 +100,6 @@ public final class JavaBeanUtils {
 
     /**
      * 中划线转驼峰
-     *
-     * @param middleLineString
-     * @return
      */
     public static String middleLineToCamelcase(String middleLineString) {
         StringBuilder sb = new StringBuilder();
@@ -140,9 +122,6 @@ public final class JavaBeanUtils {
 
     /**
      * 开头字母转大写
-     *
-     * @param text
-     * @return
      */
     public static String startUpperCaseText(String text) {
         StringBuilder sb = new StringBuilder();
@@ -159,9 +138,6 @@ public final class JavaBeanUtils {
 
     /**
      * 开头字母转小写
-     *
-     * @param text
-     * @return
      */
     public static String startLowerCaseText(String text) {
         StringBuilder sb = new StringBuilder();

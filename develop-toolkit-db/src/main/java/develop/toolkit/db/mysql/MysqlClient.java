@@ -16,6 +16,7 @@ import java.util.stream.Stream;
  *
  * @author qiushui on 2019-09-03.
  */
+@SuppressWarnings("unused")
 public class MysqlClient implements AutoCloseable {
 
     @Getter
@@ -36,12 +37,6 @@ public class MysqlClient implements AutoCloseable {
 
     /**
      * 查询列表
-     *
-     * @param sql
-     * @param rowMapper
-     * @param <T>
-     * @return
-     * @throws SQLException
      */
     public <T> List<T> query(String sql, RowMapper<T> rowMapper) throws SQLException {
         return query(sql, null, rowMapper);
@@ -49,13 +44,6 @@ public class MysqlClient implements AutoCloseable {
 
     /**
      * 查询列表
-     *
-     * @param sql
-     * @param setter
-     * @param rowMapper
-     * @param <T>
-     * @return
-     * @throws SQLException
      */
     public <T> List<T> query(String sql, PreparedStatementSetter setter, RowMapper<T> rowMapper) throws SQLException {
         final PreparedStatement statement = connection.prepareStatement(sql);
@@ -74,12 +62,6 @@ public class MysqlClient implements AutoCloseable {
 
     /**
      * 查询单记录
-     *
-     * @param sql
-     * @param rowMapper
-     * @param <T>
-     * @return
-     * @throws SQLException
      */
     public <T> Optional<T> queryOne(String sql, RowMapper<T> rowMapper) throws SQLException {
         List<T> list = query(sql, rowMapper);
@@ -93,13 +75,6 @@ public class MysqlClient implements AutoCloseable {
 
     /**
      * 查询单记录
-     *
-     * @param sql
-     * @param setter
-     * @param rowMapper
-     * @param <T>
-     * @return
-     * @throws SQLException
      */
     public <T> Optional<T> queryOne(String sql, PreparedStatementSetter setter, RowMapper<T> rowMapper) throws SQLException {
         List<T> list = query(sql, setter, rowMapper);
@@ -140,13 +115,6 @@ public class MysqlClient implements AutoCloseable {
 
     /**
      * 插入记录
-     *
-     * @param table
-     * @param data
-     * @param fields
-     * @param <T>
-     * @return
-     * @throws SQLException
      */
     public <T> int insert(String table, T data, String... fields) throws SQLException {
         return insertAll(table, List.of(data), fields);
@@ -154,11 +122,6 @@ public class MysqlClient implements AutoCloseable {
 
     /**
      * 执行修改语句
-     *
-     * @param sql
-     * @param setter
-     * @return
-     * @throws SQLException
      */
     public int executeUpdate(String sql, PreparedStatementSetter setter) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -171,10 +134,6 @@ public class MysqlClient implements AutoCloseable {
 
     /**
      * 执行修改语句
-     *
-     * @param sql
-     * @return
-     * @throws SQLException
      */
     public int executeUpdate(String sql) throws SQLException {
         return executeUpdate(sql, null);

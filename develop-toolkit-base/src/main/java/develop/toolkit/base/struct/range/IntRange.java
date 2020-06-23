@@ -11,8 +11,6 @@ public class IntRange extends Range<Integer> {
 
     /**
      * 生成整型数组
-     *
-     * @return
      */
     public final Integer[] generate() {
         Integer[] array = new Integer[end - start];

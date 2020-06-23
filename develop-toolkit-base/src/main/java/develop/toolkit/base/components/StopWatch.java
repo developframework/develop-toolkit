@@ -11,11 +11,12 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author qiushui on 2019-03-17.
  */
+@SuppressWarnings("unused")
 public final class StopWatch {
 
     public static final String DEFAULT_NAME = "default";
 
-    private Map<String, Instant> startInstantMap = new ConcurrentHashMap<>();
+    private final Map<String, Instant> startInstantMap = new ConcurrentHashMap<>();
 
     private StopWatch(String name) {
         pause(name);

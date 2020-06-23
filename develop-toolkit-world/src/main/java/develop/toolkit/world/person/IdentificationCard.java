@@ -16,6 +16,7 @@ import java.time.format.DateTimeFormatter;
  *
  * @author qiushui on 2019-02-27.
  */
+@SuppressWarnings("unused")
 @Getter
 @Setter
 @EqualsAndHashCode(of = "card")
@@ -55,8 +56,6 @@ public class IdentificationCard implements Serializable {
 
     /**
      * 15位身份证
-     *
-     * @return
      */
     public boolean length15() {
         return card.length() == 15;
@@ -64,8 +63,6 @@ public class IdentificationCard implements Serializable {
 
     /**
      * 18位身份证
-     *
-     * @return
      */
     public boolean length18() {
         return card.length() == 18;
@@ -73,9 +70,6 @@ public class IdentificationCard implements Serializable {
 
     /**
      * 验证身份证号有效
-     *
-     * @param card
-     * @return
      */
     public static boolean isValid(String card) {
         if (card != null && card.matches(Regex.IDENTIFICATION_CARD_RELAXED)) {
@@ -90,8 +84,6 @@ public class IdentificationCard implements Serializable {
 
     /**
      * 解析
-     *
-     * @param regionParser
      */
     public void parse(RegionParser regionParser) {
         if (regionParser != null) {
@@ -113,8 +105,6 @@ public class IdentificationCard implements Serializable {
 
     /**
      * 获得年龄
-     *
-     * @return
      */
     public int getAge() {
         LocalDate now = LocalDate.now();

@@ -9,13 +9,11 @@ import java.util.stream.Collectors;
  *
  * @author qiushui on 2020-01-02.
  */
+@SuppressWarnings("unused")
 public final class StatisticsAdvice {
 
     /**
      * 最大值
-     *
-     * @param numbers
-     * @return
      */
     public static double max(Collection<Number> numbers) {
         return numbers
@@ -26,9 +24,6 @@ public final class StatisticsAdvice {
 
     /**
      * 最小值
-     *
-     * @param numbers
-     * @return
      */
     public static double min(Collection<Number> numbers) {
         return numbers
@@ -39,9 +34,6 @@ public final class StatisticsAdvice {
 
     /**
      * 平均值
-     *
-     * @param numbers
-     * @return
      */
     public static double average(Collection<Number> numbers) {
         return numbers
@@ -52,9 +44,6 @@ public final class StatisticsAdvice {
 
     /**
      * 方差
-     *
-     * @param numbers
-     * @return
      */
     public static double variance(Collection<Number> numbers) {
         final double average = average(numbers);
@@ -66,9 +55,6 @@ public final class StatisticsAdvice {
 
     /**
      * 标准差
-     *
-     * @param numbers
-     * @return
      */
     public static double standardDeviation(Collection<Number> numbers) {
         return Math.sqrt(variance(numbers));
@@ -76,9 +62,6 @@ public final class StatisticsAdvice {
 
     /**
      * 中位数
-     *
-     * @param numbers
-     * @return
      */
     public static double median(Collection<Number> numbers) {
         final List<Double> list = numbers

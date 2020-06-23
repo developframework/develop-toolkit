@@ -7,14 +7,11 @@ import lombok.NonNull;
  *
  * @author qiushui on 2019-08-23.
  */
+@SuppressWarnings("unused")
 public final class CompareAdvice {
 
     /**
      * 小于
-     *
-     * @param a
-     * @param b
-     * @return
      */
     public static <T extends Comparable<T>> boolean lt(@NonNull T a, @NonNull T b) {
         return a.compareTo(b) < 0;
@@ -22,10 +19,6 @@ public final class CompareAdvice {
 
     /**
      * 小于等于
-     *
-     * @param a
-     * @param b
-     * @return
      */
     public static <T extends Comparable<T>> boolean lte(@NonNull T a, @NonNull T b) {
         return a.compareTo(b) <= 0;
@@ -33,10 +26,6 @@ public final class CompareAdvice {
 
     /**
      * 大于
-     *
-     * @param a
-     * @param b
-     * @return
      */
     public static <T extends Comparable<T>> boolean gt(@NonNull T a, @NonNull T b) {
         return a.compareTo(b) > 0;
@@ -44,10 +33,6 @@ public final class CompareAdvice {
 
     /**
      * 大于等于
-     *
-     * @param a
-     * @param b
-     * @return
      */
     public static <T extends Comparable<T>> boolean gte(@NonNull T a, @NonNull T b) {
         return a.compareTo(b) >= 0;
@@ -55,10 +40,6 @@ public final class CompareAdvice {
 
     /**
      * 等于
-     *
-     * @param a
-     * @param b
-     * @return
      */
     public static <T extends Comparable<T>> boolean eq(@NonNull T a, @NonNull T b) {
         return a.compareTo(b) == 0;
@@ -66,12 +47,6 @@ public final class CompareAdvice {
 
     /**
      * 在之间（闭区间）
-     *
-     * @param a
-     * @param start
-     * @param end
-     * @param <T>
-     * @return
      */
     public static <T extends Comparable<T>> boolean between(@NonNull T a, @NonNull T start, @NonNull T end) {
         return gte(a, start) && lte(a, end);
@@ -79,10 +54,6 @@ public final class CompareAdvice {
 
     /**
      * 返回两者中较大值
-     *
-     * @param a
-     * @param b
-     * @return
      */
     public static <T extends Comparable<T>> T max(@NonNull T a, @NonNull T b) {
         return gt(a, b) ? a : b;
@@ -90,10 +61,6 @@ public final class CompareAdvice {
 
     /**
      * 返回两者中较小值
-     *
-     * @param a
-     * @param b
-     * @return
      */
     public static <T extends Comparable<T>> T min(@NonNull T a, @NonNull T b) {
         return lt(a, b) ? a : b;

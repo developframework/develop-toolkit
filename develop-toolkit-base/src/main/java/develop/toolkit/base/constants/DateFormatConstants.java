@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
  *
  * @author qiushui on 2019-02-20.
  */
+@SuppressWarnings("unused")
 public interface DateFormatConstants {
 
     String STANDARD = "yyyy-MM-dd HH:mm:ss";

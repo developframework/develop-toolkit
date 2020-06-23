@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 /**
  * 判空处理简化操作
  */
+@SuppressWarnings("unused")
 public final class K {
 
     /**
@@ -14,8 +15,8 @@ public final class K {
      *
      * @param value           值
      * @param defaultSupplier 默认值提供器
-     * @param <T>
-     * @return
+     * @param <T>             泛型
+     * @return 值
      */
     public static <T> T def(T value, Supplier<T> defaultSupplier) {
         return value != null ? value : defaultSupplier.get();
@@ -25,7 +26,7 @@ public final class K {
      * 如果不为null则执行consumer
      *
      * @param value 值
-     * @param <T>
+     * @param <T>   泛型
      */
     public static <T> void let(T value, Consumer<T> consumer) {
         if (value != null) {
@@ -38,9 +39,7 @@ public final class K {
      *
      * @param value    值
      * @param function 转化函数
-     * @param <T>
-     * @param <R>
-     * @return
+     * @return 转化值
      */
     public static <T, R> R map(T value, Function<T, R> function) {
         return value != null ? function.apply(value) : null;

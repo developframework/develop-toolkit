@@ -13,6 +13,7 @@ import java.util.List;
  */
 @Getter
 @NoArgsConstructor
+@SuppressWarnings("unused")
 public class PagerResult<T> implements Serializable {
 
     private static final long serialVersionUID = -3028130281925624773L;
@@ -35,8 +36,6 @@ public class PagerResult<T> implements Serializable {
 
     /**
      * 空分页结果
-     *
-     * @return
      */
     public static <T> PagerResult<T> empty(Class<T> clazz, int page, int size) {
         return new PagerResult<>(page, size, List.of(), 0);

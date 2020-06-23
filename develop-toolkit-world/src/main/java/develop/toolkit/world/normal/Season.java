@@ -12,6 +12,7 @@ import java.time.temporal.ChronoUnit;
  *
  * @author qiushui on 2019-04-28.
  */
+@SuppressWarnings("unused")
 public enum Season {
 
     SPRING(1),
@@ -23,7 +24,7 @@ public enum Season {
     WINTER(4);
 
     @Getter
-    private int value;
+    private final int value;
 
     Season(int value) {
         this.value = value;
@@ -31,8 +32,6 @@ public enum Season {
 
     /**
      * 日期范围
-     *
-     * @return
      */
     public TwoValues<MonthDay, MonthDay> range() {
         switch (this) {
@@ -67,9 +66,6 @@ public enum Season {
 
     /**
      * 这一天是这个季节的第几天
-     *
-     * @param day
-     * @return
      */
     public int getDayOfSeason(LocalDate day) {
         if (isDayAt(MonthDay.from(day), this)) {
@@ -80,9 +76,6 @@ public enum Season {
 
     /**
      * 日期落在哪个季节
-     *
-     * @param monthDay
-     * @return
      */
     public static Season dayAt(MonthDay monthDay) {
         for (Season season : Season.values()) {
@@ -96,10 +89,6 @@ public enum Season {
 
     /**
      * 日期是否是某个季节
-     *
-     * @param monthDay
-     * @param season
-     * @return
      */
     public static boolean isDayAt(MonthDay monthDay, Season season) {
         return dayAt(monthDay) == season;
@@ -107,9 +96,6 @@ public enum Season {
 
     /**
      * 值
-     *
-     * @param value
-     * @return
      */
     public static Season valueOf(int value) {
         for (Season season : Season.values()) {

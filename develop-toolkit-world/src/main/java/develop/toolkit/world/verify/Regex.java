@@ -5,6 +5,7 @@ package develop.toolkit.world.verify;
  *
  * @author qiushui on 2019-02-26.
  */
+@SuppressWarnings("unused")
 public interface Regex {
 
     // 不严格的手机号

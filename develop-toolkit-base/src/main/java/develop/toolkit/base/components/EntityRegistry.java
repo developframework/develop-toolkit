@@ -12,6 +12,7 @@ import java.util.Optional;
  *
  * @author qiushui on 2018-05-29.
  */
+@SuppressWarnings("unused")
 public abstract class EntityRegistry<T extends EntitySign<K>, K> implements Serializable {
 
     private static final long serialVersionUID = 8580818076321536793L;

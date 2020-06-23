@@ -3,6 +3,7 @@ package develop.toolkit.base.struct.range;
 /**
  * 长整型范围
  */
+@SuppressWarnings("unused")
 public class LongRange extends Range<Long> {
 
     public LongRange(Long start, Long end) {
@@ -11,8 +12,6 @@ public class LongRange extends Range<Long> {
 
     /**
      * 生成长整型数组
-     *
-     * @return
      */
     public final long[] generate() {
         long[] array = new long[(int) (end - start)];

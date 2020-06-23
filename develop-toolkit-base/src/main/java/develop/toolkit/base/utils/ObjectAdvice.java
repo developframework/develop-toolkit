@@ -14,15 +14,11 @@ import java.util.Map;
  *
  * @author qiushui on 2019-02-20.
  */
+@SuppressWarnings("unused")
 public final class ObjectAdvice {
 
     /**
      * 值是否在数组里
-     *
-     * @param obj
-     * @param targets
-     * @param <T>
-     * @return
      */
     @SafeVarargs
     public static <T> boolean valueIn(@NonNull T obj, T... targets) {
@@ -36,11 +32,6 @@ public final class ObjectAdvice {
 
     /**
      * 值是否不在数组里
-     *
-     * @param obj
-     * @param targets
-     * @param <T>
-     * @return
      */
     @SafeVarargs
     public static <T> boolean valueNotIn(@NonNull T obj, T... targets) {
@@ -55,8 +46,8 @@ public final class ObjectAdvice {
     /**
      * 反射设置值
      *
-     * @param instance
-     * @param field
+     * @param instance             实例
+     * @param field                字段
      * @param firstUseSetterMethod 优先使用setter方法
      */
     @SneakyThrows
@@ -76,8 +67,8 @@ public final class ObjectAdvice {
     /**
      * 反射设置值
      *
-     * @param instance
-     * @param fieldName
+     * @param instance             实例
+     * @param fieldName            字段
      * @param firstUseSetterMethod 优先使用setter方法
      */
     @SneakyThrows
@@ -97,10 +88,10 @@ public final class ObjectAdvice {
     /**
      * 反射获取值
      *
-     * @param instance
-     * @param field
+     * @param instance 实例
+     * @param field 字段
      * @param firstUseGetterMethod 优先使用getter方法
-     * @return
+     * @return 反射值
      */
     @SneakyThrows
     public static Object get(Object instance, Field field, boolean firstUseGetterMethod) {
@@ -119,10 +110,10 @@ public final class ObjectAdvice {
     /**
      * 反射获取值
      *
-     * @param instance
-     * @param fieldName
+     * @param instance 实例
+     * @param fieldName 字段
      * @param firstUseGetterMethod 优先使用getter方法
-     * @return
+     * @return 反射值
      */
     @SneakyThrows
     public static Object get(Object instance, String fieldName, boolean firstUseGetterMethod) {
@@ -142,8 +133,8 @@ public final class ObjectAdvice {
     /**
      * 读取全部字段值
      *
-     * @param instance
-     * @return
+     * @param instance 实例
+     * @return 所有字段值
      */
     public static Map<Field, Object> readAllFieldValue(Object instance) {
         Map<Field, Object> map = new HashMap<>();
@@ -156,10 +147,6 @@ public final class ObjectAdvice {
 
     /**
      * 安静地使用无参构造方法new对象
-     *
-     * @param clazz
-     * @param <T>
-     * @return
      */
     @SneakyThrows
     public static <T> T newInstanceQuietly(Class<T> clazz) {
@@ -168,10 +155,6 @@ public final class ObjectAdvice {
 
     /**
      * 字符串值转化成基本类型值
-     *
-     * @param value
-     * @param clazz
-     * @return
      */
     public static Object primitiveTypeCast(String value, Class<?> clazz) {
         if (value == null) {

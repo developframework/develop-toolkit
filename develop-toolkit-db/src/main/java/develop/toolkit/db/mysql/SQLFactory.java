@@ -10,9 +10,10 @@ import java.util.stream.Collectors;
 /**
  * @author qiushui on 2019-09-18.
  */
+@SuppressWarnings("unused")
 public class SQLFactory {
 
-    private Map<String, String> sqlMap = new HashMap<>();
+    private final Map<String, String> sqlMap = new HashMap<>();
 
     public SQLFactory(String... sqlFiles) {
         for (String sqlFile : sqlFiles) {

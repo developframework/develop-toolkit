@@ -15,13 +15,11 @@ import java.util.stream.Stream;
  *
  * @author qiushui on 2019-02-21.
  */
+@SuppressWarnings("unused")
 public final class IOAdvice {
 
     /**
      * 转换成字节数组
-     *
-     * @param inputStream
-     * @return
      */
     public static byte[] toByteArray(InputStream inputStream) {
         try (inputStream; ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -34,9 +32,6 @@ public final class IOAdvice {
 
     /**
      * 转换成字节数组
-     *
-     * @param filename
-     * @return
      */
     public static byte[] toByteArrayFromClasspath(String filename) {
         return toByteArray(readInputStreamFromClasspath(filename));
@@ -44,9 +39,6 @@ public final class IOAdvice {
 
     /**
      * 文件读取行
-     *
-     * @param filename
-     * @return
      */
     public static Stream<String> readLines(String filename) {
         return readLines(filename, null);
@@ -54,10 +46,6 @@ public final class IOAdvice {
 
     /**
      * 文件读取行
-     *
-     * @param filename
-     * @param charset
-     * @return
      */
     public static Stream<String> readLines(String filename, Charset charset) {
         try {
@@ -69,9 +57,6 @@ public final class IOAdvice {
 
     /**
      * 文本流读取行
-     *
-     * @param inputStream
-     * @return
      */
     public static Stream<String> readLines(InputStream inputStream) {
         return readLines(inputStream, null);
@@ -79,10 +64,6 @@ public final class IOAdvice {
 
     /**
      * 文本流读取行
-     *
-     * @param inputStream
-     * @param charset
-     * @return
      */
     public static Stream<String> readLines(InputStream inputStream, Charset charset) {
         try (inputStream) {
@@ -100,9 +81,6 @@ public final class IOAdvice {
 
     /**
      * 从classpath读流
-     *
-     * @param filename
-     * @return
      */
     public static InputStream readInputStreamFromClasspath(String filename) {
         return IOAdvice.class.getResourceAsStream(filename.startsWith("/") ? filename : ("/" + filename));
@@ -110,10 +88,6 @@ public final class IOAdvice {
 
     /**
      * 从classpath读取文件
-     *
-     * @param filename
-     * @param charset
-     * @return
      */
     public static Stream<String> readLinesFromClasspath(String filename, Charset charset) {
         return readLines(readInputStreamFromClasspath(filename), charset);
@@ -121,9 +95,6 @@ public final class IOAdvice {
 
     /**
      * 从classpath读取文件
-     *
-     * @param filename
-     * @return
      */
     public static Stream<String> readLinesFromClasspath(String filename) {
         return readLines(readInputStreamFromClasspath(filename), null);
@@ -131,10 +102,6 @@ public final class IOAdvice {
 
     /**
      * 从classpath读取文件并每行用regex切分
-     *
-     * @param filename
-     * @param regex
-     * @return
      */
     public static Stream<String[]> splitFromClasspath(String filename, String regex) {
         return readLinesFromClasspath(filename).map(line -> line.split(regex));
@@ -142,10 +109,6 @@ public final class IOAdvice {
 
     /**
      * 读取文本
-     *
-     * @param inputStream
-     * @param charset
-     * @return
      */
     public static String readText(InputStream inputStream, Charset charset) {
         StringBuilder sb = new StringBuilder();
@@ -155,9 +118,6 @@ public final class IOAdvice {
 
     /**
      * 读取文本
-     *
-     * @param inputStream
-     * @return
      */
     public static String readText(InputStream inputStream) {
         StringBuilder sb = new StringBuilder();
@@ -167,10 +127,6 @@ public final class IOAdvice {
 
     /**
      * 从classpath读取文本
-     *
-     * @param filename
-     * @param charset
-     * @return
      */
     public static String readTextFromClasspath(String filename, Charset charset) {
         StringBuilder sb = new StringBuilder();
@@ -180,9 +136,6 @@ public final class IOAdvice {
 
     /**
      * 从classpath读取文本
-     *
-     * @param filename
-     * @return
      */
     public static String readTextFromClasspath(String filename) {
         StringBuilder sb = new StringBuilder();
@@ -192,10 +145,6 @@ public final class IOAdvice {
 
     /**
      * 文本流按行循环处理
-     *
-     * @param inputStream
-     * @param charset
-     * @param consumer
      */
     public static void forEach(InputStream inputStream, Charset charset, Consumer<String> consumer) {
         readLines(inputStream, charset).forEach(consumer);
@@ -203,9 +152,6 @@ public final class IOAdvice {
 
     /**
      * 文本流按行循环处理
-     *
-     * @param inputStream
-     * @param consumer
      */
     public static void forEach(InputStream inputStream, Consumer<String> consumer) {
         readLines(inputStream).forEach(consumer);
@@ -213,10 +159,6 @@ public final class IOAdvice {
 
     /**
      * classpath文本流按行循环处理
-     *
-     * @param filename
-     * @param charset
-     * @param consumer
      */
     public static void forEachFromClasspath(String filename, Charset charset, Consumer<String> consumer) {
         readLinesFromClasspath(filename, charset).forEach(consumer);
@@ -224,9 +166,6 @@ public final class IOAdvice {
 
     /**
      * classpath文本流按行循环处理
-     *
-     * @param filename
-     * @param consumer
      */
     public static void forEachFromClasspath(String filename, Consumer<String> consumer) {
         readLinesFromClasspath(filename).forEach(consumer);
@@ -234,10 +173,6 @@ public final class IOAdvice {
 
     /**
      * 写出文本行到文件
-     *
-     * @param lines
-     * @param filename
-     * @param charset
      */
     public static void writeLines(List<String> lines, String filename, Charset charset) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), charset))) {
@@ -253,10 +188,6 @@ public final class IOAdvice {
 
     /**
      * 写出文本行
-     *
-     * @param lines
-     * @param outputStream
-     * @param charset
      */
     public static void writeLines(List<String> lines, OutputStream outputStream, Charset charset) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, charset))) {
@@ -272,10 +203,6 @@ public final class IOAdvice {
 
     /**
      * 追加文本行
-     *
-     * @param lines
-     * @param filename
-     * @param charset
      */
     public static void appendLines(List<String> lines, String filename, Charset charset) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), charset))) {
@@ -291,10 +218,6 @@ public final class IOAdvice {
 
     /**
      * 追加文本行
-     *
-     * @param lines
-     * @param outputStream
-     * @param charset
      */
     public static void appendLines(List<String> lines, OutputStream outputStream, Charset charset) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, charset))) {
@@ -310,11 +233,6 @@ public final class IOAdvice {
 
     /**
      * 复制文本
-     *
-     * @param inputStream
-     * @param outputStream
-     * @param charset
-     * @param function
      */
     public static void copyText(InputStream inputStream, OutputStream outputStream, Charset charset, Function<String, String> function) {
         Scanner scanner = new Scanner(inputStream, charset);
@@ -332,10 +250,6 @@ public final class IOAdvice {
 
     /**
      * 复制文件
-     *
-     * @param inputStream
-     * @param outputStream
-     * @return
      */
     public static long copy(InputStream inputStream, OutputStream outputStream) throws IOException {
         final byte[] buffer = new byte[4096];
@@ -350,10 +264,6 @@ public final class IOAdvice {
 
     /**
      * 安静地复制文件
-     *
-     * @param source
-     * @param target
-     * @return
      */
     public static long copyQuietly(File source, File target) {
         if (target.getParentFile().mkdirs()) {
@@ -371,9 +281,6 @@ public final class IOAdvice {
 
     /**
      * 打印文件
-     *
-     * @param filename
-     * @param charset
      */
     public static void printFile(String filename, Charset charset) {
         readLines(filename, charset).forEach(System.out::println);
@@ -381,9 +288,6 @@ public final class IOAdvice {
 
     /**
      * 打印流文件
-     *
-     * @param inputStream
-     * @param charset
      */
     public static void printInputStream(InputStream inputStream, Charset charset) {
         readLines(inputStream, charset).forEach(System.out::println);
@@ -391,8 +295,6 @@ public final class IOAdvice {
 
     /**
      * 打印流文件
-     *
-     * @param inputStream
      */
     public static void printInputStream(InputStream inputStream) {
         readLines(inputStream, StandardCharsets.UTF_8).forEach(System.out::println);

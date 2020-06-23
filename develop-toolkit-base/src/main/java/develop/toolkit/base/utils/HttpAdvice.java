@@ -20,12 +20,11 @@ import java.util.stream.Collectors;
  * Http增强工具
  */
 @Slf4j
+@SuppressWarnings("unused")
 public final class HttpAdvice {
 
     /**
      * 默认的httpClient
-     *
-     * @return
      */
     public static HttpClient defaultHttpClient() {
         return HttpClient
@@ -38,16 +37,6 @@ public final class HttpAdvice {
 
     /**
      * 通用请求
-     *
-     * @param label
-     * @param httpClient
-     * @param httpMethod
-     * @param url
-     * @param headers
-     * @param parameters
-     * @param content
-     * @return
-     * @throws IOException
      */
     public static HttpAdviceResponse request(
             String label,
@@ -69,13 +58,6 @@ public final class HttpAdvice {
 
     /**
      * GET请求
-     *
-     * @param httpClient
-     * @param url
-     * @param headers
-     * @param parameters
-     * @return
-     * @throws IOException
      */
     public static HttpAdviceResponse get(String label, HttpClient httpClient, String url, Map<String, String> headers, Map<String, Object> parameters) throws IOException {
         return send(
@@ -119,15 +101,6 @@ public final class HttpAdvice {
 
     /**
      * 发送x-www-form-urlencoded格式请求
-     *
-     * @param httpClient
-     * @param httpMethod
-     * @param url
-     * @param headers
-     * @param parameters
-     * @param form
-     * @return
-     * @throws IOException
      */
     public static HttpAdviceResponse sendFormUrlencoded(String label, HttpClient httpClient, String httpMethod, String url, Map<String, String> headers, Map<String, Object> parameters, Map<String, String> form) throws IOException {
         return send(
@@ -145,15 +118,6 @@ public final class HttpAdvice {
 
     /**
      * 发送json请求
-     *
-     * @param httpClient
-     * @param httpMethod
-     * @param url
-     * @param headers
-     * @param parameters
-     * @param json
-     * @return
-     * @throws IOException
      */
     public static HttpAdviceResponse sendJson(String label, HttpClient httpClient, String httpMethod, String url, Map<String, String> headers, Map<String, Object> parameters, String json) throws IOException {
         return send(
@@ -167,15 +131,6 @@ public final class HttpAdvice {
 
     /**
      * 发送xml请求
-     *
-     * @param httpClient
-     * @param httpMethod
-     * @param url
-     * @param headers
-     * @param parameters
-     * @param xml
-     * @return
-     * @throws IOException
      */
     public static HttpAdviceResponse sendXml(String label, HttpClient httpClient, String httpMethod, String url, Map<String, String> headers, Map<String, Object> parameters, String xml) throws IOException {
         return send(

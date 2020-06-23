@@ -9,6 +9,7 @@ import java.util.Map;
 /**
  * @author qiushui on 2019-09-03.
  */
+@SuppressWarnings("unused")
 public final class DBAdvice {
 
     public static MysqlClient mysql(String domain, String username, String password, String database, Map<String, String> parameters) throws SQLException {

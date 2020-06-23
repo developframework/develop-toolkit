@@ -13,6 +13,7 @@ import java.util.function.Supplier;
  *
  * @author qiushui on 2018-07-09.
  */
+@SuppressWarnings("unused")
 public class CollectionInMap<K, V> extends LinkedHashMap<K, Collection<V>> {
 
 	private static final long serialVersionUID = 3068493190714636107L;

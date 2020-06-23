@@ -8,15 +8,13 @@ import java.util.stream.Collectors;
  *
  * @author qiushui on 2018-11-03.
  */
+@SuppressWarnings("unused")
 public class KeyValuePairs<K, V> extends LinkedList<KeyValuePair<K, V>> {
 
     private static final long serialVersionUID = -3327179013671312416L;
 
     /**
      * 添加键值对
-     *
-     * @param key
-     * @param value
      */
     public void addKeyValue(K key, V value) {
         this.add(new KeyValuePair<>(key, value));
@@ -24,8 +22,6 @@ public class KeyValuePairs<K, V> extends LinkedList<KeyValuePair<K, V>> {
 
     /**
      * 获取所有键
-     *
-     * @return
      */
     public List<K> allKey() {
         return this.stream().map(KeyValuePair::getKey).collect(Collectors.toList());
@@ -33,8 +29,6 @@ public class KeyValuePairs<K, V> extends LinkedList<KeyValuePair<K, V>> {
 
     /**
      * 获取所有值
-     *
-     * @return
      */
     public List<V> allValue() {
         return this.stream().map(KeyValuePair::getValue).collect(Collectors.toList());
@@ -42,8 +36,6 @@ public class KeyValuePairs<K, V> extends LinkedList<KeyValuePair<K, V>> {
 
     /**
      * 转化成Map形式
-     *
-     * @return
      */
     public Map<K, V> toMap() {
         Map<K, V> map = new HashMap<>();
@@ -53,11 +45,6 @@ public class KeyValuePairs<K, V> extends LinkedList<KeyValuePair<K, V>> {
 
     /**
      * 从Map转化
-     *
-     * @param map
-     * @param <K>
-     * @param <V>
-     * @return
      */
     public static <K, V> KeyValuePairs<K, V> fromMap(Map<K, V> map) {
         KeyValuePairs<K, V> keyValuePairs = new KeyValuePairs<>();
@@ -67,11 +54,6 @@ public class KeyValuePairs<K, V> extends LinkedList<KeyValuePair<K, V>> {
 
     /**
      * 带值初始化
-     *
-     * @param keyValuePairArray
-     * @param <K>
-     * @param <V>
-     * @return
      */
     @SafeVarargs
     public static <K, V> KeyValuePairs<K, V> of(KeyValuePair<K, V>... keyValuePairArray) {
@@ -80,11 +62,6 @@ public class KeyValuePairs<K, V> extends LinkedList<KeyValuePair<K, V>> {
 
     /**
      * 带值初始化
-     *
-     * @param keyValuePairCollection
-     * @param <K>
-     * @param <V>
-     * @return
      */
     public static <K, V> KeyValuePairs<K, V> of(Collection<KeyValuePair<K, V>> keyValuePairCollection) {
         KeyValuePairs<K, V> keyValuePairs = new KeyValuePairs<>();

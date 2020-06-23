@@ -12,6 +12,7 @@ import java.util.Date;
  *
  * @author qiushui on 2019-02-20.
  */
+@SuppressWarnings("unused")
 public final class DateTimeAdvice {
 
     public static String now() {
@@ -20,9 +21,6 @@ public final class DateTimeAdvice {
 
     /**
      * 格式化Date
-     *
-     * @param date
-     * @return
      */
     public static String format(Date date) {
         return format(date, DateFormatConstants.STANDARD);
@@ -30,9 +28,6 @@ public final class DateTimeAdvice {
 
     /**
      * 解析标准日期时间字符串
-     *
-     * @param dateStr
-     * @return
      */
     public static LocalDateTime parseStandard(CharSequence dateStr) {
         return LocalDateTime.parse(dateStr, DateFormatConstants.STANDARD_FORMATTER);
@@ -40,10 +35,6 @@ public final class DateTimeAdvice {
 
     /**
      * 格式化Date
-     *
-     * @param date
-     * @param pattern
-     * @return
      */
     public static String format(Date date, String pattern) {
         if (date == null) {
@@ -54,9 +45,6 @@ public final class DateTimeAdvice {
 
     /**
      * 格式化LocalDateTime
-     *
-     * @param localDateTime
-     * @return
      */
     public static String format(LocalDateTime localDateTime) {
         return format(localDateTime, DateFormatConstants.STANDARD);
@@ -64,10 +52,6 @@ public final class DateTimeAdvice {
 
     /**
      * 格式化LocalDateTime
-     *
-     * @param localDateTime
-     * @param pattern
-     * @return
      */
     public static String format(LocalDateTime localDateTime, String pattern) {
         if (localDateTime == null) {
@@ -79,9 +63,6 @@ public final class DateTimeAdvice {
 
     /**
      * Date转到LocalDateTime
-     *
-     * @param date
-     * @return
      */
     public static LocalDateTime toLocalDateTime(Date date) {
         if (date == null) {
@@ -92,9 +73,6 @@ public final class DateTimeAdvice {
 
     /**
      * Date转到LocalDate
-     *
-     * @param date
-     * @return
      */
     public static LocalDate toLocalDate(Date date) {
         if (date == null) {
@@ -105,9 +83,6 @@ public final class DateTimeAdvice {
 
     /**
      * Date转到LocalTime
-     *
-     * @param date
-     * @return
      */
     public static LocalTime toLocalTime(Date date) {
         if (date == null) {
@@ -118,9 +93,6 @@ public final class DateTimeAdvice {
 
     /**
      * Date转到Instant
-     *
-     * @param date
-     * @return
      */
     public static Instant toInstant(Date date) {
         if (date == null) {
@@ -131,9 +103,6 @@ public final class DateTimeAdvice {
 
     /**
      * 从LocalDateTime转到Date
-     *
-     * @param localDateTime
-     * @return
      */
     public static Date fromLocalDateTime(LocalDateTime localDateTime) {
         if (localDateTime == null) {
@@ -144,9 +113,6 @@ public final class DateTimeAdvice {
 
     /**
      * 从LocalDate转到Date
-     *
-     * @param localDate
-     * @return
      */
     public static Date fromLocalDate(LocalDate localDate) {
         if (localDate == null) {
@@ -157,9 +123,6 @@ public final class DateTimeAdvice {
 
     /**
      * 从LocalTime转到Date
-     *
-     * @param localTime
-     * @return
      */
     public static Date fromLocalTime(LocalTime localTime) {
         if (localTime == null) {
@@ -171,9 +134,6 @@ public final class DateTimeAdvice {
 
     /**
      * 从Instant转到Date
-     *
-     * @param instant
-     * @return
      */
     public static Date fromInstant(Instant instant) {
         if (instant == null) {
@@ -184,10 +144,6 @@ public final class DateTimeAdvice {
 
     /**
      * 判断是否同一个月
-     *
-     * @param day1
-     * @param day2
-     * @return
      */
     public static boolean isSameMonth(LocalDate day1, LocalDate day2) {
         return day1.getYear() == day2.getYear() && day1.getMonth().getValue() == day2.getMonth().getValue();
@@ -195,9 +151,6 @@ public final class DateTimeAdvice {
 
     /**
      * 毫秒美化
-     *
-     * @param millisecond
-     * @return
      */
     public static String millisecondPretty(long millisecond) {
         if (millisecond < 1000) {

@@ -9,15 +9,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@SuppressWarnings("unused")
 public final class RandomAdvice {
 
     /**
      * 随机count个整数
-     *
-     * @param startInclusive
-     * @param endExclusive
-     * @param count
-     * @return
      */
     public static int[] nextInts(final int startInclusive, final int endExclusive, final int count) {
         Validate.isTrue(endExclusive - startInclusive >= count, "Difference value must be greater or equal to end value.");
@@ -31,11 +27,6 @@ public final class RandomAdvice {
 
     /**
      * 随机count个元素
-     *
-     * @param list
-     * @param count
-     * @param <T>
-     * @return
      */
     public static <T> List<T> nextElements(final List<T> list, final int count) {
         return IntStream
@@ -46,10 +37,6 @@ public final class RandomAdvice {
 
     /**
      * 随机一个元素
-     *
-     * @param list
-     * @param <T>
-     * @return
      */
     public static <T> T nextElement(final List<T> list) {
         return list.get(RandomUtils.nextInt(0, list.size()));

@@ -5,6 +5,7 @@ package develop.toolkit.base.exception;
  *
  * @author qiushui
  */
+@SuppressWarnings("unused")
 public abstract class FormatRuntimeException extends RuntimeException{
 
     public FormatRuntimeException() {

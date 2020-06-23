@@ -14,6 +14,7 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@SuppressWarnings("unused")
 public class HttpAdviceResponse {
 
     private int httpStatus;

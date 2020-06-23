@@ -40,6 +40,7 @@ public class Pager implements Serializable {
 		this.size = size;
 	}
 
+	@SuppressWarnings("unused")
 	public int getOffset() {
 		return page * size;
 	}

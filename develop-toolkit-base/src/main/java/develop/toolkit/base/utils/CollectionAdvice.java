@@ -15,6 +15,7 @@ import java.util.stream.Stream;
  *
  * @author qiushui on 2018-12-20.
  */
+@SuppressWarnings("unused")
 public final class CollectionAdvice {
 
     /**
