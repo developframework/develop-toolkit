@@ -288,11 +288,11 @@ public final class CollectionAdvice {
      * 压缩
      * 将两个集合的元素按索引捆绑到一起
      */
-    public static <E> List<TwoValues<E, E>> zip(List<E> master, List<E> other) {
+    public static <T, S> List<TwoValues<T, S>> zip(List<T> master, List<S> other) {
         if (master.size() != other.size()) {
             throw new IllegalArgumentException("list size must be same");
         }
-        List<TwoValues<E, E>> list = new LinkedList<>();
+        List<TwoValues<T, S>> list = new LinkedList<>();
         for (int i = 0; i < master.size(); i++) {
             list.add(TwoValues.of(master.get(i), other.get(i)));
         }
