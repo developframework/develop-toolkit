@@ -187,6 +187,13 @@ public final class IOAdvice {
     }
 
     /**
+     * 写出文本行到文件
+     */
+    public static void writeLines(List<String> lines, String filename) {
+        writeLines(lines, filename, StandardCharsets.UTF_8);
+    }
+
+    /**
      * 写出文本行
      */
     public static void writeLines(List<String> lines, OutputStream outputStream, Charset charset) {
@@ -205,9 +212,9 @@ public final class IOAdvice {
      * 追加文本行
      */
     public static void appendLines(List<String> lines, String filename, Charset charset) {
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), charset))) {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename, true), charset))) {
             for (String line : lines) {
-                writer.append(line);
+                writer.write(line);
                 writer.newLine();
             }
             writer.flush();
@@ -219,16 +226,8 @@ public final class IOAdvice {
     /**
      * 追加文本行
      */
-    public static void appendLines(List<String> lines, OutputStream outputStream, Charset charset) {
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, charset))) {
-            for (String line : lines) {
-                writer.append(line);
-                writer.newLine();
-            }
-            writer.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public static void appendLines(List<String> lines, String filename) {
+        appendLines(lines, filename, StandardCharsets.UTF_8);
     }
 
     /**
@@ -249,20 +248,6 @@ public final class IOAdvice {
     }
 
     /**
-     * 复制文件
-     */
-    public static long copy(InputStream inputStream, OutputStream outputStream) throws IOException {
-        final byte[] buffer = new byte[4096];
-        long count = 0;
-        int n;
-        while (-1 != (n = inputStream.read(buffer))) {
-            outputStream.write(buffer, 0, n);
-            count += n;
-        }
-        return count;
-    }
-
-    /**
      * 安静地复制文件
      */
     public static long copyQuietly(File source, File target) {
@@ -271,7 +256,7 @@ public final class IOAdvice {
                     InputStream inputStream = new FileInputStream(source);
                     OutputStream outputStream = new FileOutputStream(target)
             ) {
-                return copy(inputStream, outputStream);
+                return inputStream.transferTo(outputStream);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

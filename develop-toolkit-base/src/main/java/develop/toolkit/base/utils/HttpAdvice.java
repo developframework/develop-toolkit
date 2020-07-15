@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -102,16 +103,17 @@ public final class HttpAdvice {
     /**
      * 发送x-www-form-urlencoded格式请求
      */
-    public static HttpAdviceResponse sendFormUrlencoded(String label, HttpClient httpClient, String httpMethod, String url, Map<String, String> headers, Map<String, Object> parameters, Map<String, String> form) throws IOException {
+    public static HttpAdviceResponse sendFormUrlencoded(String label, HttpClient httpClient, String httpMethod, String url, Map<String, String> headers, Map<String, Object> form) throws IOException {
         return send(
                 label,
                 httpClient,
                 httpMethod,
-                builder(url, headers, parameters).header("Content-Type", "application/x-www-form-urlencoded"),
+                builder(url, headers, null).header("Content-Type", "application/x-www-form-urlencoded"),
                 form
                         .entrySet()
                         .stream()
-                        .map(kv -> String.format("%s=%s", kv.getKey(), kv.getValue()))
+                        .filter(kv -> kv.getValue() != null)
+                        .map(kv -> String.format("%s=%s", kv.getKey(), URLEncoder.encode(kv.getValue().toString(), StandardCharsets.UTF_8)))
                         .collect(Collectors.joining("&"))
         );
     }
@@ -119,12 +121,12 @@ public final class HttpAdvice {
     /**
      * 发送json请求
      */
-    public static HttpAdviceResponse sendJson(String label, HttpClient httpClient, String httpMethod, String url, Map<String, String> headers, Map<String, Object> parameters, String json) throws IOException {
+    public static HttpAdviceResponse sendJson(String label, HttpClient httpClient, String httpMethod, String url, Map<String, String> headers, String json) throws IOException {
         return send(
                 label,
                 httpClient,
                 httpMethod,
-                builder(url, headers, parameters).header("Content-Type", "application/json;charset=UTF-8"),
+                builder(url, headers, null).header("Content-Type", "application/json;charset=UTF-8"),
                 json
         );
     }
@@ -132,12 +134,12 @@ public final class HttpAdvice {
     /**
      * 发送xml请求
      */
-    public static HttpAdviceResponse sendXml(String label, HttpClient httpClient, String httpMethod, String url, Map<String, String> headers, Map<String, Object> parameters, String xml) throws IOException {
+    public static HttpAdviceResponse sendXml(String label, HttpClient httpClient, String httpMethod, String url, Map<String, String> headers, String xml) throws IOException {
         return send(
                 label,
                 httpClient,
                 httpMethod,
-                builder(url, headers, parameters).header("Content-Type", "application/xml;charset=UTF-8"),
+                builder(url, headers, null).header("Content-Type", "application/xml;charset=UTF-8"),
                 xml
         );
     }
@@ -147,10 +149,11 @@ public final class HttpAdvice {
             url += parameters
                     .entrySet()
                     .stream()
-                    .map(kv -> String.format("%s=%s", kv.getKey(), kv.getValue()))
+                    .filter(kv -> kv.getValue() != null)
+                    .map(kv -> String.format("%s=%s", kv.getKey(), URLEncoder.encode(kv.getValue().toString(), StandardCharsets.UTF_8)))
                     .collect(Collectors.joining("&", "?", ""));
         }
-        HttpRequest.Builder builder = HttpRequest
+        final HttpRequest.Builder builder = HttpRequest
                 .newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)
                 .uri(URI.create(url));

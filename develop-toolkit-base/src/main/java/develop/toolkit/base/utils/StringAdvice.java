@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 字符串增强工具
@@ -95,5 +97,12 @@ public final class StringAdvice {
      */
     public static List<String> regexMatchStartEnd(String string, String start, String end) {
         return regexMatch(string, String.format("(?<=%s)(.+?)(?=%s)", start, end));
+    }
+
+    /**
+     * 间隔美化
+     */
+    public static String intervalFormat(String separator, Object... objs) {
+        return Stream.of(objs).map(Object::toString).collect(Collectors.joining(separator));
     }
 }
