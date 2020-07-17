@@ -3,6 +3,7 @@ package develop.toolkit.base.struct;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * 键值对结构体
@@ -39,5 +40,12 @@ public class KeyValuePair<K, V> implements Serializable {
      */
     public static <K, V> KeyValuePair<K, V> of(K key, V value) {
         return new KeyValuePair<>(key, value);
+    }
+
+    /**
+     * 从Entry初始化
+     */
+    public static <K, V> KeyValuePair<K, V> of(Map.Entry<K, V> entry) {
+        return new KeyValuePair<>(entry.getKey(), entry.getValue());
     }
 }
