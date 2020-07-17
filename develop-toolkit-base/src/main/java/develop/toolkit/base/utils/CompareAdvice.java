@@ -53,16 +53,37 @@ public final class CompareAdvice {
     }
 
     /**
+     * 在之间（左闭区间）
+     */
+    public static <T extends Comparable<T>> boolean betweenLeft(@NonNull T a, @NonNull T start, @NonNull T end) {
+        return gte(a, start) && lt(a, end);
+    }
+
+    /**
+     * 在之间（右闭区间）
+     */
+    public static <T extends Comparable<T>> boolean betweenRight(@NonNull T a, @NonNull T start, @NonNull T end) {
+        return gt(a, start) && lte(a, end);
+    }
+
+    /**
+     * 在之间（开区间）
+     */
+    public static <T extends Comparable<T>> boolean betweenOpen(@NonNull T a, @NonNull T start, @NonNull T end) {
+        return gt(a, start) && lt(a, end);
+    }
+
+    /**
      * 返回两者中较大值
      */
     public static <T extends Comparable<T>> T max(@NonNull T a, @NonNull T b) {
-        return gt(a, b) ? a : b;
+        return gte(a, b) ? a : b;
     }
 
     /**
      * 返回两者中较小值
      */
     public static <T extends Comparable<T>> T min(@NonNull T a, @NonNull T b) {
-        return lt(a, b) ? a : b;
+        return lte(a, b) ? a : b;
     }
 }

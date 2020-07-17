@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 public final class CollectionAdvice {
 
     /**
-     * 检查元素
+     * 检查元素存在
      */
     public static <E> boolean contains(Collection<E> collection, Object target, Function<E, ?> function) {
         if (collection != null) {
@@ -28,6 +28,22 @@ public final class CollectionAdvice {
                 if (target == null) {
                     return value == null;
                 } else if (target.equals(value)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 检查元素存在
+     */
+    public static <E> boolean contains(Collection<E> collection, Object target) {
+        if (collection != null) {
+            for (E item : collection) {
+                if (target == null) {
+                    return item == null;
+                } else if (target.equals(item)) {
                     return true;
                 }
             }
