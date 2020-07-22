@@ -267,7 +267,9 @@ public final class ArrayAdvice {
         int i = 0;
         for (E[] array : arrays) {
             for (E item : array) {
-                mergeArray[i++] = item;
+                if (item != null) {
+                    mergeArray[i++] = item;
+                }
             }
         }
         return mergeArray;

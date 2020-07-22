@@ -249,7 +249,9 @@ public final class CollectionAdvice {
     public static <E> Collection<E> merge(Supplier<Collection<E>> supplier, Collection<E>... collections) {
         Collection<E> collection = supplier.get();
         for (Collection<E> coll : collections) {
-            collection.addAll(coll);
+            if (coll != null) {
+                collection.addAll(coll);
+            }
         }
         return collection;
     }
