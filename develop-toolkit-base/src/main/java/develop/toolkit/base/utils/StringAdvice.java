@@ -103,6 +103,6 @@ public final class StringAdvice {
      * 间隔美化
      */
     public static String intervalFormat(String separator, Object... objs) {
-        return Stream.of(objs).map(Object::toString).collect(Collectors.joining(separator));
+        return Stream.of(objs).map(o -> o == null ? "null" : o.toString()).collect(Collectors.joining(separator));
     }
 }
