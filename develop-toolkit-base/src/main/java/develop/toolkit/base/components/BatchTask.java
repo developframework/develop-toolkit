@@ -44,19 +44,21 @@ public final class BatchTask {
         if (current > total) {
             throw new IllegalStateException("The task have been finished.");
         }
-        long costTime = start.until(Instant.now(), ChronoUnit.MILLIS);
+        final long costTime = start.until(Instant.now(), ChronoUnit.MILLIS);
         sumCostTime += costTime;
 
-        long avgTime = sumCostTime / current;
-        LocalDateTime finishTime = LocalDateTime.now().plusSeconds((total - current) * avgTime / 1000);
+        final long avgTime = sumCostTime / current;
+        final long surplus = (total - current) * avgTime;
+        LocalDateTime finishTime = LocalDateTime.now().plusSeconds(surplus / 1000);
         return String.format(
-                "%d/%d\t(%02f%%) [cur: %s | avg: %s | sum: %s]\tfinish at: %s - %s",
+                "%d/%d\t(%.02f%%) [cur: %s | avg: %s | sum: %s | sur: %s]\tfinish at: %s - %s",
                 current,
                 total,
                 (float) current / (float) total * 100,
                 DateTimeAdvice.millisecondPretty(costTime),
                 DateTimeAdvice.millisecondPretty(avgTime),
                 DateTimeAdvice.millisecondPretty(sumCostTime),
+                DateTimeAdvice.millisecondPretty(surplus),
                 DateTimeAdvice.format(finishTime),
                 message
         );
