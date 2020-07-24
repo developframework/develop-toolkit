@@ -53,7 +53,7 @@ public final class BatchTask {
                 "%d/%d\t(%02f%%) [cur: %s | avg: %s | sum: %s]\tfinish at: %s - %s",
                 current,
                 total,
-                (float) current / (float) total,
+                (float) current / (float) total * 100,
                 DateTimeAdvice.millisecondPretty(costTime),
                 DateTimeAdvice.millisecondPretty(avgTime),
                 DateTimeAdvice.millisecondPretty(sumCostTime),
