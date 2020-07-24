@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author qiushui on 2020-03-25.
  */
 @SuppressWarnings("unused")
-public class Counter<K> {
+public final class Counter<K> {
 
     private final ConcurrentHashMap<K, Integer> map = new ConcurrentHashMap<>();
 
