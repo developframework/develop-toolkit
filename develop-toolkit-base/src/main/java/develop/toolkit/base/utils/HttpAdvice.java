@@ -4,6 +4,7 @@ import develop.toolkit.base.struct.HttpAdviceResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -33,6 +34,22 @@ public final class HttpAdvice {
                 .version(HttpClient.Version.HTTP_1_1)
                 .connectTimeout(Duration.ofSeconds(5L))
                 .followRedirects(HttpClient.Redirect.NORMAL)
+                .build();
+    }
+
+    /**
+     * 带ssl的httpClient
+     *
+     * @param sslContext
+     * @return
+     */
+    public static HttpClient sslHttpClient(SSLContext sslContext) {
+        return HttpClient
+                .newBuilder()
+                .version(HttpClient.Version.HTTP_1_1)
+                .connectTimeout(Duration.ofSeconds(5L))
+                .followRedirects(HttpClient.Redirect.NORMAL)
+                .sslContext(sslContext)
                 .build();
     }
 
