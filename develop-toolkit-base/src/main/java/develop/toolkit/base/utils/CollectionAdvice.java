@@ -1,8 +1,8 @@
 package develop.toolkit.base.utils;
 
 import develop.toolkit.base.components.Counter;
-import develop.toolkit.base.struct.CollectionInMap;
 import develop.toolkit.base.struct.KeyValuePairs;
+import develop.toolkit.base.struct.ListInMap;
 import develop.toolkit.base.struct.TwoValues;
 
 import java.util.*;
@@ -182,15 +182,15 @@ public final class CollectionAdvice {
     /**
      * 分组
      */
-    public static <E, K, V> CollectionInMap<K, V> grouping(Collection<E> collection, Function<E, K> keySupplier, Function<E, V> valueSupplier) {
-        CollectionInMap<K, V> map = new CollectionInMap<>();
-        collection.forEach(item -> map.putItemSoft(keySupplier.apply(item), valueSupplier.apply(item)));
+    public static <E, K, V> ListInMap<K, V> grouping(Collection<E> collection, Function<E, K> keySupplier, Function<E, V> valueSupplier) {
+        ListInMap<K, V> map = new ListInMap<>();
+        collection.forEach(item -> map.putItem(keySupplier.apply(item), valueSupplier.apply(item)));
         return map;
     }
 
-    public static <K, V> CollectionInMap<K, V> grouping(Collection<V> collection, Function<V, K> keySupplier) {
-        CollectionInMap<K, V> map = new CollectionInMap<>();
-        collection.forEach(item -> map.putItemSoft(keySupplier.apply(item), item));
+    public static <K, V> ListInMap<K, V> grouping(Collection<V> collection, Function<V, K> keySupplier) {
+        ListInMap<K, V> map = new ListInMap<>();
+        collection.forEach(item -> map.putItem(keySupplier.apply(item), item));
         return map;
     }
 
@@ -260,12 +260,12 @@ public final class CollectionAdvice {
      * 关联
      * 将集合target按条件与集合master配对
      */
-    public static <E, T> CollectionInMap<E, T> associate(Collection<E> master, Collection<T> target, BiPredicate<E, T> predicate) {
-        CollectionInMap<E, T> map = new CollectionInMap<>();
+    public static <E, T> ListInMap<E, T> associate(Collection<E> master, Collection<T> target, BiPredicate<E, T> predicate) {
+        ListInMap<E, T> map = new ListInMap<>();
         for (E e : master) {
             for (T t : target) {
                 if (predicate.test(e, t)) {
-                    map.putItemSoft(e, t);
+                    map.putItem(e, t);
                 }
             }
         }

@@ -1,13 +1,16 @@
 package develop.toolkit.base.utils;
 
+import develop.toolkit.base.struct.ListInMap;
+
 import java.io.*;
+import java.lang.reflect.Constructor;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -108,6 +111,72 @@ public final class IOAdvice {
     }
 
     /**
+     * 从classpath读取文件并每行用regex切分，然后装填到实体类
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Stream<T> splitFromClasspath(String filename, String regex, Class<T> clazz) {
+        List<String[]> list = splitFromClasspath(filename, regex).collect(Collectors.toList());
+        if (list.isEmpty()) {
+            return Stream.empty();
+        } else {
+            final String[] first = list.get(0);
+            final Constructor<?> constructor = ArrayAdvice
+                    .getFirstMatch(clazz.getConstructors(), first.length, Constructor::getParameterCount)
+                    .orElseThrow(() -> new IllegalArgumentException("No match constructor for parameter size: " + first.length));
+            final Class<?>[] parameterTypes = constructor.getParameterTypes();
+            return list
+                    .stream()
+                    .map(objs -> {
+                        try {
+                            final Object[] parameters = new Object[objs.length];
+                            for (int i = 0; i < objs.length; i++) {
+                                parameters[i] = ObjectAdvice.primitiveTypeCast(objs[i], parameterTypes[i]);
+                            }
+                            return (T) constructor.newInstance(parameters);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+        }
+    }
+
+    /**
+     * 从classpath读取文件并每行用regex切分，然后按keyFunction分组
+     */
+    public static <K> ListInMap<K, String[]> splitGroupingFormClasspath(String filename, String regex, Function<String[], K> keyFunction) {
+        ListInMap<K, String[]> map = new ListInMap<>();
+        splitFromClasspath(filename, regex).forEach(objs -> map.putItem(keyFunction.apply(objs), objs));
+        return map;
+    }
+
+    /**
+     * 从classpath读取文件并每行用regex切分，装填到实体类，然后按keyFunction分组
+     */
+    public static <K, T> ListInMap<K, T> splitGroupingFormClasspath(String filename, String regex, Class<T> clazz, Function<T, K> keyFunction) {
+        ListInMap<K, T> map = new ListInMap<>();
+        splitFromClasspath(filename, regex, clazz).forEach(t -> map.putItem(keyFunction.apply(t), t));
+        return map;
+    }
+
+    /**
+     * 从classpath读取文件并每行用regex切分，然后按keyFunction分组
+     */
+    public static <K, V> ListInMap<K, V> splitGroupingFormClasspath(String filename, String regex, Function<String[], K> keyFunction, Function<String[], V> valueFunction) {
+        ListInMap<K, V> map = new ListInMap<>();
+        splitFromClasspath(filename, regex).forEach(objs -> map.putItem(keyFunction.apply(objs), valueFunction.apply(objs)));
+        return map;
+    }
+
+    /**
+     * 从classpath读取文件并每行用regex切分，装填到实体类，然后按keyFunction分组
+     */
+    public static <K, V, T> ListInMap<K, V> splitGroupingFormClasspath(String filename, String regex, Class<T> clazz, Function<T, K> keyFunction, Function<T, V> valueFunction) {
+        ListInMap<K, V> map = new ListInMap<>();
+        splitFromClasspath(filename, regex, clazz).forEach(t -> map.putItem(keyFunction.apply(t), valueFunction.apply(t)));
+        return map;
+    }
+
+    /**
      * 读取文本
      */
     public static String readText(InputStream inputStream, Charset charset) {
@@ -130,7 +199,7 @@ public final class IOAdvice {
      */
     public static String readTextFromClasspath(String filename, Charset charset) {
         StringBuilder sb = new StringBuilder();
-        forEachFromClasspath(filename, charset, line -> sb.append(line.trim()));
+        readLinesFromClasspath(filename, charset).forEach(line -> sb.append(line.trim()));
         return sb.toString();
     }
 
@@ -139,36 +208,8 @@ public final class IOAdvice {
      */
     public static String readTextFromClasspath(String filename) {
         StringBuilder sb = new StringBuilder();
-        forEachFromClasspath(filename, line -> sb.append(line.trim()));
+        readLinesFromClasspath(filename).forEach(line -> sb.append(line.trim()));
         return sb.toString();
-    }
-
-    /**
-     * 文本流按行循环处理
-     */
-    public static void forEach(InputStream inputStream, Charset charset, Consumer<String> consumer) {
-        readLines(inputStream, charset).forEach(consumer);
-    }
-
-    /**
-     * 文本流按行循环处理
-     */
-    public static void forEach(InputStream inputStream, Consumer<String> consumer) {
-        readLines(inputStream).forEach(consumer);
-    }
-
-    /**
-     * classpath文本流按行循环处理
-     */
-    public static void forEachFromClasspath(String filename, Charset charset, Consumer<String> consumer) {
-        readLinesFromClasspath(filename, charset).forEach(consumer);
-    }
-
-    /**
-     * classpath文本流按行循环处理
-     */
-    public static void forEachFromClasspath(String filename, Consumer<String> consumer) {
-        readLinesFromClasspath(filename).forEach(consumer);
     }
 
     /**

@@ -1,8 +1,8 @@
 package develop.toolkit.base.utils;
 
 import develop.toolkit.base.components.Counter;
-import develop.toolkit.base.struct.CollectionInMap;
 import develop.toolkit.base.struct.KeyValuePairs;
+import develop.toolkit.base.struct.ListInMap;
 import develop.toolkit.base.struct.TwoValues;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -186,18 +186,18 @@ public final class ArrayAdvice {
     /**
      * 分组
      */
-    public static <E, K, V> CollectionInMap<K, V> grouping(E[] array, Function<E, K> keySupplier, Function<E, V> valueSupplier) {
-        CollectionInMap<K, V> map = new CollectionInMap<>();
+    public static <E, K, V> ListInMap<K, V> grouping(E[] array, Function<E, K> keySupplier, Function<E, V> valueSupplier) {
+        ListInMap<K, V> map = new ListInMap<>();
         for (E item : array) {
-            map.putItemSoft(keySupplier.apply(item), valueSupplier.apply(item));
+            map.putItem(keySupplier.apply(item), valueSupplier.apply(item));
         }
         return map;
     }
 
-    public static <K, V> CollectionInMap<K, V> grouping(V[] array, Function<V, K> keySupplier) {
-        CollectionInMap<K, V> map = new CollectionInMap<>();
+    public static <K, V> ListInMap<K, V> grouping(V[] array, Function<V, K> keySupplier) {
+        ListInMap<K, V> map = new ListInMap<>();
         for (V item : array) {
-            map.putItemSoft(keySupplier.apply(item), item);
+            map.putItem(keySupplier.apply(item), item);
         }
         return map;
     }
@@ -279,12 +279,12 @@ public final class ArrayAdvice {
      * 关联
      * 将集合target按条件与集合master配对
      */
-    public static <E, T> CollectionInMap<E, T> associate(E[] master, T[] target, BiPredicate<E, T> predicate) {
-        CollectionInMap<E, T> map = new CollectionInMap<>();
+    public static <E, T> ListInMap<E, T> associate(E[] master, T[] target, BiPredicate<E, T> predicate) {
+        ListInMap<E, T> map = new ListInMap<>();
         for (E e : master) {
             for (T t : target) {
                 if (predicate.test(e, t)) {
-                    map.putItemSoft(e, t);
+                    map.putItem(e, t);
                 }
             }
         }
