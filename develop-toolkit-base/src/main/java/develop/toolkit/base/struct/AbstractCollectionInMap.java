@@ -30,12 +30,7 @@ public abstract class AbstractCollectionInMap<K, V, COLLECTION extends Collectio
 	 * @param item 新元素
 	 */
 	public final void putItem(K key, V item) {
-		COLLECTION collection = get(key);
-		if (collection == null) {
-			collection = supplier.get();
-			put(key, collection);
-		}
-		collection.add(item);
+		getInternal(key).add(item);
 	}
 
 	/**
@@ -45,12 +40,16 @@ public abstract class AbstractCollectionInMap<K, V, COLLECTION extends Collectio
 	 * @param items 新元素
 	 */
 	public final void putAllItem(K key, @NonNull Set<V> items) {
+		getInternal(key).addAll(items);
+	}
+
+	private COLLECTION getInternal(K key) {
 		COLLECTION collection = get(key);
 		if (collection == null) {
 			collection = supplier.get();
 			put(key, collection);
 		}
-		collection.addAll(items);
+		return collection;
 	}
 
 	/**
