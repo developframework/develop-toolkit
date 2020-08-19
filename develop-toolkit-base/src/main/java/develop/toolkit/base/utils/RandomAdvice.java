@@ -39,6 +39,6 @@ public final class RandomAdvice {
      * 随机一个元素
      */
     public static <T> T nextElement(final List<T> list) {
-        return list.get(RandomUtils.nextInt(0, list.size()));
+        return list.get(list.size() == 1 ? 0 : RandomUtils.nextInt(0, list.size()));
     }
 }
