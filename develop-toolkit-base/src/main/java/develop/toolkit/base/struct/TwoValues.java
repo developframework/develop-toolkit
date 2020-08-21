@@ -27,4 +27,8 @@ public class TwoValues<T, S> implements Serializable {
     public static <T, S> TwoValues<T, S> of(T firstValue, S secondValue) {
         return new TwoValues<>(firstValue, secondValue);
     }
+
+    public static <T> TwoValues<T, T> of(T[] objs) {
+        return new TwoValues<>(objs[0], objs[1]);
+    }
 }

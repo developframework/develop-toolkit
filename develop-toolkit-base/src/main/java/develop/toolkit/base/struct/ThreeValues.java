@@ -29,4 +29,8 @@ public class ThreeValues<T, S, U> implements Serializable {
     public static <T, S, U> ThreeValues<T, S, U> of(T firstValue, S secondValue, U thirdValue) {
         return new ThreeValues<>(firstValue, secondValue, thirdValue);
     }
+
+    public static <T> ThreeValues<T, T, T> of(T[] objs) {
+        return new ThreeValues<>(objs[0], objs[1], objs[2]);
+    }
 }

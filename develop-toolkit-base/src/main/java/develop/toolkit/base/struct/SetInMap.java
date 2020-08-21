@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 @SuppressWarnings("unused")
 public class SetInMap<K, V> extends AbstractCollectionInMap<K, V, Set<V>> {
 
-    private static final long serialVersionUID = 3068493190714636107L;
+    private static final long serialVersionUID = 3476351408668231918L;
 
     public SetInMap() {
         super(HashSet::new);

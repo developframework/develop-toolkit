@@ -42,10 +42,15 @@ public class KeyValuePair<K, V> implements Serializable {
         return new KeyValuePair<>(key, value);
     }
 
+    public static <T> KeyValuePair<T, T> of(T[] objs) {
+        return new KeyValuePair<>(objs[0], objs[1]);
+    }
+
     /**
      * 从Entry初始化
      */
     public static <K, V> KeyValuePair<K, V> of(Map.Entry<K, V> entry) {
         return new KeyValuePair<>(entry.getKey(), entry.getValue());
     }
+
 }

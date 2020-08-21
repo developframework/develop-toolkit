@@ -16,7 +16,6 @@ import java.util.function.Supplier;
 @SuppressWarnings("unused")
 public abstract class AbstractCollectionInMap<K, V, COLLECTION extends Collection<V>> extends LinkedHashMap<K, COLLECTION> {
 
-	private static final long serialVersionUID = 3068493190714636107L;
 	protected final Supplier<COLLECTION> supplier;
 
 	public AbstractCollectionInMap(Supplier<COLLECTION> supplier) {

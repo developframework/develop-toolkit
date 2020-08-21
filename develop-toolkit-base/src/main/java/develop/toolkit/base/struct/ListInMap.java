@@ -12,13 +12,13 @@ import java.util.function.Supplier;
 @SuppressWarnings("unused")
 public class ListInMap<K, V> extends AbstractCollectionInMap<K, V, List<V>> {
 
-	private static final long serialVersionUID = 3068493190714636107L;
+    private static final long serialVersionUID = -6928970809459612701L;
 
-	public ListInMap() {
-		super(LinkedList::new);
-	}
+    public ListInMap() {
+        super(LinkedList::new);
+    }
 
-	public ListInMap(Supplier<List<V>> supplier) {
-		super(supplier);
-	}
+    public ListInMap(Supplier<List<V>> supplier) {
+        super(supplier);
+    }
 }
