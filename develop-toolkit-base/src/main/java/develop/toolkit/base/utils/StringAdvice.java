@@ -2,8 +2,11 @@ package develop.toolkit.base.utils;
 
 import develop.toolkit.base.struct.TwoValues;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -104,5 +107,17 @@ public final class StringAdvice {
      */
     public static String intervalFormat(String separator, Object... objs) {
         return Stream.of(objs).map(o -> o == null ? "null" : o.toString()).collect(Collectors.joining(separator));
+    }
+
+    /**
+     * 处理成url参数格式
+     */
+    public static String urlFormat(Map<String, Object> parameters) {
+        return parameters
+                .entrySet()
+                .stream()
+                .filter(kv -> kv.getValue() != null)
+                .map(kv -> String.format("%s=%s", kv.getKey(), URLEncoder.encode(kv.getValue().toString(), StandardCharsets.UTF_8)))
+                .collect(Collectors.joining("&"));
     }
 }
