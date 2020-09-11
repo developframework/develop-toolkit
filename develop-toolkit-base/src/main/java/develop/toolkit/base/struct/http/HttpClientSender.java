@@ -14,6 +14,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,7 +40,7 @@ public final class HttpClientSender {
 
     private String debugLabel;
 
-    private Object body;
+    private Object requestBody;
 
     public HttpClientSender(HttpClient httpClient, String method, String url) {
         this.httpClient = httpClient;
@@ -79,83 +80,89 @@ public final class HttpClientSender {
 
     public HttpClientSender bodyJson(String json) {
         headers.put("Content-Type", "application/json;charset=utf-8");
-        this.body = json;
+        this.requestBody = json;
         return this;
     }
 
     public HttpClientSender bodyXml(String xml) {
         headers.put("Content-Type", "application/xml;charset=utf-8");
-        this.body = xml;
+        this.requestBody = xml;
         return this;
     }
 
     public HttpClientSender bodyBytes(byte[] bytes) {
-        this.body = bytes;
+        this.requestBody = bytes;
         return this;
     }
 
-    public <T> HttpClientReceiver<T> send(HttpResponse.BodyHandler<T> bodyHandler) throws IOException {
-        return send(bodyPublisher(body), bodyHandler);
+    public HttpClientReceiver<String> send() throws IOException {
+        return send(new SimpleSenderHandler());
     }
 
-    public <T> HttpClientReceiver<T> send(HttpRequest.BodyPublisher bodyPublisher, HttpResponse.BodyHandler<T> bodyHandler) throws IOException {
+    public <BODY, E> HttpClientReceiver<E> send(SenderHandler<BODY, E> senderHandler) throws IOException {
         final HttpRequest.Builder builder = HttpRequest
                 .newBuilder()
                 .version(httpClient.version())
                 .uri(URI.create(url + StringAdvice.urlParametersFormat(parameters, true)));
         headers.forEach(builder::header);
         final HttpRequest request = builder
-                .method(method, bodyPublisher)
+                .method(method, senderHandler.bodyPublisher(requestBody))
                 .timeout(readTimeout)
                 .build();
-        HttpClientReceiver<T> receiver = null;
+        HttpClientReceiver<E> receiver = null;
+        BODY responseBody = null;
         try {
             Instant start = Instant.now();
-            HttpResponse<T> response = httpClient.send(request, bodyHandler);
+            HttpResponse<BODY> response = httpClient.send(request, senderHandler.bodyHandler());
             Instant end = Instant.now();
-            receiver = new HttpClientReceiver<>(response, start.until(end, ChronoUnit.MILLIS));
+            responseBody = response.body();
+            receiver = new HttpClientReceiver<>(
+                    response.statusCode(),
+                    response.headers().map(),
+                    senderHandler.convert(responseBody),
+                    start.until(end, ChronoUnit.MILLIS)
+            );
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
             if (log.isDebugEnabled()) {
-                String content;
-                if (body == null) {
-                    content = "(No content)";
-                } else if (body instanceof String) {
-                    content = (String) body;
-                } else if (body.getClass().isArray()) {
-                    content = "(Bytes data)";
-                } else {
-                    content = "(Unknown data)";
-                }
-                StringBuilder sb = new StringBuilder();
-                sb
-                        .append("\nlabel: ").append(debugLabel == null ? "(未定义)" : debugLabel)
-                        .append("\nhttp request:\n    url: ")
-                        .append(request.uri().toString()).append("\n    headers:\n");
-                request
-                        .headers()
-                        .map()
-                        .forEach((k, v) -> sb.append("        ").append(k).append(": ").append(StringUtils.join(v, ";")).append("\n"));
-                sb.append("    body: ").append(content).append("\n");
-                if (receiver != null) {
-                    sb.append(receiver.toString());
-                }
-                log.debug(sb.toString());
+                printDebug(request, receiver, responseBody);
             }
         }
         return receiver;
     }
 
-    private HttpRequest.BodyPublisher bodyPublisher(Object body) {
+    private String printBody(Object body) {
         if (body == null) {
-            return HttpRequest.BodyPublishers.noBody();
+            return "(No content)";
         } else if (body instanceof String) {
-            return HttpRequest.BodyPublishers.ofString((String) body);
+            return (String) body;
         } else if (body.getClass().isArray()) {
-            return HttpRequest.BodyPublishers.ofByteArray((byte[]) body);
+            return "(Bytes data)";
         } else {
-            throw new AssertionError();
+            return "(Unknown data)";
         }
+    }
+
+    private void printDebug(HttpRequest request, HttpClientReceiver<?> receiver, Object responseBody) {
+        StringBuilder sb = new StringBuilder();
+        sb
+                .append("\nlabel: ").append(debugLabel == null ? "(未定义)" : debugLabel)
+                .append("\nhttp request:\n    url: ")
+                .append(request.uri().toString()).append("\n    headers:\n");
+        request
+                .headers()
+                .map()
+                .forEach((k, v) -> sb.append("        ").append(k).append(": ").append(StringUtils.join(v, ";")).append("\n"));
+        sb.append("    body: ").append(printBody(requestBody)).append("\n");
+        if (receiver != null) {
+            sb
+                    .append("\nhttp response:\n    status: ").append(receiver.getHttpStatus()).append("\n    headers:\n");
+            for (Map.Entry<String, List<String>> entry : receiver.getHeaders().entrySet()) {
+                sb.append("        ").append(entry.getKey()).append(": ").append(StringUtils.join(entry.getValue(), ";")).append("\n");
+            }
+            sb.append("    body: ").append(printBody(responseBody));
+        }
+        log.debug(sb.toString());
     }
 }

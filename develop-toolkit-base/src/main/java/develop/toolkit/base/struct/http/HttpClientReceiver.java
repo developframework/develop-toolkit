@@ -1,9 +1,9 @@
 package develop.toolkit.base.struct.http;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
-import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +13,7 @@ import java.util.Map;
  * @author qiushui on 2020-09-10.
  */
 @Getter
+@AllArgsConstructor
 public final class HttpClientReceiver<T> {
 
     private final int httpStatus;
@@ -23,26 +24,7 @@ public final class HttpClientReceiver<T> {
 
     private final long costTime;
 
-    public HttpClientReceiver(HttpResponse<T> httpResponse, long costTime) {
-        this.httpStatus = httpResponse.statusCode();
-        this.headers = httpResponse.headers().map();
-        this.costTime = costTime;
-        this.body = httpResponse.body();
-    }
-
     public String getHeader(String header) {
         return StringUtils.join(headers.getOrDefault(header, List.of()), ";");
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb
-                .append("\nhttp response:\n    status: ").append(httpStatus).append("\n    headers:\n");
-        for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
-            sb.append("        ").append(entry.getKey()).append(": ").append(StringUtils.join(entry.getValue(), ";")).append("\n");
-        }
-        sb.append("    body: ").append(stringBody());
-        return sb.toString();
     }
 }

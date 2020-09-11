@@ -48,6 +48,4 @@ public final class HttpClientHelper {
     public HttpClientSender delete(String url) {
         return new HttpClientSender(httpClient, "DELETE", url);
     }
-
-
 }

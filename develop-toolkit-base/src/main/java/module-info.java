@@ -6,10 +6,13 @@ module develop.toolkit.base {
     requires org.slf4j;
     requires org.apache.commons.lang3;
     requires java.net.http;
+    requires com.fasterxml.jackson.databind;
 
     exports develop.toolkit.base.components;
     exports develop.toolkit.base.constants;
     exports develop.toolkit.base.exception;
     exports develop.toolkit.base.struct;
+    exports develop.toolkit.base.struct.http;
+    exports develop.toolkit.base.struct.range;
     exports develop.toolkit.base.utils;
 }
