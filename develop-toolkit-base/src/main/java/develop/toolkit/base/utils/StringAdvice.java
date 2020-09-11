@@ -112,8 +112,11 @@ public final class StringAdvice {
     /**
      * 处理成url参数格式
      */
-    public static String urlFormat(Map<String, Object> parameters) {
-        return parameters
+    public static String urlParametersFormat(Map<String, Object> parameters, boolean needQuestionMark) {
+        if (parameters.isEmpty()) {
+            return "";
+        }
+        return (needQuestionMark ? "?" : "") + parameters
                 .entrySet()
                 .stream()
                 .filter(kv -> kv.getValue() != null)

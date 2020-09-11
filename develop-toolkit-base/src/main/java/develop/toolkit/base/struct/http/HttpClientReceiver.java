@@ -1,30 +1,33 @@
 package develop.toolkit.base.struct.http;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
-import java.nio.charset.StandardCharsets;
+import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Map;
 
 /**
+ * Http接收器
+ *
  * @author qiushui on 2020-09-10.
  */
 @Getter
-@AllArgsConstructor
-public final class HttpClientReceiver {
+public final class HttpClientReceiver<T> {
 
     private final int httpStatus;
 
     private final Map<String, List<String>> headers;
 
-    private final byte[] body;
+    private final T body;
 
     private final long costTime;
 
-    public String stringBody() {
-        return new String(body, StandardCharsets.UTF_8);
+    public HttpClientReceiver(HttpResponse<T> httpResponse, long costTime) {
+        this.httpStatus = httpResponse.statusCode();
+        this.headers = httpResponse.headers().map();
+        this.costTime = costTime;
+        this.body = httpResponse.body();
     }
 
     public String getHeader(String header) {

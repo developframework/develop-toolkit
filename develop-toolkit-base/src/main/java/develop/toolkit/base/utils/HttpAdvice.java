@@ -189,7 +189,7 @@ public final class HttpAdvice {
                             httpMethod,
                             content == null ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(content, StandardCharsets.UTF_8)
                     )
-                    .timeout(Duration.ofSeconds(10L))
+                    .timeout(Duration.ofMinutes(5L))
                     .build();
 
             Instant start = Instant.now();
