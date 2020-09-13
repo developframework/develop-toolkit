@@ -27,4 +27,8 @@ public final class HttpClientReceiver<T> {
     public String getHeader(String header) {
         return StringUtils.join(headers.getOrDefault(header, List.of()), ";");
     }
+
+    public boolean isSuccess() {
+        return httpStatus >= 200 && httpStatus < 300;
+    }
 }

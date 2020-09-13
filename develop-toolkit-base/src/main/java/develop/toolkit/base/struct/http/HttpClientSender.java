@@ -42,6 +42,8 @@ public final class HttpClientSender {
 
     private Object requestBody;
 
+    private boolean onlyPrintFailed;
+
     public HttpClientSender(HttpClient httpClient, String method, String url) {
         this.httpClient = httpClient;
         this.method = method;
@@ -75,6 +77,11 @@ public final class HttpClientSender {
 
     public HttpClientSender debugLabel(String debugLabel) {
         this.debugLabel = debugLabel;
+        return this;
+    }
+
+    public HttpClientSender onlyPrintFailed(boolean onlyPrintFailed) {
+        this.onlyPrintFailed = onlyPrintFailed;
         return this;
     }
 
@@ -125,7 +132,7 @@ public final class HttpClientSender {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
-            if (log.isDebugEnabled()) {
+            if (log.isDebugEnabled() && (!onlyPrintFailed || receiver == null || !receiver.isSuccess())) {
                 printDebug(request, receiver, responseBody);
             }
         }
