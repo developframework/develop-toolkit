@@ -1,5 +1,6 @@
 package develop.toolkit.base.struct.http;
 
+import develop.toolkit.base.utils.DateTimeAdvice;
 import develop.toolkit.base.utils.StringAdvice;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -10,12 +11,15 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Http发送器
@@ -102,21 +106,48 @@ public final class HttpClientSender {
         return this;
     }
 
-    public HttpClientReceiver<String> send() throws IOException {
-        return send(new SimpleSenderHandler());
+    public void download(Path path, OpenOption... openOptions) throws IOException {
+        send(HttpResponse.BodyHandlers::ofByteArray).save(path, openOptions);
     }
 
-    public <BODY, E> HttpClientReceiver<E> send(SenderHandler<BODY, E> senderHandler) throws IOException {
+    public void downloadQuietly(Path path, OpenOption... openOptions) {
+        sendQuietly(HttpResponse.BodyHandlers::ofByteArray)
+                .ifPresent(receiver -> receiver.save(path, openOptions));
+    }
+
+    public HttpClientReceiver<String> send() throws IOException {
+        return send(new StringBodySenderHandler());
+    }
+
+    public Optional<HttpClientReceiver<String>> sendQuietly() {
+        try {
+            return Optional.of(send(new StringBodySenderHandler()));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    public <BODY> Optional<HttpClientReceiver<BODY>> sendQuietly(SenderHandler<BODY> senderHandler) {
+        try {
+            return Optional.of(send(senderHandler));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    public <BODY> HttpClientReceiver<BODY> send(SenderHandler<BODY> senderHandler) throws IOException {
         final HttpRequest.Builder builder = HttpRequest
                 .newBuilder()
                 .version(httpClient.version())
                 .uri(URI.create(url + StringAdvice.urlParametersFormat(parameters, true)));
         headers.forEach(builder::header);
         final HttpRequest request = builder
-                .method(method, senderHandler.bodyPublisher(requestBody))
+                .method(method, requestBody == null ? HttpRequest.BodyPublishers.noBody() : senderHandler.bodyPublisher(requestBody))
                 .timeout(readTimeout)
                 .build();
-        HttpClientReceiver<E> receiver = null;
+        HttpClientReceiver<BODY> receiver = null;
         BODY responseBody = null;
         try {
             Instant start = Instant.now();
@@ -126,7 +157,7 @@ public final class HttpClientSender {
             receiver = new HttpClientReceiver<>(
                     response.statusCode(),
                     response.headers().map(),
-                    senderHandler.convert(responseBody),
+                    responseBody,
                     start.until(end, ChronoUnit.MILLIS)
             );
         } catch (InterruptedException e) {
@@ -152,24 +183,26 @@ public final class HttpClientSender {
     }
 
     private void printDebug(HttpRequest request, HttpClientReceiver<?> receiver, Object responseBody) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder("\n=========================================================================================================\n");
         sb
-                .append("\nlabel: ").append(debugLabel == null ? "(未定义)" : debugLabel)
-                .append("\nhttp request:\n    url: ")
-                .append(request.uri().toString()).append("\n    headers:\n");
+                .append("\nlabel: ").append(debugLabel == null ? "(Undefined)" : debugLabel)
+                .append("\nhttp request:\n  url: ")
+                .append(request.uri().toString()).append("\n  headers:\n");
         request
                 .headers()
                 .map()
-                .forEach((k, v) -> sb.append("        ").append(k).append(": ").append(StringUtils.join(v, ";")).append("\n"));
-        sb.append("    body: ").append(printBody(requestBody)).append("\n");
+                .forEach((k, v) -> sb.append("      ").append(k).append(": ").append(StringUtils.join(v, ";")).append("\n"));
+        sb.append("  body: ").append(printBody(requestBody)).append("\n");
         if (receiver != null) {
             sb
-                    .append("\nhttp response:\n    status: ").append(receiver.getHttpStatus()).append("\n    headers:\n");
+                    .append("\nhttp response:\n  status: ").append(receiver.getHttpStatus()).append("\n    headers:\n");
             for (Map.Entry<String, List<String>> entry : receiver.getHeaders().entrySet()) {
-                sb.append("        ").append(entry.getKey()).append(": ").append(StringUtils.join(entry.getValue(), ";")).append("\n");
+                sb.append("      ").append(entry.getKey()).append(": ").append(StringUtils.join(entry.getValue(), ";")).append("\n");
             }
-            sb.append("    body: ").append(printBody(responseBody));
+            sb.append("  cost: ").append(DateTimeAdvice.millisecondPretty(receiver.getCostTime())).append("\n");
+            sb.append("  body: ").append(printBody(responseBody));
         }
+        sb.append("\n\n=========================================================================================================\n");
         log.debug(sb.toString());
     }
 }

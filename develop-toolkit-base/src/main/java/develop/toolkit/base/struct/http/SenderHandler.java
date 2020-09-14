@@ -6,11 +6,12 @@ import java.net.http.HttpResponse;
 /**
  * @author qiushui on 2020-09-11.
  */
-public interface SenderHandler<BODY, E> {
+@FunctionalInterface
+public interface SenderHandler<BODY> {
 
-    HttpRequest.BodyPublisher bodyPublisher(Object requestBody);
+    default HttpRequest.BodyPublisher bodyPublisher(Object requestBody) {
+        return HttpRequest.BodyPublishers.ofString((String) requestBody);
+    }
 
     HttpResponse.BodyHandler<BODY> bodyHandler();
-
-    E convert(BODY body);
 }
