@@ -19,14 +19,14 @@ import java.util.function.Supplier;
 /**
  * @author qiushui on 2020-09-14.
  */
-public class MultiPartBodyPublisher {
+public class MultiPartFormDataBody {
 
     private final List<PartsSpecification> partsSpecificationList = new ArrayList<>();
 
     @Getter
     private final String boundary = RandomStringUtils.randomAlphabetic(10);
 
-    public HttpRequest.BodyPublisher build() {
+    public HttpRequest.BodyPublisher buildBodyPublisher() {
         if (partsSpecificationList.isEmpty()) {
             throw new IllegalStateException("Must have at least one part to build multipart message.");
         }
@@ -34,7 +34,7 @@ public class MultiPartBodyPublisher {
         return HttpRequest.BodyPublishers.ofByteArrays(PartsIterator::new);
     }
 
-    public MultiPartBodyPublisher addPart(String name, String value) {
+    public MultiPartFormDataBody addPart(String name, String value) {
         PartsSpecification newPart = new PartsSpecification();
         newPart.type = PartsSpecification.Type.STRING;
         newPart.name = name;
@@ -43,7 +43,7 @@ public class MultiPartBodyPublisher {
         return this;
     }
 
-    public MultiPartBodyPublisher addPart(String name, Path path) {
+    public MultiPartFormDataBody addPart(String name, Path path) {
         PartsSpecification newPart = new PartsSpecification();
         newPart.type = PartsSpecification.Type.FILE;
         newPart.name = name;
@@ -52,7 +52,7 @@ public class MultiPartBodyPublisher {
         return this;
     }
 
-    public MultiPartBodyPublisher addPart(String name, byte[] bytes) {
+    public MultiPartFormDataBody addPart(String name, byte[] bytes) {
         PartsSpecification newPart = new PartsSpecification();
         newPart.type = PartsSpecification.Type.FILE;
         newPart.name = name;
@@ -61,7 +61,7 @@ public class MultiPartBodyPublisher {
         return this;
     }
 
-    public MultiPartBodyPublisher addPart(String name, String filename, String contentType, Supplier<InputStream> stream) {
+    public MultiPartFormDataBody addPart(String name, String filename, String contentType, Supplier<InputStream> stream) {
         PartsSpecification newPart = new PartsSpecification();
         newPart.type = PartsSpecification.Type.STREAM;
         newPart.name = name;
@@ -104,6 +104,8 @@ public class MultiPartBodyPublisher {
         private boolean done;
         private byte[] next;
 
+        private static final String NEW_LINE = "\r\n";
+
         @Override
         public boolean hasNext() {
             if (done) return false;
@@ -136,12 +138,7 @@ public class MultiPartBodyPublisher {
                 String contentType = "application/octet-stream";
                 switch (nextPart.type) {
                     case STRING: {
-                        String part =
-                                "--" + boundary + "\r\n" +
-                                        "Content-Disposition: form-data; name=" + nextPart.name + "\r\n" +
-                                        "Content-Type: text/plain; charset=UTF-8\r\n\r\n" +
-                                        nextPart.value + "\r\n";
-                        return part.getBytes(StandardCharsets.UTF_8);
+                        return headerBytes(nextPart.name, nextPart.value, null, "text/plain; charset=UTF-8");
                     }
                     case FINAL_BOUNDARY: {
                         return nextPart.value.getBytes(StandardCharsets.UTF_8);
@@ -163,11 +160,7 @@ public class MultiPartBodyPublisher {
                     }
                     break;
                 }
-                String partHeader =
-                        "--" + boundary + "\r\n" +
-                                "Content-Disposition: form-data; name=" + nextPart.name + "; filename=" + filename + "\r\n" +
-                                "Content-Type: " + contentType + "\r\n\r\n";
-                return partHeader.getBytes(StandardCharsets.UTF_8);
+                return headerBytes(nextPart.name, null, filename, contentType);
             } else {
                 byte[] buf = new byte[8192];
                 int r = currentFileInput.read(buf);
@@ -178,9 +171,23 @@ public class MultiPartBodyPublisher {
                 } else {
                     currentFileInput.close();
                     currentFileInput = null;
-                    return "\r\n".getBytes();
+                    return NEW_LINE.getBytes();
                 }
             }
+        }
+
+        private byte[] headerBytes(String name, String value, String filename, String contentType) {
+            StringBuilder sb = new StringBuilder("--")
+                    .append(boundary).append(NEW_LINE)
+                    .append("Content-Disposition: form-data; name=").append(name);
+            if (filename != null) {
+                sb.append("; filename=").append(filename);
+            }
+            sb.append(NEW_LINE).append("Content-Type: ").append(contentType).append(NEW_LINE).append(NEW_LINE);
+            if (value != null) {
+                sb.append(value).append(NEW_LINE);
+            }
+            return sb.toString().getBytes(StandardCharsets.UTF_8);
         }
     }
 }

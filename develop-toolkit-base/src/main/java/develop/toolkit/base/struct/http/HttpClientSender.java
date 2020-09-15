@@ -101,6 +101,18 @@ public final class HttpClientSender {
         return this;
     }
 
+    public HttpClientSender bodyMultiPartFormData(MultiPartFormDataBody multiPartFormDataBody) {
+        headers.put("Content-Type", "multipart/form-data; boundary=" + multiPartFormDataBody.getBoundary());
+        this.requestBody = multiPartFormDataBody.buildBodyPublisher();
+        return this;
+    }
+
+    public HttpClientSender bodyFormUrlencoded(FormUrlencodedBody formUrlencodedBody) {
+        headers.put("Content-Type", "application/x-www-form-urlencoded");
+        this.requestBody = formUrlencodedBody.buildBodyPublisher();
+        return this;
+    }
+
     public HttpClientSender bodyBytes(byte[] bytes) {
         this.requestBody = bytes;
         return this;
@@ -148,23 +160,21 @@ public final class HttpClientSender {
                 .timeout(readTimeout)
                 .build();
         HttpClientReceiver<BODY> receiver = null;
-        BODY responseBody = null;
         try {
             Instant start = Instant.now();
             HttpResponse<BODY> response = httpClient.send(request, senderHandler.bodyHandler());
             Instant end = Instant.now();
-            responseBody = response.body();
             receiver = new HttpClientReceiver<>(
                     response.statusCode(),
                     response.headers().map(),
-                    responseBody,
+                    response.body(),
                     start.until(end, ChronoUnit.MILLIS)
             );
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
             if (log.isDebugEnabled() && (!onlyPrintFailed || receiver == null || !receiver.isSuccess())) {
-                printDebug(request, receiver, responseBody);
+                printDebug(request, receiver);
             }
         }
         return receiver;
@@ -182,7 +192,7 @@ public final class HttpClientSender {
         }
     }
 
-    private void printDebug(HttpRequest request, HttpClientReceiver<?> receiver, Object responseBody) {
+    private void printDebug(HttpRequest request, HttpClientReceiver<?> receiver) {
         StringBuilder sb = new StringBuilder("\n=========================================================================================================\n");
         sb
                 .append("\nlabel: ").append(debugLabel == null ? "(Undefined)" : debugLabel)
@@ -200,7 +210,7 @@ public final class HttpClientSender {
                 sb.append("      ").append(entry.getKey()).append(": ").append(StringUtils.join(entry.getValue(), ";")).append("\n");
             }
             sb.append("  cost: ").append(DateTimeAdvice.millisecondPretty(receiver.getCostTime())).append("\n");
-            sb.append("  body: ").append(printBody(responseBody));
+            sb.append("  body: ").append(printBody(receiver.getBody()));
         }
         sb.append("\n\n=========================================================================================================\n");
         log.debug(sb.toString());
