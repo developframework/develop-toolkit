@@ -25,7 +25,7 @@ public final class HttpClientHelper {
                 .newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)
                 .connectTimeout(connectTimeout)
-                .followRedirects(HttpClient.Redirect.NORMAL)
+                .followRedirects(HttpClient.Redirect.NEVER)
                 .build();
     }
 

@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
  * Http增强工具
  */
 @Slf4j
+@Deprecated
 @SuppressWarnings("unused")
 public final class HttpAdvice {
 
