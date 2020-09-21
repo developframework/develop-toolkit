@@ -60,7 +60,19 @@ public final class HttpClientSender {
     }
 
     public HttpClientSender headers(Map<String, String> headers) {
-        this.headers.putAll(headers);
+        if (headers != null) {
+            this.headers.putAll(headers);
+        }
+        return this;
+    }
+
+    public HttpClientSender headerAuthorization(String value) {
+        this.headers.put("Authorization", value);
+        return this;
+    }
+
+    public HttpClientSender headerContentType(String value) {
+        this.headers.put("Content-Type", value);
         return this;
     }
 
@@ -70,7 +82,9 @@ public final class HttpClientSender {
     }
 
     public HttpClientSender parameters(Map<String, String> parameters) {
-        this.parameters.putAll(parameters);
+        if (parameters != null) {
+            this.parameters.putAll(parameters);
+        }
         return this;
     }
 
