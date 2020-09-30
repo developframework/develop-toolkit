@@ -115,6 +115,11 @@ public final class HttpClientSender {
         return this;
     }
 
+    public HttpClientSender bodyText(String text) {
+        this.requestBody = text;
+        return this;
+    }
+
     public HttpClientSender bodyMultiPartFormData(MultiPartFormDataBody multiPartFormDataBody) {
         headers.put("Content-Type", "multipart/form-data; boundary=" + multiPartFormDataBody.getBoundary());
         this.requestBody = multiPartFormDataBody.buildBodyPublisher();
