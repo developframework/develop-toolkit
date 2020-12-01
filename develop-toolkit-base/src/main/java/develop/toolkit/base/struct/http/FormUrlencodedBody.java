@@ -5,6 +5,7 @@ import develop.toolkit.base.struct.KeyValuePairs;
 import java.net.URLEncoder;
 import java.net.http.HttpRequest;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -12,7 +13,15 @@ import java.util.stream.Collectors;
  */
 public class FormUrlencodedBody {
 
-    private final KeyValuePairs<String, Object> pairs = new KeyValuePairs<>();
+    private final KeyValuePairs<String, Object> pairs;
+
+    public FormUrlencodedBody() {
+        pairs = new KeyValuePairs<>();
+    }
+
+    public FormUrlencodedBody(Map<String, Object> map) {
+        pairs = KeyValuePairs.fromMap(map);
+    }
 
     public HttpRequest.BodyPublisher buildBodyPublisher() {
         return HttpRequest.BodyPublishers.ofString(
