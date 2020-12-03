@@ -153,6 +153,11 @@ public final class ObjectAdvice {
         return clazz.getConstructor().newInstance();
     }
 
+    @SneakyThrows
+    public static <T> T newInstanceQuietly(Class<T> clazz, Class<?>[] parameterClasses, Object... values) {
+        return clazz.getConstructor(parameterClasses).newInstance(values);
+    }
+
     /**
      * 字符串值转化成基本类型值
      */
