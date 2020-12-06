@@ -7,15 +7,8 @@ package develop.toolkit.world.verify;
  */
 public final class CarPlateVerify {
 
-    private static final String PLATE_CHARS_NUMBER = "0123456789";
-
-    private static final String PLATE_CHARS_OTHER = "学挂";
-
     /**
      * 参考https://my.oschina.net/chenyoca/blog/1571062
-     *
-     * @param plate
-     * @return
      */
     public static boolean checkValid(String plate) {
         final String PROVINCES = "京津晋冀蒙辽吉黑沪苏浙皖闽赣鲁豫鄂湘粤桂琼渝川贵云藏陕甘青宁新";
@@ -36,7 +29,7 @@ public final class CarPlateVerify {
      * 普通民用车牌
      */
     private static boolean validNormal(String plate) {
-        final String PLATE_CHARS_ORG = "ABCDEFGHJKLMNPQRSTUVWXY";
+        final String PLATE_CHARS_ORG = "ABCDEFGHJKLMNPQRSTUVWXYZ";
         final String PLATE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789";
         if (PLATE_CHARS_ORG.contains(String.valueOf(plate.charAt(1)))) {
             for (int i = 2; i < 7; i++) {
@@ -54,7 +47,7 @@ public final class CarPlateVerify {
      * 新能源车牌
      */
     private static boolean validNewEnergy(String plate) {
-        final String PLATE_CHARS_ORG = "ABCDEFGHJKLMNPQRSTUVWXY";
+        final String PLATE_CHARS_ORG = "ABCDEFGHJKLMNPQRSTUVWXYZ";
         if (PLATE_CHARS_ORG.contains(String.valueOf(plate.charAt(1)))) {
             if (
                     "123456789DF".contains(String.valueOf(plate.charAt(2))) &&
