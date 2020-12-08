@@ -1,40 +1,29 @@
 package develop.toolkit.base.struct.http;
 
-import develop.toolkit.base.struct.KeyValuePairs;
+import develop.toolkit.base.utils.StringAdvice;
+import lombok.RequiredArgsConstructor;
 
-import java.net.URLEncoder;
-import java.net.http.HttpRequest;
-import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author qiushui on 2020-09-15.
  */
+@RequiredArgsConstructor
 public class FormUrlencodedBody {
 
-    private final KeyValuePairs<String, Object> pairs;
+    private final Map<String, Object> pairs;
 
     public FormUrlencodedBody() {
-        pairs = new KeyValuePairs<>();
+        pairs = new HashMap<>();
     }
 
-    public FormUrlencodedBody(Map<String, Object> map) {
-        pairs = KeyValuePairs.fromMap(map);
-    }
-
-    public HttpRequest.BodyPublisher buildBodyPublisher() {
-        return HttpRequest.BodyPublishers.ofString(
-                pairs
-                        .stream()
-                        .filter(pair -> pair.getValue() != null)
-                        .map(pair -> pair.getKey() + "=" + URLEncoder.encode(pair.getValue().toString(), StandardCharsets.UTF_8))
-                        .collect(Collectors.joining("&"))
-        );
+    public String buildBody() {
+        return StringAdvice.urlParametersFormat(pairs, false);
     }
 
     public FormUrlencodedBody addPair(String name, Object value) {
-        pairs.addKeyValue(name, value);
+        pairs.put(name, value);
         return this;
     }
 }

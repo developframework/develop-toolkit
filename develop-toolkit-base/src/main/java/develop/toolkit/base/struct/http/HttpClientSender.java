@@ -128,7 +128,7 @@ public final class HttpClientSender {
 
     public HttpClientSender bodyFormUrlencoded(FormUrlencodedBody formUrlencodedBody) {
         headers.put("Content-Type", "application/x-www-form-urlencoded");
-        this.requestBody = formUrlencodedBody.buildBodyPublisher();
+        this.requestBody = formUrlencodedBody.buildBody();
         return this;
     }
 
