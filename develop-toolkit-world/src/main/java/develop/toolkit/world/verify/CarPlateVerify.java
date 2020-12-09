@@ -52,7 +52,7 @@ public final class CarPlateVerify {
             if (
                     "123456789DF".contains(String.valueOf(plate.charAt(2))) &&
                             "ABCDEFGHJKLMNPQRSTUVWXYZ123456789".contains(String.valueOf(plate.charAt(3))) &&
-                            "123456789DF".contains(String.valueOf(plate.charAt(7)))
+                            "0123456789DF".contains(String.valueOf(plate.charAt(7)))
             ) {
                 for (int i = 4; i < 6; i++) {
                     if ("0123456789".contains(String.valueOf(plate.charAt(i)))) {
