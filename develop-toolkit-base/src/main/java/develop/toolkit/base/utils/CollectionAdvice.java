@@ -236,7 +236,17 @@ public final class CollectionAdvice {
     /**
      * 补集
      */
+    @Deprecated
     public static <E> Set<E> complementary(Collection<E> master, Collection<E> other) {
+        Set<E> set = new HashSet<>(master);
+        set.removeIf(other::contains);
+        return set;
+    }
+
+    /**
+     * 差集
+     */
+    public static <E> Set<E> difference(Collection<E> master, Collection<E> other) {
         Set<E> set = new HashSet<>(master);
         set.removeIf(other::contains);
         return set;

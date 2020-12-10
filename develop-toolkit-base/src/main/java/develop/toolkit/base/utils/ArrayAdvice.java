@@ -248,7 +248,17 @@ public final class ArrayAdvice {
     /**
      * 补集
      */
+    @Deprecated
     public static <E> Set<E> complementary(E[] master, E[] other) {
+        Set<E> set = new HashSet<>(Set.of(master));
+        set.removeIf(item -> contains(other, item));
+        return set;
+    }
+
+    /**
+     * 差集
+     */
+    public static <E> Set<E> difference(E[] master, E[] other) {
         Set<E> set = new HashSet<>(Set.of(master));
         set.removeIf(item -> contains(other, item));
         return set;
