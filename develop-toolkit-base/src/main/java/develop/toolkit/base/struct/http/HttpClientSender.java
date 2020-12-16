@@ -220,13 +220,13 @@ public final class HttpClientSender {
         request
                 .headers()
                 .map()
-                .forEach((k, v) -> sb.append("      ").append(k).append(": ").append(StringUtils.join(v, ";")).append("\n"));
+                .forEach((k, v) -> sb.append("    ").append(k).append(": ").append(StringUtils.join(v, ";")).append("\n"));
         sb.append("  body: ").append(printBody(requestBody)).append("\n");
         if (receiver != null) {
             sb
-                    .append("\nhttp response:\n  status: ").append(receiver.getHttpStatus()).append("\n    headers:\n");
+                    .append("\nhttp response:\n  status: ").append(receiver.getHttpStatus()).append("\n  headers:\n");
             for (Map.Entry<String, List<String>> entry : receiver.getHeaders().entrySet()) {
-                sb.append("      ").append(entry.getKey()).append(": ").append(StringUtils.join(entry.getValue(), ";")).append("\n");
+                sb.append("    ").append(entry.getKey()).append(": ").append(StringUtils.join(entry.getValue(), ";")).append("\n");
             }
             sb.append("  cost: ").append(DateTimeAdvice.millisecondPretty(receiver.getCostTime())).append("\n");
             sb.append("  body: ").append(printBody(receiver.getBody()));

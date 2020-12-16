@@ -177,4 +177,14 @@ public final class DateTimeAdvice {
             return day + "d" + hour + "h" + minute + "m" + second + "s" + milli + "ms";
         }
     }
+
+    /**
+     * 秒美化成HHmmSS格式
+     */
+    public static String secondPrettyToHHmmss(long seconds) {
+        long hours = seconds / 3600;
+        long minutes = (seconds - hours * 3600) / 60;
+        long second = seconds % 60;
+        return String.format("%02d:%02d:%02d", hours, minutes, second);
+    }
 }
