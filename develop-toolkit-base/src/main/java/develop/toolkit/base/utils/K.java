@@ -23,6 +23,18 @@ public final class K {
     }
 
     /**
+     * 如果为null返回默认值
+     *
+     * @param value        值
+     * @param defaultValue 默认值
+     * @param <T>          泛型
+     * @return 值
+     */
+    public static <T> T def(T value, T defaultValue) {
+        return value != null ? value : defaultValue;
+    }
+
+    /**
      * 如果不为null则执行consumer
      *
      * @param value 值
