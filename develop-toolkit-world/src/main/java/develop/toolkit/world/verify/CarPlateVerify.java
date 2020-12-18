@@ -26,6 +26,13 @@ public final class CarPlateVerify {
     }
 
     /**
+     * 宽松的验证
+     */
+    public static boolean checkValidRelaxed(String plate) {
+        return plate.matches("^[京津晋冀蒙辽吉黑沪苏浙皖闽赣鲁豫鄂湘粤桂琼渝川贵云藏陕甘青宁新][A-Z].{5,6}$");
+    }
+
+    /**
      * 普通民用车牌
      */
     private static boolean validNormal(String plate) {
