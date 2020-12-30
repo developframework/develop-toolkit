@@ -123,4 +123,23 @@ public final class StringAdvice {
                 .map(kv -> String.format("%s=%s", kv.getKey(), URLEncoder.encode(kv.getValue().toString(), StandardCharsets.UTF_8)))
                 .collect(Collectors.joining("&"));
     }
+
+    /**
+     * 去除字符串左边的ch字符
+     */
+    public static String trimLeft(String str, char ch) {
+        if (str == null) {
+            return null;
+        }
+        int skip = 0;
+        for (int i = 0, len = str.length(); i < len; i++) {
+            char c = str.charAt(i);
+            if (c == ch) {
+                skip++;
+            } else {
+                break;
+            }
+        }
+        return str.substring(skip);
+    }
 }
