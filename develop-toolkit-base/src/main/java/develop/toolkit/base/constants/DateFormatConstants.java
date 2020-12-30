@@ -13,6 +13,7 @@ public interface DateFormatConstants {
     String STANDARD = "yyyy-MM-dd HH:mm:ss";
     String COMPACT = "yyyyMMddHHmmss";
     String DATE = "yyyy-MM-dd";
+    String MONTH = "yyyy-MM";
     String TIME = "HH:mm:ss";
     String MYSQL_FORMAT_DATETIME = "%Y-%m-%d %H:%i:%S";
     String MYSQL_FORMAT_DATE = "%Y-%m-%d";
