@@ -6,9 +6,7 @@ import java.io.*;
 import java.lang.reflect.Constructor;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -150,6 +148,21 @@ public final class IOAdvice {
     }
 
     /**
+     * 从classpath读取文件并每行用regex切分，然后按keyFunction分组，明确值是唯一的
+     */
+    public static <K> Map<K, String[]> splitGroupingUniqueFormClasspath(String filename, String regex, Function<String[], K> keyFunction) {
+        Map<K, String[]> map = new HashMap<>();
+        splitFromClasspath(filename, regex).forEach(objs -> {
+            K k = keyFunction.apply(objs);
+            if (map.containsKey(k)) {
+                throw new IllegalStateException("exists key \"" + k + "\"");
+            }
+            map.put(k, objs);
+        });
+        return map;
+    }
+
+    /**
      * 从classpath读取文件并每行用regex切分，装填到实体类，然后按keyFunction分组
      */
     public static <K, T> ListInMap<K, T> splitGroupingFormClasspath(String filename, String regex, Class<T> clazz, Function<T, K> keyFunction) {
@@ -173,6 +186,21 @@ public final class IOAdvice {
     public static <K, V, T> ListInMap<K, V> splitGroupingFormClasspath(String filename, String regex, Class<T> clazz, Function<T, K> keyFunction, Function<T, V> valueFunction) {
         ListInMap<K, V> map = new ListInMap<>();
         splitFromClasspath(filename, regex, clazz).forEach(t -> map.putItem(keyFunction.apply(t), valueFunction.apply(t)));
+        return map;
+    }
+
+    /**
+     * 从classpath读取文件并每行用regex切分，然后按keyFunction分组，明确值是唯一的
+     */
+    public static <K, V> Map<K, V> splitGroupingUniqueFormClasspath(String filename, String regex, Function<String[], K> keyFunction, Function<String[], V> valueFunction) {
+        Map<K, V> map = new HashMap<>();
+        splitFromClasspath(filename, regex).forEach(objs -> {
+            K k = keyFunction.apply(objs);
+            if (map.containsKey(k)) {
+                throw new IllegalStateException("exists key \"" + k + "\"");
+            }
+            map.put(k, valueFunction.apply(objs));
+        });
         return map;
     }
 

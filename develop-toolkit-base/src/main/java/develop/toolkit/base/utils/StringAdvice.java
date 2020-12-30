@@ -125,21 +125,30 @@ public final class StringAdvice {
     }
 
     /**
-     * 去除字符串左边的ch字符
+     * 去除字符串左右指定的字符
      */
-    public static String trimLeft(String str, char ch) {
+    public static String trim(String str, char ch) {
         if (str == null) {
             return null;
         }
-        int skip = 0;
-        for (int i = 0, len = str.length(); i < len; i++) {
-            char c = str.charAt(i);
-            if (c == ch) {
-                skip++;
-            } else {
-                break;
+        int skipLeft = 0, skipRight = 0, len = str.length();
+        boolean left = true, right = true;
+        for (int i = 0; i < len && (left || right); i++) {
+            if (left) {
+                if (str.charAt(i) == ch) {
+                    skipLeft++;
+                } else {
+                    left = false;
+                }
+            }
+            if (right) {
+                if (str.charAt(len - 1 - i) == ch) {
+                    skipRight++;
+                } else {
+                    right = false;
+                }
             }
         }
-        return str.substring(skip);
+        return str.substring(skipLeft, len - skipRight);
     }
 }
