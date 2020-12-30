@@ -66,7 +66,7 @@ public final class StringAdvice {
                 string.substring(0, index),
                 string.substring(index)
         );
-	}
+    }
 
     /**
      * 切掉尾部字符串
@@ -131,24 +131,12 @@ public final class StringAdvice {
         if (str == null) {
             return null;
         }
-        int skipLeft = 0, skipRight = 0, len = str.length();
+        int leftSkip = 0, rightSkip = 0, len = str.length();
         boolean left = true, right = true;
         for (int i = 0; i < len && (left || right); i++) {
-            if (left) {
-                if (str.charAt(i) == ch) {
-                    skipLeft++;
-                } else {
-                    left = false;
-                }
-            }
-            if (right) {
-                if (str.charAt(len - 1 - i) == ch) {
-                    skipRight++;
-                } else {
-                    right = false;
-                }
-            }
+            if (left && (left = str.charAt(i) == ch)) leftSkip++;
+            if (right && (right = str.charAt(len - 1 - i) == ch)) rightSkip++;
         }
-        return str.substring(skipLeft, len - skipRight);
+        return str.substring(leftSkip, len - rightSkip);
     }
 }
