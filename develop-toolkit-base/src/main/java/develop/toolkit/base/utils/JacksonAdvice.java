@@ -1,12 +1,8 @@
 package develop.toolkit.base.utils;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.type.ArrayType;
-import com.fasterxml.jackson.databind.type.CollectionType;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
@@ -43,42 +39,38 @@ public final class JacksonAdvice {
     }
 
     /**
-     * 快速序列化
+     * 安静地序列化
      */
-    @SneakyThrows
-    public static String quickSerialize(Object object, boolean pretty) {
+    @SneakyThrows(JsonProcessingException.class)
+    public static String serializeQuietly(ObjectMapper objectMapper, Object object, boolean pretty) {
         if (pretty) {
-            return defaultObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(object);
+            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
         } else {
-            return defaultObjectMapper().writeValueAsString(object);
+            return objectMapper.writeValueAsString(object);
         }
     }
 
     /**
-     * 快速反序列化
+     * 安静地反序列化
      */
-    @SneakyThrows
-    public static <T> T quickDeserialize(String json, Class<T> clazz) {
-        return defaultObjectMapper().readValue(json, clazz);
+    @SneakyThrows({JsonProcessingException.class, JsonMappingException.class})
+    public static <T> T deserializeQuietly(ObjectMapper objectMapper, String json, Class<T> clazz) {
+        return objectMapper.readValue(json, clazz);
     }
 
     /**
-     * 快速反序列化数组
+     * 安静地反序列化数组
      */
-    @SneakyThrows
-    public static <T> T quickDeserializeArray(String json, Class<T> clazz) {
-        ObjectMapper objectMapper = defaultObjectMapper();
-        ArrayType arrayType = objectMapper.getTypeFactory().constructArrayType(clazz);
-        return defaultObjectMapper().readValue(json, arrayType);
+    @SneakyThrows({JsonProcessingException.class, JsonMappingException.class})
+    public static <T> T deserializeArrayQuietly(ObjectMapper objectMapper, String json, Class<T> clazz) {
+        return objectMapper.readValue(json, objectMapper.getTypeFactory().constructArrayType(clazz));
     }
 
     /**
-     * 快速反序列化集合
+     * 安静地反序列化集合
      */
-    @SneakyThrows
-    public static <T> Collection<T> quickDeserializeCollection(String json, Class<T> clazz, Class<? extends Collection<?>> type) {
-        ObjectMapper objectMapper = defaultObjectMapper();
-        CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(type, clazz);
-        return defaultObjectMapper().readValue(json, collectionType);
+    @SneakyThrows({JsonProcessingException.class, JsonMappingException.class})
+    public static <T> Collection<T> deserializeCollectionQuietly(ObjectMapper objectMapper, String json, Class<T> clazz, Class<? extends Collection<?>> type) {
+        return objectMapper.readValue(json, objectMapper.getTypeFactory().constructCollectionType(type, clazz));
     }
 }
