@@ -76,12 +76,12 @@ public final class HttpClientSender {
         return this;
     }
 
-    public HttpClientSender parameter(String parameter, String value) {
+    public HttpClientSender parameter(String parameter, Object value) {
         this.parameters.put(parameter, value);
         return this;
     }
 
-    public HttpClientSender parameters(Map<String, String> parameters) {
+    public HttpClientSender parameters(Map<String, Object> parameters) {
         if (parameters != null) {
             this.parameters.putAll(parameters);
         }
@@ -215,7 +215,7 @@ public final class HttpClientSender {
         StringBuilder sb = new StringBuilder("\n=========================================================================================================\n");
         sb
                 .append("\nlabel: ").append(debugLabel == null ? "(Undefined)" : debugLabel)
-                .append("\nhttp request:\n  url: ")
+                .append("\nhttp request:\n  method: ").append(method).append("\n  url: ")
                 .append(request.uri().toString()).append("\n  headers:\n");
         request
                 .headers()
