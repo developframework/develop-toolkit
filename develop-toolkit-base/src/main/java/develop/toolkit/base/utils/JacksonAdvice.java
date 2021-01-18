@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.github.developframework.expression.*;
 import develop.toolkit.base.constants.DateFormatConstants;
 import lombok.SneakyThrows;
 
@@ -72,5 +73,42 @@ public final class JacksonAdvice {
     @SneakyThrows({JsonProcessingException.class, JsonMappingException.class})
     public static <T> Collection<T> deserializeCollectionQuietly(ObjectMapper objectMapper, String json, Class<T> clazz, Class<? extends Collection<?>> type) {
         return objectMapper.readValue(json, objectMapper.getTypeFactory().constructCollectionType(type, clazz));
+    }
+
+    /**
+     * 用表达式从json中取值
+     */
+    @SneakyThrows(JsonProcessingException.class)
+    public static <T> T getValue(ObjectMapper objectMapper, String json, String expressionValue, Class<T> clazz) {
+        if (json == null) {
+            return null;
+        }
+        Expression expression = Expression.parse(expressionValue);
+        if (expression == EmptyExpression.INSTANCE) {
+            return objectMapper.readValue(json, clazz);
+        }
+        JsonNode jsonNode = objectMapper.readTree(json);
+        for (Expression singleExpression : expression.expressionTree()) {
+            if (singleExpression instanceof ObjectExpression) {
+                jsonNode = existsJsonNode(jsonNode, ((ObjectExpression) singleExpression).getPropertyName());
+            } else if (singleExpression instanceof ArrayExpression) {
+                ArrayExpression ae = (ArrayExpression) singleExpression;
+                jsonNode = existsJsonNode(jsonNode, ae.getPropertyName());
+                if (jsonNode.isArray()) {
+                    jsonNode = jsonNode.get(ae.getIndex());
+                }
+            } else if (singleExpression instanceof MethodExpression) {
+                throw new IllegalArgumentException("not support method expression.");
+            }
+        }
+        return objectMapper.treeToValue(jsonNode, clazz);
+    }
+
+    private static JsonNode existsJsonNode(JsonNode parentNode, String propertyName) {
+        final JsonNode node = parentNode.get(propertyName);
+        if (node == null) {
+            throw new IllegalArgumentException("Not found node \"" + propertyName + "\"");
+        }
+        return node;
     }
 }
