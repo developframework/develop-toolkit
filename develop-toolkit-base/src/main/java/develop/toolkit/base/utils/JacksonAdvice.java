@@ -8,12 +8,13 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.github.developframework.expression.*;
 import develop.toolkit.base.constants.DateFormatConstants;
+import develop.toolkit.base.struct.KeyValuePair;
 import lombok.SneakyThrows;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * @author qiushui on 2020-09-15.
@@ -52,56 +53,75 @@ public final class JacksonAdvice {
     }
 
     /**
-     * 安静地反序列化
-     */
-    @SneakyThrows({JsonProcessingException.class, JsonMappingException.class})
-    public static <T> T deserializeQuietly(ObjectMapper objectMapper, String json, Class<T> clazz) {
-        return objectMapper.readValue(json, clazz);
-    }
-
-    /**
-     * 安静地反序列化数组
-     */
-    @SneakyThrows({JsonProcessingException.class, JsonMappingException.class})
-    public static <T> T deserializeArrayQuietly(ObjectMapper objectMapper, String json, Class<T> clazz) {
-        return objectMapper.readValue(json, objectMapper.getTypeFactory().constructArrayType(clazz));
-    }
-
-    /**
-     * 安静地反序列化集合
-     */
-    @SneakyThrows({JsonProcessingException.class, JsonMappingException.class})
-    public static <T> Collection<T> deserializeCollectionQuietly(ObjectMapper objectMapper, String json, Class<T> clazz, Class<? extends Collection<?>> type) {
-        return objectMapper.readValue(json, objectMapper.getTypeFactory().constructCollectionType(type, clazz));
-    }
-
-    /**
      * 用表达式从json中取值
      */
     @SneakyThrows(JsonProcessingException.class)
-    public static <T> T getValue(ObjectMapper objectMapper, String json, String expressionValue, Class<T> clazz) {
-        if (json == null) {
-            return null;
+    public static <T> T deserializeValue(ObjectMapper objectMapper, JsonNode rootNode, String expressionValue, Class<T> clazz) {
+        return objectMapper.treeToValue(
+                parseExpressionToJsonNode(rootNode, Expression.parse(expressionValue)),
+                clazz
+        );
+    }
+
+    /**
+     * 用表达式从json中取数组
+     */
+    @SneakyThrows(JsonProcessingException.class)
+    public static <T> T[] deserializeArray(ObjectMapper objectMapper, JsonNode rootNode, String expressionValue, Class<T> clazz) {
+        final JsonNode jsonNode = parseExpressionToJsonNode(rootNode, Expression.parse(expressionValue));
+        if (!jsonNode.isArray()) {
+            throw new IllegalArgumentException("\"" + expressionValue + "\" value is not a array.");
         }
-        Expression expression = Expression.parse(expressionValue);
-        if (expression == EmptyExpression.INSTANCE) {
-            return objectMapper.readValue(json, clazz);
+        return objectMapper.readValue(
+                jsonNode.toString(),
+                objectMapper.getTypeFactory().constructArrayType(clazz)
+        );
+    }
+
+    /**
+     * 用表达式从json中取列表
+     */
+    @SneakyThrows(JsonProcessingException.class)
+    public static <T> List<T> deserializeList(ObjectMapper objectMapper, JsonNode rootNode, String expressionValue, Class<T> clazz) {
+        final JsonNode jsonNode = parseExpressionToJsonNode(rootNode, Expression.parse(expressionValue));
+        if (!jsonNode.isArray()) {
+            throw new IllegalArgumentException("\"" + expressionValue + "\" value is not a list.");
         }
-        JsonNode jsonNode = objectMapper.readTree(json);
-        for (Expression singleExpression : expression.expressionTree()) {
-            if (singleExpression instanceof ObjectExpression) {
-                jsonNode = existsJsonNode(jsonNode, ((ObjectExpression) singleExpression).getPropertyName());
-            } else if (singleExpression instanceof ArrayExpression) {
-                ArrayExpression ae = (ArrayExpression) singleExpression;
-                jsonNode = existsJsonNode(jsonNode, ae.getPropertyName());
-                if (jsonNode.isArray()) {
-                    jsonNode = jsonNode.get(ae.getIndex());
+        return objectMapper.readValue(
+                jsonNode.toString(),
+                objectMapper.getTypeFactory().constructCollectionType(List.class, clazz)
+        );
+    }
+
+    @SneakyThrows(JsonProcessingException.class)
+    public static Object[] deserializeValues(ObjectMapper objectMapper, JsonNode rootNode, KeyValuePair<String, Class<?>>... expressionValues) {
+        final Object[] values = new Object[expressionValues.length];
+        for (int i = 0; i < expressionValues.length; i++) {
+            final KeyValuePair<String, Class<?>> kv = expressionValues[i];
+            final Expression expression = Expression.parse(kv.getKey());
+            JsonNode jsonNode = parseExpressionToJsonNode(rootNode, expression);
+            values[i] = objectMapper.treeToValue(jsonNode, kv.getValue());
+        }
+        return values;
+    }
+
+    private static JsonNode parseExpressionToJsonNode(JsonNode jsonNode, Expression expression) {
+        if (expression != EmptyExpression.INSTANCE) {
+            for (Expression singleExpression : expression.expressionTree()) {
+                if (singleExpression instanceof ObjectExpression) {
+                    jsonNode = existsJsonNode(jsonNode, ((ObjectExpression) singleExpression).getPropertyName());
+                } else if (singleExpression instanceof ArrayExpression) {
+                    ArrayExpression ae = (ArrayExpression) singleExpression;
+                    jsonNode = existsJsonNode(jsonNode, ae.getPropertyName());
+                    if (jsonNode.isArray()) {
+                        jsonNode = jsonNode.get(ae.getIndex());
+                    }
+                } else if (singleExpression instanceof MethodExpression) {
+                    throw new IllegalArgumentException("not support method expression.");
                 }
-            } else if (singleExpression instanceof MethodExpression) {
-                throw new IllegalArgumentException("not support method expression.");
             }
         }
-        return objectMapper.treeToValue(jsonNode, clazz);
+        return jsonNode;
     }
 
     private static JsonNode existsJsonNode(JsonNode parentNode, String propertyName) {
