@@ -13,7 +13,6 @@ import lombok.SneakyThrows;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -33,9 +32,8 @@ public final class JacksonAdvice {
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         objectMapper.enable(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN);
         JavaTimeModule javaTimeModule = new JavaTimeModule();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DateFormatConstants.STANDARD);
-        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(dateTimeFormatter));
-        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(dateTimeFormatter));
+        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateFormatConstants.STANDARD_FORMATTER));
+        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateFormatConstants.STANDARD_FORMATTER));
         objectMapper.registerModule(javaTimeModule);
         return objectMapper;
     }
@@ -93,6 +91,7 @@ public final class JacksonAdvice {
         );
     }
 
+    @SafeVarargs
     @SneakyThrows(JsonProcessingException.class)
     public static Object[] deserializeValues(ObjectMapper objectMapper, JsonNode rootNode, KeyValuePair<String, Class<?>>... expressionValues) {
         final Object[] values = new Object[expressionValues.length];
