@@ -213,9 +213,9 @@ public final class CollectionAdvice {
      * 并集
      */
     @SafeVarargs
-    public static <E> Set<E> union(Collection<E> master, Collection<E>... other) {
-        Set<E> set = new HashSet<>(master);
-        for (Collection<E> collection : other) {
+    public static <E> Set<E> union(Collection<E>... collections) {
+        Set<E> set = new HashSet<>();
+        for (Collection<E> collection : collections) {
             set.addAll(collection);
         }
         return set;
@@ -226,20 +226,14 @@ public final class CollectionAdvice {
      */
     @SafeVarargs
     public static <E> Set<E> intersection(Collection<E> master, Collection<E>... other) {
-        Set<E> set = new HashSet<>(master);
-        for (Collection<E> collection : other) {
-            set.removeIf(Predicate.not(collection::contains));
+        Set<E> set = new HashSet<>();
+        a:
+        for (E e : master) {
+            for (Collection<E> collection : other) {
+                if (!contains(collection, e)) continue a;
+            }
+            set.add(e);
         }
-        return set;
-    }
-
-    /**
-     * 补集
-     */
-    @Deprecated
-    public static <E> Set<E> complementary(Collection<E> master, Collection<E> other) {
-        Set<E> set = new HashSet<>(master);
-        set.removeIf(other::contains);
         return set;
     }
 

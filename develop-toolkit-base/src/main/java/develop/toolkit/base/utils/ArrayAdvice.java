@@ -225,10 +225,10 @@ public final class ArrayAdvice {
      * 并集
      */
     @SafeVarargs
-    public static <E> Set<E> union(E[] master, E[]... other) {
-        Set<E> set = new HashSet<>(Set.of(master));
-        for (E[] array : other) {
-            set.addAll(Set.of(array));
+    public static <E> Set<E> union(E[]... arrays) {
+        Set<E> set = new HashSet<>();
+        for (E[] array : arrays) {
+            set.addAll(Arrays.asList(array));
         }
         return set;
     }
@@ -238,20 +238,14 @@ public final class ArrayAdvice {
      */
     @SafeVarargs
     public static <E> Set<E> intersection(E[] master, E[]... other) {
-        Set<E> set = new HashSet<>(Set.of(master));
-        for (E[] array : other) {
-            set.removeIf(Predicate.not(item -> contains(array, item)));
+        Set<E> set = new HashSet<>();
+        a:
+        for (E e : master) {
+            for (E[] array : other) {
+                if (!contains(array, e)) continue a;
+            }
+            set.add(e);
         }
-        return set;
-    }
-
-    /**
-     * 补集
-     */
-    @Deprecated
-    public static <E> Set<E> complementary(E[] master, E[] other) {
-        Set<E> set = new HashSet<>(Set.of(master));
-        set.removeIf(item -> contains(other, item));
         return set;
     }
 
@@ -259,8 +253,12 @@ public final class ArrayAdvice {
      * 差集
      */
     public static <E> Set<E> difference(E[] master, E[] other) {
-        Set<E> set = new HashSet<>(Set.of(master));
-        set.removeIf(item -> contains(other, item));
+        Set<E> set = new HashSet<>();
+        for (E e : master) {
+            if (!contains(other, e)) {
+                set.add(e);
+            }
+        }
         return set;
     }
 
