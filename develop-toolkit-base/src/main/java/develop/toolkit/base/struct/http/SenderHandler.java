@@ -4,6 +4,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 /**
+ * 发送器扩展逻辑
+ *
  * @author qiushui on 2020-09-11.
  */
 @FunctionalInterface

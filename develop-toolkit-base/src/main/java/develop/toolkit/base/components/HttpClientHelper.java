@@ -1,6 +1,7 @@
 package develop.toolkit.base.components;
 
 import develop.toolkit.base.struct.http.HttpClientSender;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.http.HttpClient;
@@ -12,13 +13,10 @@ import java.time.Duration;
  * @author qiushui on 2020-09-10.
  */
 @Slf4j
+@RequiredArgsConstructor
 public final class HttpClientHelper {
 
     private final HttpClient httpClient;
-
-    public HttpClientHelper(HttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
 
     public HttpClientHelper(Duration connectTimeout) {
         this.httpClient = HttpClient

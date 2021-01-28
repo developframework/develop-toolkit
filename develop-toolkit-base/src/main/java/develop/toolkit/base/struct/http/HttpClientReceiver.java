@@ -1,8 +1,8 @@
 package develop.toolkit.base.struct.http;
 
 import develop.toolkit.base.utils.IOAdvice;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -19,23 +19,31 @@ import java.util.Map;
  * @author qiushui on 2020-09-10.
  */
 @Getter
-@AllArgsConstructor
+@Setter
 public final class HttpClientReceiver<T> {
 
-    private final int httpStatus;
+    private int httpStatus;
 
-    private final Map<String, List<String>> headers;
+    private Map<String, List<String>> headers;
 
-    private final T body;
+    private T body;
 
-    private final long costTime;
+    private long costTime;
+
+    private boolean connectTimeout;
+
+    private boolean readTimeout;
 
     public String getHeader(String header) {
         return StringUtils.join(headers.getOrDefault(header, List.of()), ";");
     }
 
+    public boolean isTimeout() {
+        return connectTimeout || readTimeout;
+    }
+
     public boolean isSuccess() {
-        return httpStatus >= 200 && httpStatus < 300;
+        return !isTimeout() && httpStatus >= 200 && httpStatus < 300;
     }
 
     public void save(Path path, OpenOption... openOptions) {

@@ -8,9 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.net.http.*;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -142,8 +140,7 @@ public final class HttpClientSender {
     }
 
     public void downloadQuietly(Path path, OpenOption... openOptions) {
-        sendQuietly(HttpResponse.BodyHandlers::ofByteArray)
-                .ifPresent(receiver -> receiver.save(path, openOptions));
+        sendQuietly(HttpResponse.BodyHandlers::ofByteArray).ifPresent(receiver -> receiver.save(path, openOptions));
     }
 
     public HttpClientReceiver<String> send() throws IOException {
@@ -151,12 +148,7 @@ public final class HttpClientSender {
     }
 
     public Optional<HttpClientReceiver<String>> sendQuietly() {
-        try {
-            return Optional.of(send(new StringBodySenderHandler()));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return Optional.empty();
-        }
+        return sendQuietly(new StringBodySenderHandler());
     }
 
     public <BODY> Optional<HttpClientReceiver<BODY>> sendQuietly(SenderHandler<BODY> senderHandler) {
@@ -168,6 +160,14 @@ public final class HttpClientSender {
         }
     }
 
+    /**
+     * 核心发送逻辑
+     *
+     * @param senderHandler 发送器扩展逻辑
+     * @param <BODY>        响应内容
+     * @return receiver
+     * @throws IOException IO异常
+     */
     public <BODY> HttpClientReceiver<BODY> send(SenderHandler<BODY> senderHandler) throws IOException {
         final HttpRequest.Builder builder = HttpRequest
                 .newBuilder()
@@ -178,21 +178,22 @@ public final class HttpClientSender {
                 .method(method, requestBody == null ? HttpRequest.BodyPublishers.noBody() : senderHandler.bodyPublisher(requestBody))
                 .timeout(readTimeout)
                 .build();
-        HttpClientReceiver<BODY> receiver = null;
+        final HttpClientReceiver<BODY> receiver = new HttpClientReceiver<>();
         try {
             Instant start = Instant.now();
             HttpResponse<BODY> response = httpClient.send(request, senderHandler.bodyHandler());
-            Instant end = Instant.now();
-            receiver = new HttpClientReceiver<>(
-                    response.statusCode(),
-                    response.headers().map(),
-                    response.body(),
-                    start.until(end, ChronoUnit.MILLIS)
-            );
+            receiver.setCostTime(start.until(Instant.now(), ChronoUnit.MILLIS));
+            receiver.setHttpStatus(response.statusCode());
+            receiver.setHeaders(response.headers().map());
+            receiver.setBody(response.body());
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
+        } catch (HttpConnectTimeoutException e) {
+            receiver.setConnectTimeout(true);
+        } catch (HttpTimeoutException e) {
+            receiver.setReadTimeout(true);
         } finally {
-            if (log.isDebugEnabled() && (!onlyPrintFailed || receiver == null || !receiver.isSuccess())) {
+            if (log.isDebugEnabled() && (!onlyPrintFailed || !receiver.isSuccess())) {
                 printDebug(request, receiver);
             }
         }
@@ -221,10 +222,13 @@ public final class HttpClientSender {
                 .headers()
                 .map()
                 .forEach((k, v) -> sb.append("    ").append(k).append(": ").append(StringUtils.join(v, ";")).append("\n"));
-        sb.append("  body: ").append(printBody(requestBody)).append("\n");
-        if (receiver != null) {
-            sb
-                    .append("\nhttp response:\n  status: ").append(receiver.getHttpStatus()).append("\n  headers:\n");
+        sb.append("  body: ").append(printBody(requestBody)).append("\n").append("\nhttp response:\n");
+        if (receiver.isConnectTimeout()) {
+            sb.append("  (connect timeout ").append(httpClient.connectTimeout().map(Duration::getSeconds).orElse(0L)).append("s)\n");
+        } else if (receiver.isReadTimeout()) {
+            sb.append("  (read timeout ").append(readTimeout).append("s)\n");
+        } else {
+            sb.append("  status: ").append(receiver.getHttpStatus()).append("\n  headers:\n");
             for (Map.Entry<String, List<String>> entry : receiver.getHeaders().entrySet()) {
                 sb.append("    ").append(entry.getKey()).append(": ").append(StringUtils.join(entry.getValue(), ";")).append("\n");
             }
