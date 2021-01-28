@@ -12,6 +12,7 @@ import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * Http接收器
@@ -34,6 +35,8 @@ public final class HttpClientReceiver<T> {
 
     private boolean readTimeout;
 
+    private String errorMessage;
+
     public String getHeader(String header) {
         return StringUtils.join(headers.getOrDefault(header, List.of()), ";");
     }
@@ -43,7 +46,13 @@ public final class HttpClientReceiver<T> {
     }
 
     public boolean isSuccess() {
-        return !isTimeout() && httpStatus >= 200 && httpStatus < 300;
+        return errorMessage == null && !isTimeout() && httpStatus >= 200 && httpStatus < 300;
+    }
+
+    public void ifSuccess(Consumer<HttpClientReceiver<T>> consumer) {
+        if (isSuccess()) {
+            consumer.accept(this);
+        }
     }
 
     public void save(Path path, OpenOption... openOptions) {

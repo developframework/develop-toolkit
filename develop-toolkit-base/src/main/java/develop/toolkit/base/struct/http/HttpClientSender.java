@@ -17,7 +17,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Http发送器
@@ -135,29 +134,12 @@ public final class HttpClientSender {
         return this;
     }
 
-    public void download(Path path, OpenOption... openOptions) throws IOException {
-        send(HttpResponse.BodyHandlers::ofByteArray).save(path, openOptions);
+    public void download(Path path, OpenOption... openOptions) {
+        send(HttpResponse.BodyHandlers::ofByteArray).ifSuccess(r -> r.save(path, openOptions));
     }
 
-    public void downloadQuietly(Path path, OpenOption... openOptions) {
-        sendQuietly(HttpResponse.BodyHandlers::ofByteArray).ifPresent(receiver -> receiver.save(path, openOptions));
-    }
-
-    public HttpClientReceiver<String> send() throws IOException {
+    public HttpClientReceiver<String> send() {
         return send(new StringBodySenderHandler());
-    }
-
-    public Optional<HttpClientReceiver<String>> sendQuietly() {
-        return sendQuietly(new StringBodySenderHandler());
-    }
-
-    public <BODY> Optional<HttpClientReceiver<BODY>> sendQuietly(SenderHandler<BODY> senderHandler) {
-        try {
-            return Optional.of(send(senderHandler));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return Optional.empty();
-        }
     }
 
     /**
@@ -166,9 +148,8 @@ public final class HttpClientSender {
      * @param senderHandler 发送器扩展逻辑
      * @param <BODY>        响应内容
      * @return receiver
-     * @throws IOException IO异常
      */
-    public <BODY> HttpClientReceiver<BODY> send(SenderHandler<BODY> senderHandler) throws IOException {
+    public <BODY> HttpClientReceiver<BODY> send(SenderHandler<BODY> senderHandler) {
         final HttpRequest.Builder builder = HttpRequest
                 .newBuilder()
                 .version(httpClient.version())
@@ -192,6 +173,8 @@ public final class HttpClientSender {
             receiver.setConnectTimeout(true);
         } catch (HttpTimeoutException e) {
             receiver.setReadTimeout(true);
+        } catch (IOException e) {
+            receiver.setErrorMessage(e.getMessage());
         } finally {
             if (log.isDebugEnabled() && (!onlyPrintFailed || !receiver.isSuccess())) {
                 printDebug(request, receiver);
@@ -224,9 +207,11 @@ public final class HttpClientSender {
                 .forEach((k, v) -> sb.append("    ").append(k).append(": ").append(StringUtils.join(v, ";")).append("\n"));
         sb.append("  body: ").append(printBody(requestBody)).append("\n").append("\nhttp response:\n");
         if (receiver.isConnectTimeout()) {
-            sb.append("  (connect timeout ").append(httpClient.connectTimeout().map(Duration::getSeconds).orElse(0L)).append("s)\n");
+            sb.append("  (connect timeout ").append(httpClient.connectTimeout().map(Duration::getSeconds).orElse(0L)).append("s)");
         } else if (receiver.isReadTimeout()) {
-            sb.append("  (read timeout ").append(readTimeout).append("s)\n");
+            sb.append("  (read timeout ").append(readTimeout).append("s)");
+        } else if (receiver.getErrorMessage() != null) {
+            sb.append("  (ioerror ").append(receiver.getErrorMessage()).append(")");
         } else {
             sb.append("  status: ").append(receiver.getHttpStatus()).append("\n  headers:\n");
             for (Map.Entry<String, List<String>> entry : receiver.getHeaders().entrySet()) {
