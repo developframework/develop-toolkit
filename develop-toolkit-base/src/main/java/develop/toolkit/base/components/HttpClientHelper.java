@@ -2,6 +2,7 @@ package develop.toolkit.base.components;
 
 import develop.toolkit.base.struct.http.HttpClientSender;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.http.HttpClient;
@@ -18,6 +19,9 @@ public final class HttpClientHelper {
 
     private final HttpClient httpClient;
 
+    @Setter
+    private boolean onlyPrintFailed = true;
+
     public HttpClientHelper(Duration connectTimeout) {
         this.httpClient = HttpClient
                 .newBuilder()
@@ -32,22 +36,22 @@ public final class HttpClientHelper {
     }
 
     public HttpClientSender get(String url) {
-        return new HttpClientSender(httpClient, "GET", url);
+        return new HttpClientSender(httpClient, "GET", url).onlyPrintFailed(onlyPrintFailed);
     }
 
     public HttpClientSender post(String url) {
-        return new HttpClientSender(httpClient, "POST", url);
+        return new HttpClientSender(httpClient, "POST", url).onlyPrintFailed(onlyPrintFailed);
     }
 
     public HttpClientSender put(String url) {
-        return new HttpClientSender(httpClient, "PUT", url);
+        return new HttpClientSender(httpClient, "PUT", url).onlyPrintFailed(onlyPrintFailed);
     }
 
     public HttpClientSender delete(String url) {
-        return new HttpClientSender(httpClient, "DELETE", url);
+        return new HttpClientSender(httpClient, "DELETE", url).onlyPrintFailed(onlyPrintFailed);
     }
 
     public HttpClientSender request(String method, String url) {
-        return new HttpClientSender(httpClient, method, url);
+        return new HttpClientSender(httpClient, method, url).onlyPrintFailed(onlyPrintFailed);
     }
 }
