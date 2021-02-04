@@ -209,7 +209,7 @@ public final class HttpClientSender {
         if (receiver.isConnectTimeout()) {
             sb.append("  (connect timeout ").append(httpClient.connectTimeout().map(Duration::getSeconds).orElse(0L)).append("s)");
         } else if (receiver.isReadTimeout()) {
-            sb.append("  (read timeout ").append(readTimeout).append("s)");
+            sb.append("  (read timeout ").append(readTimeout.getSeconds()).append("s)");
         } else if (receiver.getErrorMessage() != null) {
             sb.append("  (ioerror ").append(receiver.getErrorMessage()).append(")");
         } else {
