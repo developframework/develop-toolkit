@@ -124,10 +124,14 @@ public final class JacksonAdvice {
     }
 
     private static JsonNode existsJsonNode(JsonNode parentNode, String propertyName) {
-        final JsonNode node = parentNode.get(propertyName);
-        if (node == null) {
-            throw new IllegalArgumentException("Not found node \"" + propertyName + "\"");
+        if (propertyName.isEmpty() && parentNode.isArray()) {
+            return parentNode;
+        } else {
+            final JsonNode node = parentNode.get(propertyName);
+            if (node == null) {
+                throw new IllegalArgumentException("Not found node \"" + propertyName + "\"");
+            }
+            return node;
         }
-        return node;
     }
 }
