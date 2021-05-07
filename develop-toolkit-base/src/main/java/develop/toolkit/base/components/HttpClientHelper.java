@@ -5,7 +5,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import java.io.InputStream;
 import java.net.http.HttpClient;
+import java.security.KeyStore;
+import java.security.SecureRandom;
 import java.time.Duration;
 
 /**
@@ -29,6 +34,27 @@ public final class HttpClientHelper {
                 .connectTimeout(connectTimeout)
                 .followRedirects(HttpClient.Redirect.NEVER)
                 .build();
+    }
+
+    public HttpClientHelper(Duration connectTimeout, String password, InputStream pkcs12) {
+        try {
+            KeyStore ks = KeyStore.getInstance("PKCS12");
+            char[] passwordChar = password.toCharArray();
+            ks.load(pkcs12, passwordChar);
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            kmf.init(ks, passwordChar);
+            SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(kmf.getKeyManagers(), null, new SecureRandom());
+            this.httpClient = HttpClient
+                    .newBuilder()
+                    .version(HttpClient.Version.HTTP_1_1)
+                    .connectTimeout(Duration.ofSeconds(5L))
+                    .followRedirects(HttpClient.Redirect.NEVER)
+                    .sslContext(sslContext)
+                    .build();
+        } catch (Exception e) {
+            throw new RuntimeException("read pkcs12 failed");
+        }
     }
 
     public HttpClientHelper() {
