@@ -212,7 +212,7 @@ public final class HttpClientSender {
             sb.append("  (read timeout ").append(readTimeout.getSeconds()).append("s)");
         } else if (receiver.getErrorMessage() != null) {
             sb.append("  (ioerror ").append(receiver.getErrorMessage()).append(")");
-        } else {
+        } else if (receiver.getHeaders() != null) {
             sb.append("  status: ").append(receiver.getHttpStatus()).append("\n  headers:\n");
             for (Map.Entry<String, List<String>> entry : receiver.getHeaders().entrySet()) {
                 sb.append("    ").append(entry.getKey()).append(": ").append(StringUtils.join(entry.getValue(), ";")).append("\n");
