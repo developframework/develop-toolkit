@@ -3,6 +3,7 @@ package develop.toolkit.base.struct.http;
 import lombok.Getter;
 import org.apache.commons.lang3.RandomStringUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -52,11 +53,13 @@ public class MultiPartFormDataBody {
         return this;
     }
 
-    public MultiPartFormDataBody addPart(String name, byte[] bytes) {
+    public MultiPartFormDataBody addPart(String name, String filename, String contentType, byte[] bytes) {
         PartsSpecification newPart = new PartsSpecification();
-        newPart.type = PartsSpecification.Type.FILE;
+        newPart.type = PartsSpecification.Type.BYTES;
         newPart.name = name;
         newPart.bytes = bytes;
+        newPart.filename = filename;
+        newPart.contentType = contentType;
         partsSpecificationList.add(newPart);
         return this;
     }
@@ -144,13 +147,15 @@ public class MultiPartFormDataBody {
                         return nextPart.value.getBytes(StandardCharsets.UTF_8);
                     }
                     case BYTES: {
-                        return nextPart.bytes;
+                        filename = nextPart.filename;
+                        contentType = nextPart.contentType;
+                        currentFileInput = new ByteArrayInputStream(nextPart.bytes);
                     }
+                    break;
                     case FILE: {
-                        Path path = nextPart.path;
-                        filename = path.getFileName().toString();
-                        contentType = Files.probeContentType(path);
-                        currentFileInput = Files.newInputStream(path);
+                        filename = nextPart.path.getFileName().toString();
+                        contentType = Files.probeContentType(nextPart.path);
+                        currentFileInput = Files.newInputStream(nextPart.path);
                     }
                     break;
                     case STREAM: {

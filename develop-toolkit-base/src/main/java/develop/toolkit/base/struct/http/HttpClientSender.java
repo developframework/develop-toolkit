@@ -174,6 +174,7 @@ public final class HttpClientSender {
         } catch (HttpTimeoutException e) {
             receiver.setReadTimeout(true);
         } catch (IOException e) {
+            e.printStackTrace();
             receiver.setErrorMessage(e.getMessage());
         } finally {
             if (log.isDebugEnabled() && (!onlyPrintFailed || !receiver.isSuccess())) {
