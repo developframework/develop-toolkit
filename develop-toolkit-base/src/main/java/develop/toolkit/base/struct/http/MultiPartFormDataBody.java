@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.function.Supplier;
 
 /**
  * @author qiushui on 2020-09-14.
@@ -64,7 +63,7 @@ public class MultiPartFormDataBody {
         return this;
     }
 
-    public MultiPartFormDataBody addPart(String name, String filename, String contentType, Supplier<InputStream> stream) {
+    public MultiPartFormDataBody addPart(String name, String filename, String contentType, InputStream stream) {
         PartsSpecification newPart = new PartsSpecification();
         newPart.type = PartsSpecification.Type.STREAM;
         newPart.name = name;
@@ -93,7 +92,7 @@ public class MultiPartFormDataBody {
         public String value;
         public Path path;
         public byte[] bytes;
-        public Supplier<InputStream> stream;
+        public InputStream stream;
         public String filename;
         public String contentType;
 
@@ -161,7 +160,7 @@ public class MultiPartFormDataBody {
                     case STREAM: {
                         filename = nextPart.filename;
                         contentType = nextPart.contentType;
-                        currentFileInput = nextPart.stream.get();
+                        currentFileInput = nextPart.stream;
                     }
                     break;
                 }
