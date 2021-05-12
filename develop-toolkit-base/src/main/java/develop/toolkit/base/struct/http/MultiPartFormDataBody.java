@@ -14,7 +14,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.function.Supplier;
 
 /**
  * @author qiushui on 2020-09-14.
@@ -63,7 +63,7 @@ public class MultiPartFormDataBody {
         return this;
     }
 
-    public MultiPartFormDataBody addPart(String name, String filename, String contentType, InputStream stream) {
+    public MultiPartFormDataBody addPart(String name, String filename, String contentType, Supplier<InputStream> stream) {
         PartsSpecification newPart = new PartsSpecification();
         newPart.type = PartsSpecification.Type.STREAM;
         newPart.name = name;
@@ -81,7 +81,7 @@ public class MultiPartFormDataBody {
         partsSpecificationList.add(newPart);
     }
 
-    static class PartsSpecification {
+    private static class PartsSpecification {
 
         public enum Type {
             STRING, FILE, BYTES, STREAM, FINAL_BOUNDARY
@@ -92,95 +92,98 @@ public class MultiPartFormDataBody {
         public String value;
         public Path path;
         public byte[] bytes;
-        public InputStream stream;
+        public Supplier<InputStream> stream;
         public String filename;
         public String contentType;
 
     }
 
-    class PartsIterator implements Iterator<byte[]> {
+    private class PartsIterator implements Iterator<byte[]> {
 
         private final Iterator<PartsSpecification> iterator = partsSpecificationList.iterator();
-        private InputStream currentFileInput;
 
-        private boolean done;
-        private byte[] next;
+        private InputStream currentInputStream;
+
+        private byte[] nextBytes;
 
         private static final String NEW_LINE = "\r\n";
 
         @Override
         public boolean hasNext() {
-            if (done) return false;
-            if (next != null) return true;
             try {
-                next = computeNext();
+                nextBytes = currentInputStream == null ? determineNextPart() : readCurrentInputStream();
+                return nextBytes != null;
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
-            if (next == null) {
-                done = true;
-                return false;
-            }
-            return true;
         }
 
         @Override
         public byte[] next() {
-            if (!hasNext()) throw new NoSuchElementException();
-            byte[] res = next;
-            next = null;
-            return res;
+            byte[] result = nextBytes;
+            System.out.println(result.length);
+            nextBytes = null;
+            return result;
         }
 
-        private byte[] computeNext() throws IOException {
-            if (currentFileInput == null) {
-                if (!iterator.hasNext()) return null;
-                PartsSpecification nextPart = iterator.next();
-                String filename = null;
-                String contentType = "application/octet-stream";
-                switch (nextPart.type) {
-                    case STRING: {
-                        return headerBytes(nextPart.name, nextPart.value, null, "text/plain; charset=UTF-8");
-                    }
-                    case FINAL_BOUNDARY: {
-                        return nextPart.value.getBytes(StandardCharsets.UTF_8);
-                    }
-                    case BYTES: {
-                        filename = nextPart.filename;
-                        contentType = nextPart.contentType;
-                        currentFileInput = new ByteArrayInputStream(nextPart.bytes);
-                    }
-                    break;
-                    case FILE: {
-                        filename = nextPart.path.getFileName().toString();
-                        contentType = Files.probeContentType(nextPart.path);
-                        currentFileInput = Files.newInputStream(nextPart.path);
-                    }
-                    break;
-                    case STREAM: {
-                        filename = nextPart.filename;
-                        contentType = nextPart.contentType;
-                        currentFileInput = nextPart.stream;
-                    }
-                    break;
+        /**
+         * 决定下一个Part
+         */
+        private byte[] determineNextPart() throws IOException {
+            if (!iterator.hasNext()) return null;
+            final PartsSpecification nextPart = iterator.next();
+            switch (nextPart.type) {
+                case FINAL_BOUNDARY: {
+                    return nextPart.value.getBytes(StandardCharsets.UTF_8);
                 }
-                return headerBytes(nextPart.name, null, filename, contentType);
-            } else {
-                byte[] buf = new byte[8192];
-                int r = currentFileInput.read(buf);
-                if (r > 0) {
-                    byte[] actualBytes = new byte[r];
-                    System.arraycopy(buf, 0, actualBytes, 0, r);
-                    return actualBytes;
-                } else {
-                    currentFileInput.close();
-                    currentFileInput = null;
-                    return NEW_LINE.getBytes();
+                case STRING: {
+                    currentInputStream = new ByteArrayInputStream((nextPart.value).getBytes(StandardCharsets.UTF_8));
+                    return headerBytes(nextPart.name, null, "text/plain; charset=UTF-8");
                 }
+                case BYTES: {
+                    currentInputStream = new ByteArrayInputStream(nextPart.bytes);
+                    return headerBytes(
+                            nextPart.name,
+                            nextPart.filename,
+                            nextPart.contentType
+                    );
+                }
+                case FILE: {
+                    currentInputStream = Files.newInputStream(nextPart.path);
+                    return headerBytes(
+                            nextPart.name,
+                            nextPart.path.getFileName().toString(),
+                            Files.probeContentType(nextPart.path)
+                    );
+                }
+                case STREAM: {
+                    currentInputStream = nextPart.stream.get();
+                    return headerBytes(
+                            nextPart.name,
+                            nextPart.filename,
+                            nextPart.contentType
+                    );
+                }
+                default:
+                    throw new AssertionError();
             }
         }
 
-        private byte[] headerBytes(String name, String value, String filename, String contentType) {
+        private byte[] readCurrentInputStream() throws IOException {
+            byte[] buffer = new byte[8192];
+            int r = currentInputStream.read(buffer);
+            if (r > 0) {
+                byte[] actualBytes = new byte[r];
+                System.arraycopy(buffer, 0, actualBytes, 0, r);
+                return actualBytes;
+            } else {
+                currentInputStream.close();
+                currentInputStream = null;
+                return NEW_LINE.getBytes();
+            }
+        }
+
+        private byte[] headerBytes(String name, String filename, String contentType) {
             StringBuilder sb = new StringBuilder("--")
                     .append(boundary).append(NEW_LINE)
                     .append("Content-Disposition: form-data; name=").append(name);
@@ -188,9 +191,6 @@ public class MultiPartFormDataBody {
                 sb.append("; filename=").append(filename);
             }
             sb.append(NEW_LINE).append("Content-Type: ").append(contentType).append(NEW_LINE).append(NEW_LINE);
-            if (value != null) {
-                sb.append(value).append(NEW_LINE);
-            }
             return sb.toString().getBytes(StandardCharsets.UTF_8);
         }
     }
