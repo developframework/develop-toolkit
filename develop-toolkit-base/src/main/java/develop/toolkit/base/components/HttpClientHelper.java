@@ -48,7 +48,7 @@ public final class HttpClientHelper {
             this.httpClient = HttpClient
                     .newBuilder()
                     .version(HttpClient.Version.HTTP_1_1)
-                    .connectTimeout(Duration.ofSeconds(5L))
+                    .connectTimeout(connectTimeout)
                     .followRedirects(HttpClient.Redirect.NEVER)
                     .sslContext(sslContext)
                     .build();
