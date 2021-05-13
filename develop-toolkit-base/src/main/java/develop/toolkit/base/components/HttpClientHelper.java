@@ -53,7 +53,7 @@ public final class HttpClientHelper {
                     .sslContext(sslContext)
                     .build();
         } catch (Exception e) {
-            throw new RuntimeException("read pkcs12 failed");
+            throw new RuntimeException("read pkcs12 failed:" + e.getMessage());
         }
     }
 
