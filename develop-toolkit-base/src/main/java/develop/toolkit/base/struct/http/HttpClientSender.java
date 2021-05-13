@@ -189,10 +189,8 @@ public final class HttpClientSender {
             return "(No content)";
         } else if (body instanceof String) {
             return (String) body;
-        } else if (body.getClass().isArray()) {
-            return "(Bytes data)";
         } else {
-            return "(Unknown data)";
+            return "(Binary byte data)";
         }
     }
 

@@ -28,10 +28,17 @@ public class MultiPartFormDataBody {
 
     public HttpRequest.BodyPublisher buildBodyPublisher() {
         if (partsSpecificationList.isEmpty()) {
-            throw new IllegalStateException("Must have at least one part to build multipart message.");
+            return HttpRequest.BodyPublishers.noBody();
         }
         addFinalBoundaryPart();
-        return HttpRequest.BodyPublishers.ofByteArrays(PartsIterator::new);
+
+        /*
+         * 直接使用迭代器获取字节数据会报错  Too few bytes returned by the publisher
+         * JDK的bug   参考 https://bugs.openjdk.java.net/browse/JDK-8222968
+         */
+        // return HttpRequest.BodyPublishers.ofByteArrays(PartsIterator::new);
+        final byte[] data = assemble();
+        return HttpRequest.BodyPublishers.ofByteArray(data);
     }
 
     public MultiPartFormDataBody addPart(String name, String value) {
@@ -121,7 +128,6 @@ public class MultiPartFormDataBody {
         @Override
         public byte[] next() {
             byte[] result = nextBytes;
-            System.out.println(result.length);
             nextBytes = null;
             return result;
         }
@@ -193,5 +199,22 @@ public class MultiPartFormDataBody {
             sb.append(NEW_LINE).append("Content-Type: ").append(contentType).append(NEW_LINE).append(NEW_LINE);
             return sb.toString().getBytes(StandardCharsets.UTF_8);
         }
+    }
+
+    private byte[] assemble() {
+        // 使用以下方法 自己拼装byte[]
+        int length = 0, pos = 0;
+        PartsIterator iteratorForCount = new PartsIterator();
+        while (iteratorForCount.hasNext()) {
+            length += iteratorForCount.next().length;
+        }
+        byte[] data = new byte[length];
+        PartsIterator iteratorForBytes = new PartsIterator();
+        while (iteratorForBytes.hasNext()) {
+            final byte[] nextBytes = iteratorForBytes.next();
+            System.arraycopy(nextBytes, 0, data, pos, nextBytes.length);
+            pos += nextBytes.length;
+        }
+        return data;
     }
 }
