@@ -10,7 +10,7 @@ import java.util.Map;
  * @author qiushui on 2020-09-15.
  */
 @RequiredArgsConstructor
-public class FormUrlencodedBody {
+public final class FormUrlencodedBody {
 
     private final Map<String, Object> pairs;
 

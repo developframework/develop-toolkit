@@ -5,7 +5,7 @@ import java.net.http.HttpResponse;
 /**
  * @author qiushui on 2020-09-11.
  */
-public class StringBodySenderHandler implements SenderHandler<String> {
+public final class StringBodySenderHandler implements SenderHandler<String> {
 
     @Override
     public HttpResponse.BodyHandler<String> bodyHandler() {

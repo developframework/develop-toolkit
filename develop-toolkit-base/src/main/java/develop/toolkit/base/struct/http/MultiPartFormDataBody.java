@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 /**
  * @author qiushui on 2020-09-14.
  */
-public class MultiPartFormDataBody {
+public final class MultiPartFormDataBody {
 
     private final List<PartsSpecification> partsSpecificationList = new ArrayList<>();
 
