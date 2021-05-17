@@ -37,6 +37,10 @@ public final class HttpClientHelper {
         return builder().build();
     }
 
+    public static HttpClientHelper buildCustomize(HttpClient httpClient, boolean onlyPrintFailed) {
+        return new HttpClientHelper(httpClient, onlyPrintFailed);
+    }
+
     public HttpClientSender request(String method, String url) {
         return new HttpClientSender(httpClient, method, url).onlyPrintFailed(onlyPrintFailed);
     }

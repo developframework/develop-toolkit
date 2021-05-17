@@ -167,13 +167,11 @@ public final class HttpClientSender {
             receiver.setHttpStatus(response.statusCode());
             receiver.setHeaders(response.headers().map());
             receiver.setBody(response.body());
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
         } catch (HttpConnectTimeoutException e) {
             receiver.setConnectTimeout(true);
         } catch (HttpTimeoutException e) {
             receiver.setReadTimeout(true);
-        } catch (IOException e) {
+        } catch (InterruptedException | IOException e) {
             e.printStackTrace();
             receiver.setErrorMessage(e.getMessage());
         } finally {
