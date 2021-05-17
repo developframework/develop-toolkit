@@ -178,7 +178,7 @@ public final class HttpClientSender {
             receiver.setErrorMessage(e.getMessage());
         } finally {
             if (log.isDebugEnabled() && (!onlyPrintFailed || !receiver.isSuccess())) {
-                printDebug(request, receiver);
+                printLog(request, receiver);
             }
         }
         return receiver;
@@ -194,7 +194,7 @@ public final class HttpClientSender {
         }
     }
 
-    private void printDebug(HttpRequest request, HttpClientReceiver<?> receiver) {
+    private void printLog(HttpRequest request, HttpClientReceiver<?> receiver) {
         StringBuilder sb = new StringBuilder("\n=========================================================================================================\n");
         sb
                 .append("\nlabel: ").append(debugLabel == null ? "(Undefined)" : debugLabel)
