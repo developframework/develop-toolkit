@@ -39,6 +39,14 @@ public final class JacksonAdvice {
     }
 
     /**
+     * 反序列化树结构
+     */
+    @SneakyThrows(JsonProcessingException.class)
+    public static JsonNode readTreeQuietly(ObjectMapper objectMapper, String json) {
+        return objectMapper.readTree(json);
+    }
+
+    /**
      * 安静地序列化
      */
     @SneakyThrows(JsonProcessingException.class)

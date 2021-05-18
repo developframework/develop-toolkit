@@ -6,7 +6,10 @@ import develop.toolkit.base.struct.ListInMap;
 import develop.toolkit.base.struct.TwoValues;
 
 import java.util.*;
-import java.util.function.*;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -324,14 +327,14 @@ public final class CollectionAdvice {
     /**
      * 分页处理
      */
-    public static <T> void pagingProcess(List<T> list, int size, Consumer<List<T>> consumer) {
+    public static <T> void pagingProcess(List<T> list, int size, PagingProcessor<T> consumer) {
         final int total = list.size();
         final int page = total % size == 0 ? (total / size) : (total / size + 1);
         for (int i = 0; i < page; i++) {
             int fromIndex = i * size;
             int toIndex = fromIndex + Math.min(total - fromIndex, size);
             List<T> subList = list.subList(fromIndex, toIndex);
-            consumer.accept(subList);
+            consumer.process(i, page, subList);
         }
     }
 
@@ -351,5 +354,11 @@ public final class CollectionAdvice {
                 .of(sortTarget)
                 .map(s -> CollectionAdvice.getFirstTrue(master, c -> predicate.test(c, s)).orElse(null))
                 .collect(Collectors.toList());
+    }
+
+    @FunctionalInterface
+    public interface PagingProcessor<T> {
+
+        void process(int page, int total, List<T> subList);
     }
 }

@@ -9,7 +9,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.BiPredicate;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -347,14 +346,14 @@ public final class ArrayAdvice {
     /**
      * 分页处理
      */
-    public static <E> void pagingProcess(E[] array, int size, Consumer<E[]> consumer) {
+    public static <E> void pagingProcess(E[] array, int size, PagingProcessor<E> consumer) {
         final int total = array.length;
         final int page = total % size == 0 ? (total / size) : (total / size + 1);
         for (int i = 0; i < page; i++) {
             int fromIndex = i * size;
             int toIndex = fromIndex + Math.min(total - fromIndex, size);
             E[] subArray = ArrayUtils.subarray(array, fromIndex, toIndex);
-            consumer.accept(subArray);
+            consumer.process(i, page, subArray);
         }
     }
 
@@ -374,5 +373,11 @@ public final class ArrayAdvice {
                 .stream()
                 .map(s -> ArrayAdvice.getFirstTrue(master, c -> predicate.test(c, s)).orElse(null))
                 .collect(Collectors.toList());
+    }
+
+    @FunctionalInterface
+    public interface PagingProcessor<T> {
+
+        void process(int page, int total, T[] subArray);
     }
 }
