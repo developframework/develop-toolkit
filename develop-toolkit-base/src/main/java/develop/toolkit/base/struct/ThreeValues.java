@@ -31,6 +31,9 @@ public class ThreeValues<T, S, U> implements Serializable {
     }
 
     public static <T> ThreeValues<T, T, T> of(T[] objs) {
+        if (objs.length != 3) {
+            throw new IllegalArgumentException("TwoValues of array length is " + objs.length);
+        }
         return new ThreeValues<>(objs[0], objs[1], objs[2]);
     }
 }

@@ -29,6 +29,9 @@ public class TwoValues<T, S> implements Serializable {
     }
 
     public static <T> TwoValues<T, T> of(T[] objs) {
+        if (objs.length != 2) {
+            throw new IllegalArgumentException("TwoValues of array length is " + objs.length);
+        }
         return new TwoValues<>(objs[0], objs[1]);
     }
 }

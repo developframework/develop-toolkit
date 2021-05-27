@@ -6,10 +6,7 @@ import develop.toolkit.base.struct.ListInMap;
 import develop.toolkit.base.struct.TwoValues;
 
 import java.util.*;
-import java.util.function.BiPredicate;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -306,7 +303,10 @@ public final class CollectionAdvice {
                 notMatch.add(e);
             }
         }
-        return TwoValues.of(match, notMatch);
+        return TwoValues.of(
+                Collections.unmodifiableList(match),
+                Collections.unmodifiableList(notMatch)
+        );
     }
 
     /**
@@ -327,15 +327,59 @@ public final class CollectionAdvice {
     /**
      * 分页处理
      */
-    public static <T> void pagingProcess(List<T> list, int size, PagingProcessor<T> consumer) {
+    public static <T> void pagingProcess(List<T> list, int size, PagingProcessor<T> processor) {
         final int total = list.size();
         final int page = total % size == 0 ? (total / size) : (total / size + 1);
         for (int i = 0; i < page; i++) {
             int fromIndex = i * size;
             int toIndex = fromIndex + Math.min(total - fromIndex, size);
             List<T> subList = list.subList(fromIndex, toIndex);
-            consumer.process(i, page, subList);
+            processor.process(i, page, subList);
         }
+    }
+
+    /**
+     * 分页处理 （通过总数）
+     */
+    public static <T> void pagingProcess(int total, int size, BiConsumer<Integer, Integer> consumer) {
+        final int page = total % size == 0 ? (total / size) : (total / size + 1);
+        for (int i = 0; i < page; i++) {
+            consumer.accept(i, page);
+        }
+    }
+
+    /**
+     * 分页处理 （含返回值）
+     */
+    public static <T, R> R pagingProcess(
+            List<T> list,
+            int size,
+            R initialValue,
+            BiFunction<R, R, R> reduceFunction,
+            PagingReduceProcessor<T, R> processor
+    ) {
+        final int total = list.size();
+        final int page = total % size == 0 ? (total / size) : (total / size + 1);
+        for (int i = 0; i < page; i++) {
+            int fromIndex = i * size;
+            int toIndex = fromIndex + Math.min(total - fromIndex, size);
+            List<T> subList = list.subList(fromIndex, toIndex);
+            final R r = processor.process(i, page, subList);
+            initialValue = reduceFunction.apply(initialValue, r);
+        }
+        return initialValue;
+    }
+
+    /**
+     * 分页处理 （通过总数 含返回值）
+     */
+    public static <T, R> R pagingProcess(int total, int size, R initialValue, BiFunction<R, R, R> reduceFunction, BiFunction<Integer, Integer, R> function) {
+        final int page = total % size == 0 ? (total / size) : (total / size + 1);
+        for (int i = 0; i < page; i++) {
+            final R r = function.apply(i, page);
+            initialValue = reduceFunction.apply(initialValue, r);
+        }
+        return initialValue;
     }
 
     /**
@@ -360,5 +404,11 @@ public final class CollectionAdvice {
     public interface PagingProcessor<T> {
 
         void process(int page, int total, List<T> subList);
+    }
+
+    @FunctionalInterface
+    public interface PagingReduceProcessor<T, R> {
+
+        R process(int page, int total, List<T> subList);
     }
 }

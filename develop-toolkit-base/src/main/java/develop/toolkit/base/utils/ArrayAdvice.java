@@ -8,6 +8,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -325,7 +326,10 @@ public final class ArrayAdvice {
                 notMatch.add(e);
             }
         }
-        return TwoValues.of(match, notMatch);
+        return TwoValues.of(
+                Collections.unmodifiableList(match),
+                Collections.unmodifiableList(notMatch)
+        );
     }
 
     /**
@@ -333,11 +337,12 @@ public final class ArrayAdvice {
      * 将两个集合的元素按索引捆绑到一起
      */
     public static <T, S> List<TwoValues<T, S>> zip(T[] master, S[] other) {
-        if (master.length != other.length) {
+        final int length = master.length;
+        if (length != other.length) {
             throw new IllegalArgumentException("list size must be same");
         }
-        List<TwoValues<T, S>> list = new LinkedList<>();
-        for (int i = 0; i < master.length; i++) {
+        List<TwoValues<T, S>> list = new ArrayList<>(length);
+        for (int i = 0; i < length; i++) {
             list.add(TwoValues.of(master[i], other[i]));
         }
         return list;
@@ -346,15 +351,37 @@ public final class ArrayAdvice {
     /**
      * 分页处理
      */
-    public static <E> void pagingProcess(E[] array, int size, PagingProcessor<E> consumer) {
+    public static <T> void pagingProcess(T[] array, int size, PagingProcessor<T> consumer) {
         final int total = array.length;
         final int page = total % size == 0 ? (total / size) : (total / size + 1);
         for (int i = 0; i < page; i++) {
             int fromIndex = i * size;
             int toIndex = fromIndex + Math.min(total - fromIndex, size);
-            E[] subArray = ArrayUtils.subarray(array, fromIndex, toIndex);
+            T[] subArray = ArrayUtils.subarray(array, fromIndex, toIndex);
             consumer.process(i, page, subArray);
         }
+    }
+
+    /**
+     * 分页处理
+     */
+    public static <T, R> R pagingProcess(
+            T[] array,
+            int size,
+            R initialValue,
+            BiFunction<R, R, R> reduceFunction,
+            PagingReduceProcessor<T, R> consumer
+    ) {
+        final int total = array.length;
+        final int page = total % size == 0 ? (total / size) : (total / size + 1);
+        for (int i = 0; i < page; i++) {
+            int fromIndex = i * size;
+            int toIndex = fromIndex + Math.min(total - fromIndex, size);
+            T[] subArray = ArrayUtils.subarray(array, fromIndex, toIndex);
+            final R r = consumer.process(i, page, subArray);
+            initialValue = reduceFunction.apply(initialValue, r);
+        }
+        return initialValue;
     }
 
     /**
@@ -379,5 +406,11 @@ public final class ArrayAdvice {
     public interface PagingProcessor<T> {
 
         void process(int page, int total, T[] subArray);
+    }
+
+    @FunctionalInterface
+    public interface PagingReduceProcessor<T, R> {
+
+        R process(int page, int total, T[] subArray);
     }
 }
