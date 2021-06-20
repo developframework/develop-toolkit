@@ -86,4 +86,19 @@ public final class CompareAdvice {
     public static <T extends Comparable<T>> T min(@NonNull T a, @NonNull T b) {
         return lte(a, b) ? a : b;
     }
+
+    /**
+     * 调整边界值
+     */
+    public static <T extends Comparable<T>> T adjustRange(T x, T start, T end) {
+        if (gt(start, end)) {
+            throw new IllegalArgumentException("start great than end");
+        } else if (lt(x, start)) {
+            return start;
+        } else if (gt(x, end)) {
+            return end;
+        } else {
+            return x;
+        }
+    }
 }
