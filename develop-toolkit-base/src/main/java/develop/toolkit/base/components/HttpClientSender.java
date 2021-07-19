@@ -1,5 +1,6 @@
-package develop.toolkit.base.struct.http;
+package develop.toolkit.base.components;
 
+import develop.toolkit.base.struct.http.*;
 import develop.toolkit.base.utils.DateTimeAdvice;
 import develop.toolkit.base.utils.StringAdvice;
 import lombok.Getter;
@@ -37,7 +38,7 @@ public final class HttpClientSender {
 
     private final Map<String, Object> parameters = new HashMap<>();
 
-    private Duration readTimeout = Duration.ofSeconds(10L);
+    private Duration readTimeout;
 
     private String debugLabel;
 
@@ -45,10 +46,11 @@ public final class HttpClientSender {
 
     private boolean onlyPrintFailed;
 
-    public HttpClientSender(HttpClient httpClient, String method, String url) {
+    protected HttpClientSender(HttpClient httpClient, String method, String url, Duration readTimeout) {
         this.httpClient = httpClient;
         this.method = method;
         this.url = url;
+        this.readTimeout = readTimeout;
     }
 
     public HttpClientSender header(String header, String value) {

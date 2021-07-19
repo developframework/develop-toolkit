@@ -1,7 +1,5 @@
 package develop.toolkit.base.components;
 
-import develop.toolkit.base.struct.http.HttpClientSender;
-import develop.toolkit.base.utils.K;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +27,8 @@ public final class HttpClientHelper {
 
     private final boolean onlyPrintFailed;
 
+    private final Duration readTimeout;
+
     public static Builder builder() {
         return new Builder();
     }
@@ -37,12 +37,12 @@ public final class HttpClientHelper {
         return builder().build();
     }
 
-    public static HttpClientHelper buildCustomize(HttpClient httpClient, boolean onlyPrintFailed) {
-        return new HttpClientHelper(httpClient, onlyPrintFailed);
+    public static HttpClientHelper buildCustomize(HttpClient httpClient, boolean onlyPrintFailed, Duration readTimeout) {
+        return new HttpClientHelper(httpClient, onlyPrintFailed, readTimeout);
     }
 
     public HttpClientSender request(String method, String url) {
-        return new HttpClientSender(httpClient, method, url).onlyPrintFailed(onlyPrintFailed);
+        return new HttpClientSender(httpClient, method, url, readTimeout).onlyPrintFailed(onlyPrintFailed);
     }
 
     public HttpClientSender get(String url) {
@@ -67,7 +67,9 @@ public final class HttpClientHelper {
 
         private SSLContext sslContext;
 
-        private Duration connectTimeout;
+        private Duration connectTimeout = Duration.ofSeconds(10L);
+
+        private Duration readTimeout = Duration.ofSeconds(30L);
 
         private InetSocketAddress proxyAddress;
 
@@ -78,6 +80,11 @@ public final class HttpClientHelper {
 
         public Builder connectTimeout(Duration connectTimeout) {
             this.connectTimeout = connectTimeout;
+            return this;
+        }
+
+        public Builder readTimeout(Duration readTimeout) {
+            this.readTimeout = readTimeout;
             return this;
         }
 
@@ -105,7 +112,7 @@ public final class HttpClientHelper {
             final HttpClient.Builder builder = HttpClient.newBuilder()
                     .version(HttpClient.Version.HTTP_1_1)
                     .followRedirects(HttpClient.Redirect.NEVER)
-                    .connectTimeout(K.def(connectTimeout, () -> Duration.ofSeconds(5L)));
+                    .connectTimeout(connectTimeout);
             if (sslContext != null) {
                 builder.sslContext(sslContext);
             }
@@ -113,7 +120,7 @@ public final class HttpClientHelper {
                 builder.proxy(ProxySelector.of(proxyAddress));
             }
             final HttpClient httpClient = builder.build();
-            return new HttpClientHelper(httpClient, onlyPrintFailed);
+            return new HttpClientHelper(httpClient, onlyPrintFailed, readTimeout);
         }
     }
 }
