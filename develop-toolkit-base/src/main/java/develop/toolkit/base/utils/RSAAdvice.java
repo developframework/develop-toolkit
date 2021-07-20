@@ -19,6 +19,7 @@ public abstract class RSAAdvice {
 
     private static final String KEY_ALGORITHM = "RSA";
     private static final int KEY_SIZE = 1024;
+    private static final String SIGNATURE_ALGORITHM = "Sha1WithRSA";
 
     /**
      * 生成公钥和私钥对
@@ -66,7 +67,7 @@ public abstract class RSAAdvice {
      *
      * @param encryptString 加密字符串
      * @param privateKey    私钥
-     * @return 铭文
+     * @return 明文
      */
     public static String decrypt(String encryptString, String privateKey) throws Exception {
         final Base64.Decoder decoder = Base64.getDecoder();
@@ -77,5 +78,46 @@ public abstract class RSAAdvice {
         Cipher cipher = Cipher.getInstance(KEY_ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, priKey);
         return new String(cipher.doFinal(inputByte));
+    }
+
+    /**
+     * 生成签名
+     *
+     * @param data       数据
+     * @param privateKey 私钥
+     * @return 签名
+     */
+    public static String signature(byte[] data, String privateKey) {
+        try {
+            Signature sign = Signature.getInstance(SIGNATURE_ALGORITHM);
+            PrivateKey priKey = KeyFactory
+                    .getInstance(KEY_ALGORITHM)
+                    .generatePrivate(new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKey)));
+            sign.initSign(priKey);
+            sign.update(data);
+            return Base64.getEncoder().encodeToString(sign.sign());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 用公钥验证签名
+     */
+    public static boolean verifysSignature(byte[] data, String signatureBase64, String publicKey) {
+        try {
+            RSAPublicKey pubKey = (RSAPublicKey) KeyFactory
+                    .getInstance(KEY_ALGORITHM)
+                    .generatePublic(
+                            new X509EncodedKeySpec(Base64.getDecoder().decode(publicKey))
+                    );
+            Signature sign = Signature.getInstance(SIGNATURE_ALGORITHM);
+            sign.initVerify(pubKey);
+            sign.update(data);
+            return sign.verify(Base64.getDecoder().decode(signatureBase64));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
