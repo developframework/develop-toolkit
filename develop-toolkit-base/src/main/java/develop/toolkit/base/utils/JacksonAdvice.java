@@ -58,6 +58,16 @@ public final class JacksonAdvice {
         }
     }
 
+    @SneakyThrows(JsonProcessingException.class)
+    public static JsonNode deserializeTreeQuietly(ObjectMapper objectMapper, String json) {
+        return objectMapper.readTree(json);
+    }
+
+    @SneakyThrows(JsonProcessingException.class)
+    public static <T> T deserializeQuietly(ObjectMapper objectMapper, String json, Class<T> clazz) {
+        return objectMapper.readValue(json, clazz);
+    }
+
     /**
      * 用表达式从json中取值
      */
