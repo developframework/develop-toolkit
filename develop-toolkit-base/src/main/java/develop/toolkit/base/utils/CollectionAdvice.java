@@ -16,7 +16,17 @@ import java.util.stream.Stream;
  * @author qiushui on 2018-12-20.
  */
 @SuppressWarnings("unused")
-public final class CollectionAdvice {
+public abstract class CollectionAdvice {
+
+    /**
+     * 获得第一个元素
+     */
+    public static <E> Optional<E> getFirst(List<E> list) {
+        return Optional
+                .ofNullable(list)
+                .filter(Predicate.not(List::isEmpty))
+                .map(c -> c.get(0));
+    }
 
     /**
      * 检查元素存在
@@ -250,8 +260,8 @@ public final class CollectionAdvice {
      * 合并多集合
      */
     @SafeVarargs
-    public static <E> Collection<E> merge(Supplier<Collection<E>> supplier, Collection<E>... collections) {
-        Collection<E> collection = supplier.get();
+    public static <T extends Collection<E>, E> T merge(Supplier<T> supplier, Collection<E>... collections) {
+        T collection = supplier.get();
         for (Collection<E> coll : collections) {
             if (coll != null) {
                 collection.addAll(coll);
