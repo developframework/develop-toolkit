@@ -13,6 +13,7 @@ import lombok.SneakyThrows;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -39,14 +40,6 @@ public final class JacksonAdvice {
     }
 
     /**
-     * 反序列化树结构
-     */
-    @SneakyThrows(JsonProcessingException.class)
-    public static JsonNode readTreeQuietly(ObjectMapper objectMapper, String json) {
-        return objectMapper.readTree(json);
-    }
-
-    /**
      * 安静地序列化
      */
     @SneakyThrows(JsonProcessingException.class)
@@ -66,6 +59,16 @@ public final class JacksonAdvice {
     @SneakyThrows(JsonProcessingException.class)
     public static <T> T deserializeQuietly(ObjectMapper objectMapper, String json, Class<T> clazz) {
         return objectMapper.readValue(json, clazz);
+    }
+
+    @SneakyThrows(JsonProcessingException.class)
+    public static <T> T deserializeArrayQuietly(ObjectMapper objectMapper, String json, Class<T> clazz) {
+        return objectMapper.readValue(json, objectMapper.getTypeFactory().constructArrayType(clazz));
+    }
+
+    @SneakyThrows(JsonProcessingException.class)
+    public static <T extends Collection<E>, E> T deserializeCollectionQuietly(ObjectMapper objectMapper, String json, Class<T> collectionClass, Class<E> itemClass) {
+        return objectMapper.readValue(json, objectMapper.getTypeFactory().constructCollectionType(collectionClass, itemClass));
     }
 
     /**
