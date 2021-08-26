@@ -210,6 +210,14 @@ public final class ArrayAdvice {
         return map;
     }
 
+    public static <E, K, V> Map<K, V> groupingUniqueKey(E[] array, Function<E, K> keySupplier, Function<E, V> valueSupplier) {
+        Map<K, V> map = new HashMap<>();
+        for (E item : array) {
+            map.put(keySupplier.apply(item), valueSupplier.apply(item));
+        }
+        return map;
+    }
+
     /**
      * 分组求数量
      */

@@ -19,13 +19,13 @@ import java.util.stream.Stream;
 public abstract class CollectionAdvice {
 
     /**
-     * 获得第一个元素
+     * 获得元素
      */
-    public static <E> Optional<E> getFirst(List<E> list) {
+    public static <E> Optional<E> get(List<E> list, int index) {
         return Optional
                 .ofNullable(list)
                 .filter(Predicate.not(List::isEmpty))
-                .map(c -> c.get(0));
+                .map(c -> c.get(index));
     }
 
     /**
@@ -207,6 +207,12 @@ public abstract class CollectionAdvice {
     public static <K, V> Map<K, V> groupingUniqueKey(Collection<V> collection, Function<V, K> keySupplier) {
         Map<K, V> map = new HashMap<>();
         collection.forEach(item -> map.put(keySupplier.apply(item), item));
+        return map;
+    }
+
+    public static <E, K, V> Map<K, V> groupingUniqueKey(Collection<E> collection, Function<E, K> keySupplier, Function<E, V> valueSupplier) {
+        Map<K, V> map = new HashMap<>();
+        collection.forEach(item -> map.put(keySupplier.apply(item), valueSupplier.apply(item)));
         return map;
     }
 

@@ -3,6 +3,7 @@ package develop.toolkit.base.components;
 import develop.toolkit.base.utils.DateTimeAdvice;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,8 +32,11 @@ public final class StopWatch {
     }
 
     public long end(String name) {
-        final Instant end = Instant.now();
-        return end.toEpochMilli() - startInstantMap.get(name).toEpochMilli();
+        return startInstantMap.get(name).until(Instant.now(), ChronoUnit.MILLIS);
+    }
+
+    public long interval(String startName, String endName) {
+        return startInstantMap.get(startName).until(startInstantMap.get(endName), ChronoUnit.MILLIS);
     }
 
     public String formatEnd() {
