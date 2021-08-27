@@ -1,6 +1,7 @@
 package develop.toolkit.base.utils;
 
 import develop.toolkit.base.struct.TwoValues;
+import org.apache.commons.lang3.ArrayUtils;
 
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
@@ -56,7 +57,14 @@ public abstract class RSAAdvice {
                     );
             Cipher cipher = Cipher.getInstance(KEY_ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, pubKey);
-            return Base64.getEncoder().encodeToString(cipher.doFinal(original.getBytes(StandardCharsets.UTF_8)));
+            final byte[] bytes = original.getBytes(StandardCharsets.UTF_8);
+            final int offset = 64;
+            byte[] enBytes = null;
+            for (int i = 0; i < bytes.length; i += offset) {
+                byte[] doFinal = cipher.doFinal(ArrayUtils.subarray(bytes, i, i + 64));
+                enBytes = ArrayUtils.addAll(enBytes, doFinal);
+            }
+            return Base64.getEncoder().encodeToString(enBytes);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -71,13 +79,20 @@ public abstract class RSAAdvice {
      */
     public static String decrypt(String encryptString, String privateKey) throws Exception {
         final Base64.Decoder decoder = Base64.getDecoder();
-        byte[] inputByte = decoder.decode(encryptString.getBytes(StandardCharsets.UTF_8));
+        byte[] inputBytes = decoder.decode(encryptString.getBytes(StandardCharsets.UTF_8));
         PrivateKey priKey = KeyFactory
                 .getInstance(KEY_ALGORITHM)
                 .generatePrivate(new PKCS8EncodedKeySpec(decoder.decode(privateKey)));
         Cipher cipher = Cipher.getInstance(KEY_ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, priKey);
-        return new String(cipher.doFinal(inputByte));
+
+        StringBuilder sb = new StringBuilder();
+        final int offset = 128;
+        for (int i = 0; i < inputBytes.length; i += offset) {
+            byte[] doFinal = cipher.doFinal(ArrayUtils.subarray(inputBytes, i, i + offset));
+            sb.append(new String(doFinal));
+        }
+        return sb.toString();
     }
 
     /**
