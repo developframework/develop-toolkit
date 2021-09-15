@@ -2,7 +2,6 @@ package develop.toolkit.base.components;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -20,7 +19,6 @@ import java.util.concurrent.Executor;
  *
  * @author qiushui on 2020-09-10.
  */
-@Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class HttpClientHelper {
 
@@ -104,10 +102,10 @@ public final class HttpClientHelper {
         public Builder ssl(InputStream pkcs12, String password) {
             try {
                 KeyStore ks = KeyStore.getInstance("PKCS12");
-                char[] passwordChar = password.toCharArray();
-                ks.load(pkcs12, passwordChar);
+                char[] passwordChars = password.toCharArray();
+                ks.load(pkcs12, passwordChars);
                 KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-                kmf.init(ks, passwordChar);
+                kmf.init(ks, passwordChars);
                 sslContext = SSLContext.getInstance("SSL");
                 sslContext.init(kmf.getKeyManagers(), null, new SecureRandom());
             } catch (Exception e) {
