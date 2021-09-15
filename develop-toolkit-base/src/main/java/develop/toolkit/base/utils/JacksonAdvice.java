@@ -62,7 +62,7 @@ public final class JacksonAdvice {
     }
 
     @SneakyThrows(JsonProcessingException.class)
-    public static <T> T deserializeArrayQuietly(ObjectMapper objectMapper, String json, Class<T> clazz) {
+    public static <T> T[] deserializeArrayQuietly(ObjectMapper objectMapper, String json, Class<T> clazz) {
         return objectMapper.readValue(json, objectMapper.getTypeFactory().constructArrayType(clazz));
     }
 

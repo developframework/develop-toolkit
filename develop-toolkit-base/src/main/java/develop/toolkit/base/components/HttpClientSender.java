@@ -18,6 +18,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Http发送器
@@ -144,6 +145,10 @@ public final class HttpClientSender {
         return send(new StringBodySenderHandler());
     }
 
+    public CompletableFuture<HttpClientReceiver<String>> sendAsync() {
+        return sendAsync(new StringBodySenderHandler());
+    }
+
     /**
      * 核心发送逻辑
      *
@@ -162,10 +167,9 @@ public final class HttpClientSender {
                 .timeout(readTimeout)
                 .build();
         final HttpClientReceiver<BODY> receiver = new HttpClientReceiver<>();
+        Instant start = Instant.now();
         try {
-            Instant start = Instant.now();
             HttpResponse<BODY> response = httpClient.send(request, senderHandler.bodyHandler());
-            receiver.setCostTime(start.until(Instant.now(), ChronoUnit.MILLIS));
             receiver.setHttpStatus(response.statusCode());
             receiver.setHeaders(response.headers().map());
             receiver.setBody(response.body());
@@ -177,11 +181,54 @@ public final class HttpClientSender {
             e.printStackTrace();
             receiver.setErrorMessage(e.getMessage());
         } finally {
+            receiver.setCostTime(start.until(Instant.now(), ChronoUnit.MILLIS));
             if (log.isDebugEnabled() && (!onlyPrintFailed || !receiver.isSuccess())) {
                 printLog(request, receiver);
             }
         }
         return receiver;
+    }
+
+    /**
+     * 核心发送逻辑（异步）
+     *
+     * @param senderHandler 发送器扩展逻辑
+     * @param <BODY>        响应内容
+     * @return completableFuture
+     */
+    public <BODY> CompletableFuture<HttpClientReceiver<BODY>> sendAsync(SenderHandler<BODY> senderHandler) {
+        final HttpRequest.Builder builder = HttpRequest
+                .newBuilder()
+                .version(httpClient.version())
+                .uri(URI.create(url + StringAdvice.urlParametersFormat(parameters, true)));
+        headers.forEach(builder::header);
+        final HttpRequest request = builder
+                .method(method, requestBody == null ? HttpRequest.BodyPublishers.noBody() : senderHandler.bodyPublisher(requestBody))
+                .timeout(readTimeout)
+                .build();
+        Instant start = Instant.now();
+        return httpClient
+                .sendAsync(request, senderHandler.bodyHandler())
+                .handle((response, e) -> {
+                    final HttpClientReceiver<BODY> receiver = new HttpClientReceiver<>();
+                    if (e == null) {
+                        receiver.setHttpStatus(response.statusCode());
+                        receiver.setHeaders(response.headers().map());
+                        receiver.setBody(response.body());
+                    } else if (e instanceof HttpConnectTimeoutException) {
+                        receiver.setConnectTimeout(true);
+                    } else if (e instanceof HttpTimeoutException) {
+                        receiver.setReadTimeout(true);
+                    } else if (e instanceof InterruptedException || e instanceof IOException) {
+                        e.printStackTrace();
+                        receiver.setErrorMessage(e.getMessage());
+                    }
+                    receiver.setCostTime(start.until(Instant.now(), ChronoUnit.MILLIS));
+                    if (log.isDebugEnabled() && (!onlyPrintFailed || !receiver.isSuccess())) {
+                        printLog(request, receiver);
+                    }
+                    return receiver;
+                });
     }
 
     private String printBody(Object body) {

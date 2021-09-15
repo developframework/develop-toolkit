@@ -13,6 +13,7 @@ import java.net.http.HttpClient;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.time.Duration;
+import java.util.concurrent.Executor;
 
 /**
  * Http发送助手
@@ -73,6 +74,8 @@ public final class HttpClientHelper {
 
         private InetSocketAddress proxyAddress;
 
+        private Executor executor;
+
         public Builder onlyPrintFailed(boolean onlyPrintFailed) {
             this.onlyPrintFailed = onlyPrintFailed;
             return this;
@@ -90,6 +93,11 @@ public final class HttpClientHelper {
 
         public Builder proxyAddress(InetSocketAddress proxyAddress) {
             this.proxyAddress = proxyAddress;
+            return this;
+        }
+
+        public Builder executor(Executor executor) {
+            this.executor = executor;
             return this;
         }
 
@@ -118,6 +126,9 @@ public final class HttpClientHelper {
             }
             if (proxyAddress != null) {
                 builder.proxy(ProxySelector.of(proxyAddress));
+            }
+            if (executor != null) {
+                builder.executor(executor);
             }
             final HttpClient httpClient = builder.build();
             return new HttpClientHelper(httpClient, onlyPrintFailed, readTimeout);
