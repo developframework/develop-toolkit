@@ -7,7 +7,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.net.http.HttpRequest;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,16 +18,17 @@ import java.util.function.Supplier;
 /**
  * @author qiushui on 2020-09-14.
  */
-public final class MultiPartFormDataBody {
+public final class MultiPartFormDataBody implements HttpRequestBody<byte[]> {
 
     private final List<PartsSpecification> partsSpecificationList = new ArrayList<>();
 
     @Getter
     private final String boundary = RandomStringUtils.randomAlphabetic(10);
 
-    public HttpRequest.BodyPublisher buildBodyPublisher() {
+    @Override
+    public byte[] getBody() {
         if (partsSpecificationList.isEmpty()) {
-            return HttpRequest.BodyPublishers.noBody();
+            return new byte[0];
         }
         addFinalBoundaryPart();
 
@@ -37,8 +37,12 @@ public final class MultiPartFormDataBody {
          * JDK的bug   参考 https://bugs.openjdk.java.net/browse/JDK-8222968
          */
         // return HttpRequest.BodyPublishers.ofByteArrays(PartsIterator::new);
-        final byte[] data = assemble();
-        return HttpRequest.BodyPublishers.ofByteArray(data);
+        return assemble();
+    }
+
+    @Override
+    public String toString() {
+        return "(Binary byte data)";
     }
 
     public MultiPartFormDataBody addPart(String name, String value) {

@@ -11,13 +11,17 @@ import java.net.http.HttpResponse;
 @FunctionalInterface
 public interface SenderHandler<BODY> {
 
-    default HttpRequest.BodyPublisher bodyPublisher(Object requestBody) {
-        if (requestBody instanceof HttpRequest.BodyPublisher) {
-            return (HttpRequest.BodyPublisher) requestBody;
-        } else if (requestBody instanceof String) {
-            return HttpRequest.BodyPublishers.ofString((String) requestBody);
-        } else if (requestBody.getClass().isArray()) {
-            return HttpRequest.BodyPublishers.ofByteArray((byte[]) requestBody);
+    default HttpRequest.BodyPublisher bodyPublisher(HttpRequestBody<?> requestBody) {
+        if (requestBody == null) {
+            return HttpRequest.BodyPublishers.noBody();
+        } else if (requestBody instanceof RawRequestBody) {
+            return HttpRequest.BodyPublishers.ofString(((RawRequestBody) requestBody).getBody());
+        } else if (requestBody instanceof FormUrlencodedBody) {
+            return HttpRequest.BodyPublishers.ofString(((FormUrlencodedBody) requestBody).getBody());
+        } else if (requestBody instanceof ByteRequestBody) {
+            return HttpRequest.BodyPublishers.ofByteArray(((ByteRequestBody) requestBody).getBody());
+        } else if (requestBody instanceof MultiPartFormDataBody) {
+            return HttpRequest.BodyPublishers.ofByteArray(((MultiPartFormDataBody) requestBody).getBody());
         } else {
             throw new AssertionError();
         }

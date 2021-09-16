@@ -1,5 +1,6 @@
 package develop.toolkit.base.components;
 
+import develop.toolkit.base.struct.http.HttpPostProcessor;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -12,6 +13,8 @@ import java.net.http.HttpClient;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.time.Duration;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Executor;
 
 /**
@@ -28,6 +31,8 @@ public final class HttpClientHelper {
 
     private final Duration readTimeout;
 
+    private final List<HttpPostProcessor> globalPostProcessors;
+
     public static Builder builder() {
         return new Builder();
     }
@@ -36,12 +41,12 @@ public final class HttpClientHelper {
         return builder().build();
     }
 
-    public static HttpClientHelper buildCustomize(HttpClient httpClient, boolean onlyPrintFailed, Duration readTimeout) {
-        return new HttpClientHelper(httpClient, onlyPrintFailed, readTimeout);
+    public static HttpClientHelper buildCustomize(HttpClient httpClient, boolean onlyPrintFailed, Duration readTimeout, List<HttpPostProcessor> globalPostProcessors) {
+        return new HttpClientHelper(httpClient, onlyPrintFailed, readTimeout, globalPostProcessors);
     }
 
     public HttpClientSender request(String method, String url) {
-        return new HttpClientSender(httpClient, method, url, readTimeout).onlyPrintFailed(onlyPrintFailed);
+        return new HttpClientSender(httpClient, method, url, readTimeout, globalPostProcessors).onlyPrintFailed(onlyPrintFailed);
     }
 
     public HttpClientSender get(String url) {
@@ -74,6 +79,8 @@ public final class HttpClientHelper {
 
         private Executor executor;
 
+        private final List<HttpPostProcessor> globalPostProcessors = new LinkedList<>();
+
         public Builder onlyPrintFailed(boolean onlyPrintFailed) {
             this.onlyPrintFailed = onlyPrintFailed;
             return this;
@@ -96,6 +103,11 @@ public final class HttpClientHelper {
 
         public Builder executor(Executor executor) {
             this.executor = executor;
+            return this;
+        }
+
+        public Builder addGlobalPostProcessor(HttpPostProcessor globalPostProcessor) {
+            this.globalPostProcessors.add(globalPostProcessor);
             return this;
         }
 
@@ -129,7 +141,7 @@ public final class HttpClientHelper {
                 builder.executor(executor);
             }
             final HttpClient httpClient = builder.build();
-            return new HttpClientHelper(httpClient, onlyPrintFailed, readTimeout);
+            return new HttpClientHelper(httpClient, onlyPrintFailed, readTimeout, globalPostProcessors);
         }
     }
 }

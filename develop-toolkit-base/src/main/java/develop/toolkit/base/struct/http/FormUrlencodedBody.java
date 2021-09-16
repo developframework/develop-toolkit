@@ -10,7 +10,7 @@ import java.util.Map;
  * @author qiushui on 2020-09-15.
  */
 @RequiredArgsConstructor
-public final class FormUrlencodedBody {
+public final class FormUrlencodedBody implements HttpRequestBody<String> {
 
     private final Map<String, Object> pairs;
 
@@ -18,8 +18,14 @@ public final class FormUrlencodedBody {
         pairs = new HashMap<>();
     }
 
-    public String buildBody() {
+    @Override
+    public String getBody() {
         return StringAdvice.urlParametersFormat(pairs, false);
+    }
+
+    @Override
+    public String toString() {
+        return getBody();
     }
 
     public FormUrlencodedBody addPair(String name, Object value) {

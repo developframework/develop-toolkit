@@ -1,11 +1,8 @@
 package develop.toolkit.base.components;
 
 import develop.toolkit.base.struct.http.*;
-import develop.toolkit.base.utils.DateTimeAdvice;
 import develop.toolkit.base.utils.StringAdvice;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,7 +12,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -25,7 +22,6 @@ import java.util.concurrent.CompletableFuture;
  *
  * @author qiushui on 2020-09-10.
  */
-@Slf4j
 @Getter
 public final class HttpClientSender {
 
@@ -35,23 +31,30 @@ public final class HttpClientSender {
 
     private final String url;
 
-    private final Map<String, String> headers = new HashMap<>();
+    private final Map<String, String> headers = new LinkedHashMap<>();
 
-    private final Map<String, Object> parameters = new HashMap<>();
+    private final Map<String, Object> parameters = new LinkedHashMap<>();
+
+    private final List<HttpPostProcessor> postProcessors;
 
     private Duration readTimeout;
 
     private String debugLabel;
 
-    private Object requestBody;
+    private HttpRequestBody<?> requestBody;
+
+    private String requestStringBody;
 
     private boolean onlyPrintFailed;
 
-    protected HttpClientSender(HttpClient httpClient, String method, String url, Duration readTimeout) {
+    private URI uri;
+
+    protected HttpClientSender(HttpClient httpClient, String method, String url, Duration readTimeout, List<HttpPostProcessor> globalPostProcessors) {
         this.httpClient = httpClient;
         this.method = method;
         this.url = url;
         this.readTimeout = readTimeout;
+        this.postProcessors = globalPostProcessors;
     }
 
     public HttpClientSender header(String header, String value) {
@@ -103,37 +106,43 @@ public final class HttpClientSender {
         return this;
     }
 
+    public HttpClientSender addPostProcessor(HttpPostProcessor postProcessor) {
+        postProcessors.add(postProcessor);
+        return this;
+    }
+
     public HttpClientSender bodyJson(String json) {
         headers.put("Content-Type", "application/json;charset=utf-8");
-        this.requestBody = json;
+        this.requestBody = new RawRequestBody(json);
         return this;
     }
 
     public HttpClientSender bodyXml(String xml) {
         headers.put("Content-Type", "application/xml;charset=utf-8");
-        this.requestBody = xml;
+        this.requestBody = new RawRequestBody(xml);
         return this;
     }
 
     public HttpClientSender bodyText(String text) {
-        this.requestBody = text;
+        headers.put("Content-Type", "text/plain;charset=utf-8");
+        this.requestBody = new RawRequestBody(text);
+        return this;
+    }
+
+    public HttpClientSender bodyBytes(byte[] bytes) {
+        this.requestBody = new ByteRequestBody(bytes);
         return this;
     }
 
     public HttpClientSender bodyMultiPartFormData(MultiPartFormDataBody multiPartFormDataBody) {
         headers.put("Content-Type", "multipart/form-data; boundary=" + multiPartFormDataBody.getBoundary());
-        this.requestBody = multiPartFormDataBody.buildBodyPublisher();
+        this.requestBody = multiPartFormDataBody;
         return this;
     }
 
     public HttpClientSender bodyFormUrlencoded(FormUrlencodedBody formUrlencodedBody) {
         headers.put("Content-Type", "application/x-www-form-urlencoded");
-        this.requestBody = formUrlencodedBody.buildBody();
-        return this;
-    }
-
-    public HttpClientSender bodyBytes(byte[] bytes) {
-        this.requestBody = bytes;
+        this.requestBody = formUrlencodedBody;
         return this;
     }
 
@@ -157,15 +166,17 @@ public final class HttpClientSender {
      * @return receiver
      */
     public <BODY> HttpClientReceiver<BODY> send(SenderHandler<BODY> senderHandler) {
+        this.uri = URI.create(url + StringAdvice.urlParametersFormat(parameters, true));
         final HttpRequest.Builder builder = HttpRequest
                 .newBuilder()
                 .version(httpClient.version())
-                .uri(URI.create(url + StringAdvice.urlParametersFormat(parameters, true)));
+                .uri(uri);
         headers.forEach(builder::header);
         final HttpRequest request = builder
-                .method(method, requestBody == null ? HttpRequest.BodyPublishers.noBody() : senderHandler.bodyPublisher(requestBody))
+                .method(method, senderHandler.bodyPublisher(requestBody))
                 .timeout(readTimeout)
                 .build();
+        requestStringBody = HttpRequestBody.bodyToString(requestBody);
         final HttpClientReceiver<BODY> receiver = new HttpClientReceiver<>();
         Instant start = Instant.now();
         try {
@@ -182,10 +193,11 @@ public final class HttpClientSender {
             receiver.setErrorMessage(e.getMessage());
         } finally {
             receiver.setCostTime(start.until(Instant.now(), ChronoUnit.MILLIS));
-            if (log.isDebugEnabled() && (!onlyPrintFailed || !receiver.isSuccess())) {
-                printLog(request, receiver);
+            for (HttpPostProcessor postProcessor : postProcessors) {
+                postProcessor.process(this, receiver);
             }
         }
+
         return receiver;
     }
 
@@ -197,16 +209,18 @@ public final class HttpClientSender {
      * @return completableFuture
      */
     public <BODY> CompletableFuture<HttpClientReceiver<BODY>> sendAsync(SenderHandler<BODY> senderHandler) {
+        this.uri = URI.create(url + StringAdvice.urlParametersFormat(parameters, true));
         final HttpRequest.Builder builder = HttpRequest
                 .newBuilder()
                 .version(httpClient.version())
-                .uri(URI.create(url + StringAdvice.urlParametersFormat(parameters, true)));
+                .uri(uri);
         headers.forEach(builder::header);
         final HttpRequest request = builder
-                .method(method, requestBody == null ? HttpRequest.BodyPublishers.noBody() : senderHandler.bodyPublisher(requestBody))
+                .method(method, senderHandler.bodyPublisher(requestBody))
                 .timeout(readTimeout)
                 .build();
-        Instant start = Instant.now();
+        requestStringBody = HttpRequestBody.bodyToString(requestBody);
+        final Instant start = Instant.now();
         return httpClient
                 .sendAsync(request, senderHandler.bodyHandler())
                 .handle((response, e) -> {
@@ -224,49 +238,14 @@ public final class HttpClientSender {
                         receiver.setErrorMessage(e.getMessage());
                     }
                     receiver.setCostTime(start.until(Instant.now(), ChronoUnit.MILLIS));
-                    if (log.isDebugEnabled() && (!onlyPrintFailed || !receiver.isSuccess())) {
-                        printLog(request, receiver);
-                    }
+                    doPostProcessors(receiver);
                     return receiver;
                 });
     }
 
-    private String printBody(Object body) {
-        if (body == null) {
-            return "(No content)";
-        } else if (body instanceof String) {
-            return (String) body;
-        } else {
-            return "(Binary byte data)";
+    private <BODY> void doPostProcessors(HttpClientReceiver<BODY> receiver) {
+        for (HttpPostProcessor postProcessor : postProcessors) {
+            postProcessor.process(this, receiver);
         }
-    }
-
-    private void printLog(HttpRequest request, HttpClientReceiver<?> receiver) {
-        StringBuilder sb = new StringBuilder("\n=========================================================================================================\n");
-        sb
-                .append("\nlabel: ").append(debugLabel == null ? "(Undefined)" : debugLabel)
-                .append("\nhttp request:\n  method: ").append(method).append("\n  url: ")
-                .append(request.uri().toString()).append("\n  headers:\n");
-        request
-                .headers()
-                .map()
-                .forEach((k, v) -> sb.append("    ").append(k).append(": ").append(StringUtils.join(v, ";")).append("\n"));
-        sb.append("  body: ").append(printBody(requestBody)).append("\n").append("\nhttp response:\n");
-        if (receiver.isConnectTimeout()) {
-            sb.append("  (connect timeout ").append(httpClient.connectTimeout().map(Duration::getSeconds).orElse(0L)).append("s)");
-        } else if (receiver.isReadTimeout()) {
-            sb.append("  (read timeout ").append(readTimeout.getSeconds()).append("s)");
-        } else if (receiver.getErrorMessage() != null) {
-            sb.append("  (ioerror ").append(receiver.getErrorMessage()).append(")");
-        } else if (receiver.getHeaders() != null) {
-            sb.append("  status: ").append(receiver.getHttpStatus()).append("\n  headers:\n");
-            for (Map.Entry<String, List<String>> entry : receiver.getHeaders().entrySet()) {
-                sb.append("    ").append(entry.getKey()).append(": ").append(StringUtils.join(entry.getValue(), ";")).append("\n");
-            }
-            sb.append("  cost: ").append(DateTimeAdvice.millisecondPretty(receiver.getCostTime())).append("\n");
-            sb.append("  body: ").append(printBody(receiver.getBody()));
-        }
-        sb.append("\n\n=========================================================================================================\n");
-        log.debug(sb.toString());
     }
 }
