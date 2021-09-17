@@ -203,11 +203,8 @@ public final class HttpClientSender {
             receiver.setErrorMessage(e.getMessage());
         } finally {
             receiver.setCostTime(start.until(Instant.now(), ChronoUnit.MILLIS));
-            for (HttpPostProcessor postProcessor : postProcessors) {
-                postProcessor.process(this, receiver);
-            }
+            doPostProcessors(receiver);
         }
-
         return receiver;
     }
 
