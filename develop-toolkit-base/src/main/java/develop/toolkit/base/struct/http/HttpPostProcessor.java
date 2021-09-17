@@ -10,5 +10,5 @@ import develop.toolkit.base.components.HttpClientSender;
 @FunctionalInterface
 public interface HttpPostProcessor {
 
-    <T> void process(HttpClientSender sender, HttpClientReceiver<T> receiver);
+    void process(HttpClientSender sender, HttpClientReceiver<?> receiver);
 }

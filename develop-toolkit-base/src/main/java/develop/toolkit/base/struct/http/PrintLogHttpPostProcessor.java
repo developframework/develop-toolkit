@@ -14,10 +14,10 @@ import java.util.Map;
  * @author qiushui on 2021-09-16.
  */
 @Slf4j
-public class PrintLogHttpPostProcessor implements HttpPostProcessor {
+public final class PrintLogHttpPostProcessor implements HttpPostProcessor {
 
     @Override
-    public <T> void process(HttpClientSender sender, HttpClientReceiver<T> receiver) {
+    public void process(HttpClientSender sender, HttpClientReceiver<?> receiver) {
         if (log.isDebugEnabled() && (!sender.isOnlyPrintFailed() || !receiver.isSuccess())) {
             debugPrintLog(sender, receiver);
         }
@@ -28,7 +28,7 @@ public class PrintLogHttpPostProcessor implements HttpPostProcessor {
         sb
                 .append("\nlabel: ").append(K.def(sender.getDebugLabel(), "(Undefined)"))
                 .append("\nhttp request:\n  method: ").append(sender.getMethod()).append("\n  url: ")
-                .append(request.uri().toString()).append("\n  headers:\n");
+                .append(sender.getUri().toString()).append("\n  headers:\n");
         sender
                 .getHeaders()
                 .forEach((k, v) -> sb.append("    ").append(k).append(": ").append(StringUtils.join(v, ";")).append("\n"));

@@ -1,5 +1,6 @@
 package develop.toolkit.base.components;
 
+import develop.toolkit.base.struct.http.HttpClientGlobalOptions;
 import develop.toolkit.base.struct.http.HttpPostProcessor;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +14,7 @@ import java.net.http.HttpClient;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.time.Duration;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 
 /**
@@ -22,16 +22,13 @@ import java.util.concurrent.Executor;
  *
  * @author qiushui on 2020-09-10.
  */
+@SuppressWarnings("unused")
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class HttpClientHelper {
 
     private final HttpClient httpClient;
 
-    private final boolean onlyPrintFailed;
-
-    private final Duration readTimeout;
-
-    private final List<HttpPostProcessor> globalPostProcessors;
+    private final HttpClientGlobalOptions options;
 
     public static Builder builder() {
         return new Builder();
@@ -41,12 +38,8 @@ public final class HttpClientHelper {
         return builder().build();
     }
 
-    public static HttpClientHelper buildCustomize(HttpClient httpClient, boolean onlyPrintFailed, Duration readTimeout, List<HttpPostProcessor> globalPostProcessors) {
-        return new HttpClientHelper(httpClient, onlyPrintFailed, readTimeout, globalPostProcessors);
-    }
-
     public HttpClientSender request(String method, String url) {
-        return new HttpClientSender(httpClient, method, url, readTimeout, globalPostProcessors).onlyPrintFailed(onlyPrintFailed);
+        return new HttpClientSender(httpClient, method, url, options);
     }
 
     public HttpClientSender get(String url) {
@@ -67,32 +60,23 @@ public final class HttpClientHelper {
 
     public static class Builder {
 
-        private boolean onlyPrintFailed = true;
-
         private SSLContext sslContext;
 
         private Duration connectTimeout = Duration.ofSeconds(10L);
-
-        private Duration readTimeout = Duration.ofSeconds(30L);
 
         private InetSocketAddress proxyAddress;
 
         private Executor executor;
 
-        private final List<HttpPostProcessor> globalPostProcessors = new LinkedList<>();
+        private final HttpClientGlobalOptions globalOptions = new HttpClientGlobalOptions();
 
         public Builder onlyPrintFailed(boolean onlyPrintFailed) {
-            this.onlyPrintFailed = onlyPrintFailed;
+            globalOptions.onlyPrintFailed = onlyPrintFailed;
             return this;
         }
 
         public Builder connectTimeout(Duration connectTimeout) {
             this.connectTimeout = connectTimeout;
-            return this;
-        }
-
-        public Builder readTimeout(Duration readTimeout) {
-            this.readTimeout = readTimeout;
             return this;
         }
 
@@ -106,8 +90,23 @@ public final class HttpClientHelper {
             return this;
         }
 
+        public Builder readTimeout(Duration readTimeout) {
+            globalOptions.readTimeout = readTimeout;
+            return this;
+        }
+
         public Builder addGlobalPostProcessor(HttpPostProcessor globalPostProcessor) {
-            this.globalPostProcessors.add(globalPostProcessor);
+            globalOptions.postProcessors.add(globalPostProcessor);
+            return this;
+        }
+
+        public Builder constant(String key, String value) {
+            globalOptions.constants.putConstant(key, value);
+            return this;
+        }
+
+        public Builder constantMap(Map<String, String> constantMap) {
+            globalOptions.constants.putConstantMap(constantMap);
             return this;
         }
 
@@ -121,7 +120,7 @@ public final class HttpClientHelper {
                 sslContext = SSLContext.getInstance("SSL");
                 sslContext.init(kmf.getKeyManagers(), null, new SecureRandom());
             } catch (Exception e) {
-                throw new RuntimeException("read pkcs12 failed:" + e.getMessage());
+                throw new IllegalStateException(e.getMessage());
             }
             return this;
         }
@@ -140,8 +139,7 @@ public final class HttpClientHelper {
             if (executor != null) {
                 builder.executor(executor);
             }
-            final HttpClient httpClient = builder.build();
-            return new HttpClientHelper(httpClient, onlyPrintFailed, readTimeout, globalPostProcessors);
+            return new HttpClientHelper(builder.build(), globalOptions);
         }
     }
 }

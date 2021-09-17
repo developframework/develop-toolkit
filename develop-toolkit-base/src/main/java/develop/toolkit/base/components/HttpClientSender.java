@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -49,28 +50,31 @@ public final class HttpClientSender {
 
     private URI uri;
 
-    protected HttpClientSender(HttpClient httpClient, String method, String url, Duration readTimeout, List<HttpPostProcessor> globalPostProcessors) {
+    private final HttpClientConstants constants;
+
+    protected HttpClientSender(HttpClient httpClient, String method, String url, HttpClientGlobalOptions options) {
         this.httpClient = httpClient;
         this.method = method;
-        this.url = url;
-        this.readTimeout = readTimeout;
-        this.postProcessors = globalPostProcessors;
+        this.readTimeout = options.readTimeout;
+        this.postProcessors = new LinkedList<>(options.postProcessors);
+        this.constants = options.constants;
+        this.url = constants.replace(url);
     }
 
     public HttpClientSender header(String header, String value) {
-        this.headers.put(header, value);
+        this.headers.put(header, constants.replace(value));
         return this;
     }
 
-    public HttpClientSender headers(Map<String, String> headers) {
-        if (headers != null) {
-            this.headers.putAll(headers);
+    public HttpClientSender headers(Map<String, String> customHeaders) {
+        if (customHeaders != null) {
+            customHeaders.forEach((k, v) -> this.headers.put(k, constants.replace(v)));
         }
         return this;
     }
 
     public HttpClientSender headerAuthorization(String value) {
-        this.headers.put("Authorization", value);
+        this.headers.put("Authorization", constants.replace(value));
         return this;
     }
 
