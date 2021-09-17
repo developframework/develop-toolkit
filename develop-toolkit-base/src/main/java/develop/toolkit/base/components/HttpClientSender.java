@@ -78,8 +78,8 @@ public final class HttpClientSender {
         return this;
     }
 
-    public HttpClientSender headerContentType(String value) {
-        this.headers.put("Content-Type", value);
+    public HttpClientSender headerContentType(String contentType) {
+        this.headers.put("Content-Type", contentType);
         return this;
     }
 
@@ -88,9 +88,15 @@ public final class HttpClientSender {
         return this;
     }
 
-    public HttpClientSender parameters(Map<String, Object> parameters) {
-        if (parameters != null) {
-            this.parameters.putAll(parameters);
+    public HttpClientSender parameters(Map<String, Object> parameterMap) {
+        if (parameterMap != null) {
+            parameterMap.forEach((k, v) -> {
+                if (v instanceof String) {
+                    this.parameters.put(k, constants.replace((String) v));
+                } else {
+                    this.parameters.put(k, v);
+                }
+            });
         }
         return this;
     }
