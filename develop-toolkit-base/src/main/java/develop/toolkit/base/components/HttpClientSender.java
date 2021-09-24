@@ -58,6 +58,7 @@ public final class HttpClientSender {
         this.readTimeout = options.readTimeout;
         this.postProcessors = new LinkedList<>(options.postProcessors);
         this.constants = options.constants;
+        this.onlyPrintFailed = options.onlyPrintFailed;
         this.url = constants.replace(url);
     }
 
