@@ -24,7 +24,7 @@ import java.util.concurrent.Executor;
  */
 @SuppressWarnings("unused")
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public final class HttpClientHelper {
+public class HttpClientHelper {
 
     private final HttpClient httpClient;
 
