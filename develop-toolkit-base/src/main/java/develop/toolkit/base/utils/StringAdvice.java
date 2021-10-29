@@ -3,6 +3,7 @@ package develop.toolkit.base.utils;
 import develop.toolkit.base.struct.TwoValues;
 
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -138,5 +139,12 @@ public final class StringAdvice {
             if (right && (right = str.charAt(len - 1 - i) == ch)) rightSkip++;
         }
         return str.substring(leftSkip, len - rightSkip);
+    }
+
+    /**
+     * 修改编码
+     */
+    public static String changeCharset(String str, String charset) {
+        return new String(str.getBytes(StandardCharsets.ISO_8859_1), Charset.forName("GBK"));
     }
 }
