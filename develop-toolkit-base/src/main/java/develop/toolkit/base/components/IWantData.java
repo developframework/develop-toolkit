@@ -13,21 +13,21 @@ import java.util.Map;
  */
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class IWantData {
+public class IWantData<V> {
 
     private final boolean success;
 
     private final String message;
 
-    private final Map<String, Object> data;
+    private final Map<String, V> data;
 
     /**
      * 成功获取
      *
      * @param data 数据
      */
-    public static IWantData ok(Map<String, Object> data) {
-        return new IWantData(true, "OK", data);
+    public static <V> IWantData<V> ok(Map<String, V> data) {
+        return new IWantData<>(true, "OK", data);
     }
 
     /**
@@ -35,7 +35,7 @@ public class IWantData {
      *
      * @param message 失败信息
      */
-    public static IWantData fail(String message) {
-        return new IWantData(true, message, null);
+    public static <V> IWantData<V> fail(String message) {
+        return new IWantData<>(true, message, null);
     }
 }
