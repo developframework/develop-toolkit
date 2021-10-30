@@ -3,6 +3,7 @@ package develop.toolkit.base.utils;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
@@ -28,8 +29,7 @@ public final class JacksonAdvice {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
         objectMapper.setDateFormat(new SimpleDateFormat(DateFormatConstants.STANDARD));
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, SerializationFeature.FAIL_ON_EMPTY_BEANS);
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         objectMapper.enable(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN);
         JavaTimeModule javaTimeModule = new JavaTimeModule();
@@ -37,6 +37,23 @@ public final class JacksonAdvice {
         javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateFormatConstants.STANDARD_FORMATTER));
         objectMapper.registerModule(javaTimeModule);
         return objectMapper;
+    }
+
+    /**
+     * 常用默认的XmlMapper配置
+     */
+    public static XmlMapper defaultXmlMapper() {
+        XmlMapper xmlMapper = new XmlMapper();
+        xmlMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+        xmlMapper.setDateFormat(new SimpleDateFormat(DateFormatConstants.STANDARD));
+        xmlMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        xmlMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        xmlMapper.enable(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN);
+        JavaTimeModule javaTimeModule = new JavaTimeModule();
+        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateFormatConstants.STANDARD_FORMATTER));
+        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateFormatConstants.STANDARD_FORMATTER));
+        xmlMapper.registerModule(javaTimeModule);
+        return xmlMapper;
     }
 
     /**
