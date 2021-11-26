@@ -114,7 +114,7 @@ public final class StringAdvice {
      * 处理成url参数格式
      */
     public static String urlParametersFormat(Map<String, Object> parameters, boolean needQuestionMark) {
-        if (parameters.isEmpty()) {
+        if (parameters == null || parameters.isEmpty()) {
             return "";
         }
         return (needQuestionMark ? "?" : "") + parameters

@@ -1,6 +1,7 @@
 package develop.toolkit.base.components;
 
 import develop.toolkit.base.struct.http.*;
+import develop.toolkit.base.utils.K;
 import develop.toolkit.base.utils.StringAdvice;
 import lombok.Getter;
 
@@ -124,24 +125,24 @@ public final class HttpClientSender {
 
     public HttpClientSender bodyJson(String json) {
         headers.put("Content-Type", "application/json;charset=utf-8");
-        this.requestBody = new RawRequestBody(json);
+        this.requestBody = K.map(json, RawRequestBody::new);
         return this;
     }
 
     public HttpClientSender bodyXml(String xml) {
         headers.put("Content-Type", "application/xml;charset=utf-8");
-        this.requestBody = new RawRequestBody(xml);
+        this.requestBody = K.map(xml, RawRequestBody::new);
         return this;
     }
 
     public HttpClientSender bodyText(String text) {
         headers.put("Content-Type", "text/plain;charset=utf-8");
-        this.requestBody = new RawRequestBody(text);
+        this.requestBody = K.map(text, RawRequestBody::new);
         return this;
     }
 
     public HttpClientSender bodyBytes(byte[] bytes) {
-        this.requestBody = new ByteRequestBody(bytes);
+        this.requestBody = K.map(bytes, ByteRequestBody::new);
         return this;
     }
 
