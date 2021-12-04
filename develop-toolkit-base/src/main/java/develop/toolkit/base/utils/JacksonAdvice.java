@@ -2,7 +2,9 @@ package develop.toolkit.base.utils;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -12,10 +14,14 @@ import develop.toolkit.base.constants.DateFormatConstants;
 import develop.toolkit.base.struct.KeyValuePair;
 import lombok.SneakyThrows;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * @author qiushui on 2020-09-15.
@@ -71,6 +77,11 @@ public final class JacksonAdvice {
     @SneakyThrows(JsonProcessingException.class)
     public static JsonNode deserializeTreeQuietly(ObjectMapper objectMapper, String json) {
         return objectMapper.readTree(json);
+    }
+
+    @SneakyThrows(JsonProcessingException.class)
+    public static <T> T treeToValueQuietly(ObjectMapper objectMapper, TreeNode node, Class<T> clazz) {
+        return objectMapper.treeToValue(node, clazz);
     }
 
     @SneakyThrows(JsonProcessingException.class)
@@ -140,6 +151,30 @@ public final class JacksonAdvice {
             values[i] = objectMapper.treeToValue(jsonNode, kv.getValue());
         }
         return values;
+    }
+
+    /**
+     * ArrayNode转到List
+     */
+    public static <T> List<T> arrayNodeToList(ArrayNode arrayNode, Function<JsonNode, T> function) {
+        List<T> list = new ArrayList<>(arrayNode.size());
+        for (JsonNode node : arrayNode) {
+            list.add(function.apply(node));
+        }
+        return Collections.unmodifiableList(list);
+    }
+
+    /**
+     * ArrayNode转到数组
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T[] arrayNodeToArray(ArrayNode arrayNode, Class<T> clazz, Function<JsonNode, T> function) {
+        final T[] array = (T[]) Array.newInstance(clazz, arrayNode.size());
+        int i = 0;
+        for (JsonNode node : arrayNode) {
+            array[i++] = function.apply(node);
+        }
+        return array;
     }
 
     private static JsonNode parseExpressionToJsonNode(JsonNode jsonNode, Expression expression) {
