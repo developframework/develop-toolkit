@@ -1,12 +1,13 @@
 package develop.toolkit.multimedia.image;
 
+import com.drew.imaging.FileType;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import develop.toolkit.base.utils.CompareAdvice;
-import develop.toolkit.base.utils.IOAdvice;
+import org.apache.commons.io.IOUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -27,11 +28,11 @@ public abstract class ImageAdvice {
      * @param inputStream  图片输入流
      * @param outputStream 输出流
      * @param rectangle    裁切区域
-     * @param outImageType 输出图片类型
+     * @param outFileType  输出图片类型
      * @throws IOException
      */
-    public static void fixOrientationAndCut(InputStream inputStream, OutputStream outputStream, Rectangle rectangle, ImageType outImageType) throws IOException {
-        final byte[] data = IOAdvice.toByteArray(inputStream);
+    public static void fixOrientationAndCut(InputStream inputStream, OutputStream outputStream, Rectangle rectangle, FileType outFileType) throws IOException {
+        final byte[] data = IOUtils.toByteArray(inputStream);
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
         final int angle = readOrientationAngle(bais);
         bais.close();
@@ -41,7 +42,7 @@ public abstract class ImageAdvice {
                 rectangle
         );
         bais.close();
-        ImageIO.write(image, outImageType.getExtensionNames()[0], outputStream);
+        ImageIO.write(image, outFileType.getAllExtensions()[0], outputStream);
     }
 
     /**
@@ -50,11 +51,11 @@ public abstract class ImageAdvice {
      * @param inputStream  图片输入流
      * @param outputStream 输出流
      * @param width        定宽
-     * @param outImageType 输出图片类型
+     * @param outFileType  输出图片类型
      * @throws IOException
      */
-    public static void fixOrientationAndZoom(InputStream inputStream, OutputStream outputStream, int width, ImageType outImageType) throws IOException {
-        final byte[] data = IOAdvice.toByteArray(inputStream);
+    public static void fixOrientationAndZoom(InputStream inputStream, OutputStream outputStream, int width, FileType outFileType) throws IOException {
+        final byte[] data = IOUtils.toByteArray(inputStream);
         ByteArrayInputStream bais = new ByteArrayInputStream(data);
         final int angle = readOrientationAngle(bais);
         bais.close();
@@ -64,7 +65,7 @@ public abstract class ImageAdvice {
                 width
         );
         bais.close();
-        ImageIO.write(image, outImageType.getExtensionNames()[0], outputStream);
+        ImageIO.write(image, outFileType.getAllExtensions()[0], outputStream);
     }
 
     /**

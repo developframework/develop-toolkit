@@ -6,6 +6,7 @@ module develop.toolkit.multimedia {
     requires develop.toolkit.base;
     requires java.desktop;
     requires lombok;
+    requires org.apache.commons.io;
 
     exports develop.toolkit.multimedia.image;
 }
