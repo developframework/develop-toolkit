@@ -353,4 +353,26 @@ public final class IOAdvice {
     public static void printInputStream(InputStream inputStream) {
         readLines(inputStream, StandardCharsets.UTF_8).forEach(System.out::println);
     }
+
+    /**
+     * 截取输入流中某一段的字节数据
+     *
+     * @param bufferSize 缓冲区大小
+     * @param offset     偏移量
+     * @param chunkSize  截取块大小
+     * @param in         输入流
+     * @param out        输出流
+     * @throws IOException IO异常
+     */
+    public static long sliceBytes(int bufferSize, long offset, long chunkSize, InputStream in, OutputStream out) throws IOException {
+        in.skip(offset);
+        long transferred = 0L;
+        int read;
+        final byte[] buffer = new byte[bufferSize];
+        while (transferred < chunkSize && (read = in.read(buffer, 0, (int) Math.min(buffer.length, chunkSize - transferred))) != -1) {
+            transferred += read;
+            out.write(buffer, 0, read);
+        }
+        return transferred;
+    }
 }
