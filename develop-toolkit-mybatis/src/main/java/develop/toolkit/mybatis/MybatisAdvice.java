@@ -3,6 +3,7 @@ package develop.toolkit.mybatis;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.ibatis.mapping.Environment;
+import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
@@ -34,6 +35,14 @@ public abstract class MybatisAdvice {
         configurationHandler.configMapperRegistry(configuration.getMapperRegistry());
         configurationHandler.configTypeAliasRegistry(configuration.getTypeAliasRegistry());
         configurationHandler.configInterceptors(configuration.getInterceptors());
+
+        for (MappedStatement mappedStatement : configuration.getMappedStatements()) {
+            try {
+                SimpleMapperHelper.changeMs(mappedStatement);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return new SqlSessionFactoryBuilder().build(configuration);
     }
 }
