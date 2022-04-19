@@ -1,13 +1,12 @@
 package develop.toolkit.base.utils;
 
-import lombok.SneakyThrows;
-
 import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 import java.util.function.Predicate;
 
 /**
@@ -15,65 +14,79 @@ import java.util.function.Predicate;
  */
 public abstract class FileAdvice {
 
-    /**
-     * 打开缓冲写
-     */
-    public static BufferedWriter open(File file, boolean append) throws IOException {
-        return new BufferedWriter(
-                new OutputStreamWriter(
-                        new FileOutputStream(file, append),
-                        StandardCharsets.UTF_8
-                )
-        );
-    }
-
-    @SneakyThrows(IOException.class)
-    public static void write(File file, String text, boolean append) {
-        if (file.exists() || file.getParentFile().mkdirs()) {
-            try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file, append), StandardCharsets.UTF_8)) {
-                writer.write(text);
-            }
+    public static void write(Path filePath, CharSequence text, Charset charset, boolean append) {
+        try {
+            touch(filePath);
+            Files.writeString(
+                    filePath,
+                    text,
+                    charset,
+                    StandardOpenOption.WRITE,
+                    append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING
+            );
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 
-    @SneakyThrows(IOException.class)
-    public static void write(File file, List<String> lines, boolean append) {
-        if (file.exists() || file.getParentFile().mkdirs()) {
-            try (BufferedWriter writer = open(file, append)) {
-                for (String line : lines) {
-                    writer.write(line);
-                    writer.newLine();
-                }
-            }
+    public static void write(Path filePath, Iterable<? extends CharSequence> lines, Charset charset, boolean append) {
+        try {
+            touch(filePath);
+            Files.write(
+                    filePath,
+                    lines,
+                    charset,
+                    StandardOpenOption.WRITE,
+                    append ? StandardOpenOption.APPEND : StandardOpenOption.TRUNCATE_EXISTING
+            );
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    public static void touch(Path path) throws IOException {
+        final Path parent = path.getParent();
+        if (Files.notExists(parent)) {
+            Files.createDirectories(parent);
+        }
+        if (Files.notExists(path)) {
+            Files.createFile(path);
         }
     }
 
     /**
      * 遍历目录 找到所有满足条件的文件
      */
-    public static List<File> files(File dir, Predicate<File> predicate) {
-        if (dir.isFile()) {
-            return Collections.emptyList();
-        }
-        List<File> files = new LinkedList<>();
-        Stack<File> stack = new Stack<>();
-        stack.push(dir);
-        do {
-            eachFiles(stack.pop(), stack, files, predicate);
-        } while (!stack.empty());
-        return List.copyOf(files);
-    }
-
-    private static void eachFiles(File dir, Stack<File> stack, List<File> files, Predicate<File> predicate) {
-        final File[] listFiles = dir.listFiles();
-        if (listFiles != null) {
-            for (File file : listFiles) {
-                if (file.isDirectory()) {
-                    stack.push(file);
-                } else if (predicate.test(file)) {
-                    files.add(file);
+    public static List<Path> files(Path path, Predicate<Path> predicate) {
+        List<Path> paths = new LinkedList<>();
+        try {
+            Files.walkFileTree(path, new FileVisitor<>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    return FileVisitResult.CONTINUE;
                 }
-            }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    if (predicate.test(file)) {
+                        paths.add(path);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+            return Collections.unmodifiableList(paths);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 
