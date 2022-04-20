@@ -1,8 +1,12 @@
 package develop.toolkit.base.utils;
 
+import develop.toolkit.base.struct.ZipWrapper;
+
 import java.io.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * 压缩增强
@@ -62,6 +66,28 @@ public abstract class CompressAdvice {
             try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
                 uncompress(data, baos);
                 return baos.toByteArray();
+            }
+        }
+    }
+
+    public static class Zip {
+
+        public static void compress(ZipWrapper zipWrapper, OutputStream outputStream) {
+            ZipOutputStream zos = new ZipOutputStream(outputStream);
+
+
+        }
+
+        private static void recursiveCompress(ZipWrapper zipWrapper, String parentPath, ZipOutputStream zos) throws IOException {
+            if (zipWrapper.isFile()) {
+                final ZipEntry zipEntry = new ZipEntry(parentPath + File.separator + zipWrapper.getFilename());
+                zos.putNextEntry(zipEntry);
+                try (InputStream is = zipWrapper.getInputStreamSupplier().get()) {
+                    is.transferTo(zos);
+                }
+                zos.closeEntry();
+            } else {
+
             }
         }
     }
