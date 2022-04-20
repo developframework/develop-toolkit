@@ -93,7 +93,7 @@ public abstract class CompressAdvice {
                         String currentName = filePath.subpath(path.getNameCount(), filePath.getNameCount()).toString();
                         File file = filePath.toFile();
                         final ZipEntry zipEntry = new ZipEntry(currentName);
-                        zipEntry.setMethod(ZipEntry.DEFLATED);
+                        zipEntry.setMethod(currentName.endsWith(".zip") ? ZipEntry.STORED : ZipEntry.DEFLATED);
                         zipEntry.setLastModifiedTime(FileTime.fromMillis(file.lastModified()));
                         zos.putNextEntry(zipEntry);
                         try (InputStream is = new FileInputStream(file)) {
