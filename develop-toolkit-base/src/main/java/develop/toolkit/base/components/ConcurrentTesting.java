@@ -18,20 +18,24 @@ public final class ConcurrentTesting {
 
     private final int cycleCount;
 
+    private final int triggerCount;
+
     private final int interval;
 
     private final HttpClientHelper helper;
 
-    public ConcurrentTesting(int threadCount, int cycleCount, int interval) {
+    public ConcurrentTesting(int threadCount, int triggerCount, int cycleCount, int interval) {
         this.helper = HttpClientHelper.buildDefault();
         this.service = Executors.newFixedThreadPool(threadCount);
+        this.triggerCount = triggerCount;
         this.cycleCount = cycleCount;
         this.interval = interval;
     }
 
-    public ConcurrentTesting(HttpClientHelper helper, int threadCount, int cycleCount, int interval) {
+    public ConcurrentTesting(HttpClientHelper helper, int threadCount, int triggerCount, int cycleCount, int interval) {
         this.helper = helper;
         this.service = Executors.newFixedThreadPool(threadCount);
+        this.triggerCount = triggerCount;
         this.cycleCount = cycleCount;
         this.interval = interval;
     }
@@ -44,17 +48,20 @@ public final class ConcurrentTesting {
     }
 
     public void start(Function<HttpClientHelper, HttpClientReceiver<String>> function, Consumer<HttpClientReceiver<String>> consumer) {
-        service.execute(() -> {
-            for (int i = 0; i < cycleCount; i++) {
-                if (interval > 0) {
-                    try {
-                        Thread.sleep(interval);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+        for (int i = 0; i < triggerCount; i++) {
+            service.execute(() -> {
+                for (int j = 0; j < cycleCount; j++) {
+                    if (interval > 0) {
+                        try {
+                            Thread.sleep(interval);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
+                    consumer.accept(function.apply(helper));
                 }
-                consumer.accept(function.apply(helper));
-            }
-        });
+            });
+        }
+        service.shutdown();
     }
 }
