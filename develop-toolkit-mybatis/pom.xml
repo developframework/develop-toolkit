@@ -13,7 +13,7 @@
 
     <properties>
         <mybatis.version>3.5.5</mybatis.version>
-        <mysql-connector-java.version>8.0.20</mysql-connector-java.version>
+        <mysql-connector-java.version>8.0.28</mysql-connector-java.version>
         <HikariCP.version>4.0.3</HikariCP.version>
     </properties>
 
