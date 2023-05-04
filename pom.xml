@@ -22,6 +22,7 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <version.lombok>1.18.20</version.lombok>
         <version.slf4j-api>1.7.30</version.slf4j-api>
@@ -180,18 +181,6 @@
             </plugin>
         </plugins>
     </build>
-
-    <!-- 配置私库地址 -->
-    <distributionManagement>
-        <snapshotRepository>
-            <id>hclc aliyun nexus</id>
-            <url>http://nexus.hclcaliyun.com:8082/repository/maven-snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>hclc aliyun nexus</id>
-            <url>http://nexus.hclcaliyun.com:8082/repository/maven-releases/</url>
-        </repository>
-    </distributionManagement>
 
     <profiles>
         <profile>
