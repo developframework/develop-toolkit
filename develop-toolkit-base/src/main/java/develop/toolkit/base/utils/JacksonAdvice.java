@@ -9,7 +9,9 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.github.developframework.expression.*;
+import com.github.developframework.expression.ArrayExpression;
+import com.github.developframework.expression.EmptyExpression;
+import com.github.developframework.expression.Expression;
 import develop.toolkit.base.constants.DateFormatConstants;
 import develop.toolkit.base.struct.KeyValuePair;
 import lombok.SneakyThrows;
@@ -180,15 +182,19 @@ public final class JacksonAdvice {
     private static JsonNode parseExpressionToJsonNode(JsonNode jsonNode, Expression expression) {
         if (expression != EmptyExpression.INSTANCE) {
             for (Expression singleExpression : expression.expressionTree()) {
-                if (singleExpression instanceof ObjectExpression) {
-                    jsonNode = existsJsonNode(jsonNode, ((ObjectExpression) singleExpression).getPropertyName());
-                } else if (singleExpression instanceof ArrayExpression) {
+                if (singleExpression.isObject()) {
+                    jsonNode = existsJsonNode(jsonNode, singleExpression.getName());
+                } else if (singleExpression.isArray()) {
                     ArrayExpression ae = (ArrayExpression) singleExpression;
-                    jsonNode = existsJsonNode(jsonNode, ae.getPropertyName());
-                    if (jsonNode.isArray()) {
-                        jsonNode = jsonNode.get(ae.getIndex());
+                    jsonNode = existsJsonNode(jsonNode, ae.getName());
+                    for (int i : ae.getIndexArray()) {
+                        if (jsonNode.isArray()) {
+                            jsonNode = jsonNode.get(i);
+                        } else {
+                            throw new IllegalArgumentException("jsonNode is not Array,for expression:" + singleExpression);
+                        }
                     }
-                } else if (singleExpression instanceof MethodExpression) {
+                } else if (singleExpression.isMethod()) {
                     throw new IllegalArgumentException("not support method expression.");
                 }
             }
