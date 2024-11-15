@@ -48,19 +48,20 @@ public final class ObjectAdvice {
      *
      * @param instance             实例
      * @param field                字段
+     * @param value                值
      * @param firstUseSetterMethod 优先使用setter方法
      */
     @SneakyThrows
-    public static void set(Object instance, Field field, boolean firstUseSetterMethod) {
+    public static void set(Object instance, Field field, Object value, boolean firstUseSetterMethod) {
         if (firstUseSetterMethod) {
             try {
                 final String setterMethodName = JavaBeanUtils.getSetterMethodName(field.getName());
                 MethodUtils.invokeMethod(instance, true, setterMethodName);
             } catch (NoSuchMethodException e) {
-                FieldUtils.writeField(field, instance, true);
+                FieldUtils.writeField(field, instance, value, true);
             }
         } else {
-            FieldUtils.writeField(field, instance, true);
+            FieldUtils.writeField(field, instance, value, true);
         }
     }
 
@@ -69,27 +70,28 @@ public final class ObjectAdvice {
      *
      * @param instance             实例
      * @param fieldName            字段
+     * @param value                值
      * @param firstUseSetterMethod 优先使用setter方法
      */
     @SneakyThrows
-    public static void set(Object instance, String fieldName, boolean firstUseSetterMethod) {
+    public static void set(Object instance, String fieldName, Object value, boolean firstUseSetterMethod) {
         if (firstUseSetterMethod) {
             try {
                 final String setterMethodName = JavaBeanUtils.getSetterMethodName(fieldName);
                 MethodUtils.invokeMethod(instance, true, setterMethodName);
             } catch (NoSuchMethodException e) {
-                FieldUtils.writeField(instance, fieldName, true);
+                FieldUtils.writeField(instance, fieldName, value, true);
             }
         } else {
-            FieldUtils.writeField(instance, fieldName, true);
+            FieldUtils.writeField(instance, fieldName, value, true);
         }
     }
 
     /**
      * 反射获取值
      *
-     * @param instance 实例
-     * @param field 字段
+     * @param instance             实例
+     * @param field                字段
      * @param firstUseGetterMethod 优先使用getter方法
      * @return 反射值
      */
@@ -110,8 +112,8 @@ public final class ObjectAdvice {
     /**
      * 反射获取值
      *
-     * @param instance 实例
-     * @param fieldName 字段
+     * @param instance             实例
+     * @param fieldName            字段
      * @param firstUseGetterMethod 优先使用getter方法
      * @return 反射值
      */
