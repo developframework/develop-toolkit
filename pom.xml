@@ -5,7 +5,7 @@
     <groupId>com.github.developframework</groupId>
     <artifactId>develop-toolkit</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.6</version>
+    <version>1.0.7-SNAPSHOT</version>
     <description>开发工具箱</description>
     <inceptionYear>2018</inceptionYear>
     <name>Develop Toolkit</name>
@@ -36,27 +36,27 @@
             <dependency>
                 <groupId>com.github.developframework</groupId>
                 <artifactId>develop-toolkit-base</artifactId>
-                <version>1.0.6</version>
+                <version>1.0.7-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.github.developframework</groupId>
                 <artifactId>develop-toolkit-db</artifactId>
-                <version>1.0.6</version>
+                <version>1.0.7-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.github.developframework</groupId>
                 <artifactId>develop-toolkit-world</artifactId>
-                <version>1.0.6</version>
+                <version>1.0.7-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.github.developframework</groupId>
                 <artifactId>develop-toolkit-multimedia</artifactId>
-                <version>1.0.6</version>
+                <version>1.0.7-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.github.developframework</groupId>
                 <artifactId>develop-toolkit-mybatis</artifactId>
-                <version>1.0.6</version>
+                <version>1.0.7-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.projectlombok</groupId>
@@ -121,7 +121,7 @@
         <connection>scm:git:git@github.com:developframework/develop-toolkit.git</connection>
         <developerConnection>scm:git:git@github.com:developframework/develop-toolkit.git</developerConnection>
         <url>https://github.com/developframework/develop-toolkit</url>
-        <tag>v1.0.6</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <build>
